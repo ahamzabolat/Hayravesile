@@ -3,68 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Hayra Vesile | Admin</title>
+    <title>Hayra Vesile | Privacy & Bio</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
         :root { --hv: #10b981; --bg: #000; --card: #0a0a0b; --border: #161618; }
         * { margin:0; padding:0; box-sizing:border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { background: var(--bg); color: white; overflow: hidden; height: 100vh; }
         .main-scroll { height: calc(100vh - 140px); overflow-y: auto; }
         .hv-card { background: var(--card); border-bottom: 1px solid var(--border); padding: 15px; }
-        .nav-dock { position: fixed; bottom: 0; left: 0; width: 100%; background: #000; border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; padding: 15px; z-index: 9000; }
-        .full-page { position: fixed; inset: 0; background: #000; z-index: 10000; display: none; flex-direction: column; padding: 20px; overflow-y: auto; }
-        .badge-admin { color: #fbbf24; font-size: 10px; font-weight: 900; border: 1px solid #fbbf24; padding: 2px 6px; border-radius: 4px; background: rgba(251, 191, 36, 0.1); }
-        .badge-user { color: #666; font-size: 10px; font-weight: 900; border: 1px solid #333; padding: 2px 6px; border-radius: 4px; }
+        .nav-dock { position: fixed; bottom: 0; left: 0; width: 100%; background: #000; border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; padding: 12px; z-index: 9000; }
+        .full-page { position: fixed; inset: 0; background: #000; z-index: 10000; display: none; flex-direction: column; padding: 15px; overflow-y: auto; }
+        .badge-admin { color: #fbbf24; font-size: 10px; font-weight: 900; border: 1px solid #fbbf24; padding: 2px 6px; border-radius: 4px; }
+        .msg-bubble { padding: 10px 15px; rounded: 18px; font-size: 13px; max-width: 80%; position: relative; }
+        .msg-deleted { font-style: italic; opacity: 0.5; }
     </style>
 </head>
 <body>
 
     <div id="auth-screen" class="fixed inset-0 bg-black z-[20000] flex flex-col items-center justify-center">
         <h1 class="text-4xl font-black text-emerald-500 mb-8 uppercase italic">Hayra Vesile</h1>
-        <button onclick="login()" class="bg-white text-black px-10 py-4 rounded-2xl font-black flex items-center gap-3">
-            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/action/google.svg" class="w-6"> Google ile Giriş Yap
+        <button onclick="login()" class="bg-white text-black px-10 py-4 rounded-2xl font-black flex items-center gap-3 active:scale-95 transition">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/action/google.svg" class="w-6"> Google ile Giriş
         </button>
     </div>
 
     <div id="app-content" style="display: none;">
-        <header class="p-4 border-b border-white/5 flex justify-between items-center bg-black">
-            <h1 class="text-xl font-black text-emerald-500 uppercase">HAYRA VESİLE</h1>
+        <header class="p-4 border-b border-white/5 flex justify-between items-center bg-black sticky top-0 z-[8000]">
+            <h1 class="text-lg font-black text-emerald-500 uppercase">HAYRA VESİLE</h1>
             <div id="u-top" class="w-9 h-9 rounded-full border border-emerald-500/30 overflow-hidden" onclick="showTab('profile')"></div>
         </header>
 
         <main class="main-scroll">
             <div id="tab-feed" class="tab-page"><div id="feed-items"></div></div>
+            
             <div id="tab-users" class="tab-page hidden p-4">
-                <input type="text" id="user-search" class="w-full p-4 bg-zinc-900 border border-white/5 rounded-2xl mb-4 outline-none" placeholder="Kullanıcı ara..." oninput="filterUsers()">
-                <div id="user-list" class="space-y-2"></div>
+                <input type="text" id="user-search" class="w-full p-4 rounded-2xl mb-4 bg-zinc-900 outline-none" placeholder="Kişi ara..." oninput="filterUsers()">
+                <div id="user-list" class="space-y-3"></div>
             </div>
-            <div id="tab-profile" class="tab-page hidden p-6 text-center">
-                <img id="p-img" class="w-24 h-24 rounded-3xl mx-auto border-2 border-emerald-500 p-1 mb-4 object-cover">
-                <h2 id="p-name" class="font-black text-2xl uppercase">...</h2>
-                <div id="p-rank" class="mb-6"></div>
-                <button onclick="logout()" class="bg-zinc-900 text-red-500 w-full font-bold py-3 rounded-xl mt-10 border border-red-500/20">ÇIKIŞ YAP</button>
+
+            <div id="tab-profile" class="tab-page hidden">
+                <div class="p-8 text-center border-b border-white/5">
+                    <img id="p-img" class="w-24 h-24 rounded-3xl mx-auto border-2 border-emerald-500 p-1 mb-4 object-cover">
+                    <h2 id="p-name" class="font-black text-2xl uppercase">...</h2>
+                    <div id="p-rank" class="mb-4"></div>
+                    <input type="text" id="bio-input" class="w-full p-3 bg-zinc-900 rounded-xl mb-2 text-xs" placeholder="Yeni biyografi yaz...">
+                    <button onclick="updateBio()" class="text-emerald-500 font-bold text-xs mb-6">GÜNCELLE</button>
+                    
+                    <div class="text-left mt-4">
+                        <h4 class="text-[10px] font-black text-zinc-500 uppercase mb-2">Biyografi Geçmişi</h4>
+                        <div id="bio-history" class="text-[11px] text-zinc-400 space-y-1"></div>
+                    </div>
+
+                    <button onclick="logout()" class="mt-10 bg-zinc-900 text-red-500 px-6 py-2 rounded-xl font-bold text-xs">ÇIKIŞ YAP</button>
+                </div>
+                <div id="my-posts" class="p-2"></div>
             </div>
         </main>
 
         <nav class="nav-dock">
-            <i class="fa-solid fa-house text-xl" onclick="showTab('feed')"></i>
-            <div class="w-12 h-12 bg-emerald-500 text-black rounded-2xl flex items-center justify-center shadow-lg" onclick="openFullPage('page-post')">
+            <i class="fa-solid fa-house" onclick="showTab('feed')"></i>
+            <div class="w-12 h-12 bg-emerald-500 text-black rounded-2xl flex items-center justify-center" onclick="openFullPage('page-post')">
                 <i class="fa-solid fa-plus text-2xl"></i>
             </div>
-            <i class="fa-solid fa-message text-xl" onclick="showTab('users')"></i>
-            <i class="fa-solid fa-user text-xl" onclick="showTab('profile')"></i>
+            <i class="fa-solid fa-users" onclick="showTab('users')"></i>
+            <i class="fa-solid fa-circle-user" onclick="showTab('profile')"></i>
         </nav>
     </div>
 
-    <div id="page-post" class="full-page">
-        <div class="flex justify-between items-center mb-10">
-            <button onclick="closeFullPage('page-post')" class="text-zinc-500 font-bold text-sm">VAZGEÇ</button>
-            <button id="btn-publish" class="bg-emerald-500 text-black px-8 py-2 rounded-full font-black text-xs uppercase">Paylaş</button>
+    <div id="page-user-profile" class="full-page">
+        <div class="flex items-center gap-4 mb-6">
+            <i class="fa-solid fa-arrow-left text-xl" onclick="closeFullPage('page-user-profile')"></i>
+            <span class="font-black uppercase text-sm">Profil</span>
         </div>
-        <textarea id="post-input" class="w-full bg-transparent text-white text-2xl font-bold h-64 outline-none border-none" placeholder="Ne anlatmak istersin?"></textarea>
+        <div id="user-profile-content" class="text-center p-6 bg-zinc-900/50 rounded-3xl border border-white/5 mb-6">
+            </div>
+        <div id="user-profile-posts"></div>
     </div>
 
     <div id="page-chat" class="full-page">
@@ -75,14 +91,22 @@
         <div id="chat-messages" class="flex-1 overflow-y-auto space-y-4"></div>
         <div class="flex gap-2 mt-4 bg-zinc-900 p-2 rounded-2xl">
             <input type="text" id="chat-input" class="flex-1 bg-transparent p-2 outline-none" placeholder="Mesaj yaz...">
-            <button id="btn-send-msg" class="bg-emerald-500 text-black px-6 py-2 rounded-xl font-black">GÖNDER</button>
+            <button id="btn-send-msg" class="bg-emerald-500 text-black px-4 py-2 rounded-xl font-black">GÖNDER</button>
         </div>
+    </div>
+
+    <div id="page-post" class="full-page">
+        <div class="flex justify-between items-center mb-6">
+            <button onclick="closeFullPage('page-post')" class="text-zinc-500">İptal</button>
+            <button id="btn-publish" class="bg-emerald-500 text-black px-6 py-2 rounded-full font-black text-xs">YAYINLA</button>
+        </div>
+        <textarea id="post-input" class="w-full p-4 rounded-3xl text-lg font-bold h-48 bg-zinc-900 border-none" placeholder="Arkadaşlarınla paylaş..."></textarea>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, updateDoc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, updateDoc, getDoc, setDoc, where, arrayUnion, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const config = {
             apiKey: "AIzaSyDZO3lct-xzXAx79lbqgMP7s6WRCirWIHk",
@@ -95,13 +119,9 @@
 
         const app = initializeApp(config);
         const auth = getAuth(app), db = getFirestore(app);
-        let me = null, activeChatId = null;
+        let me = null, friends = [];
 
-        // KRİTİK: ADMIN KONTROLÜ
-        const checkIsAdmin = (u) => {
-            // İster isme bak, ister UID'ye (Adil Hamza ismi geçiyorsa Admin yap)
-            return u.displayName && u.displayName.includes("Adil Hamza");
-        };
+        const isAdmin = (u) => u.displayName && u.displayName.includes("Adil Hamza");
 
         window.login = () => signInWithPopup(auth, new GoogleAuthProvider());
         window.logout = () => signOut(auth).then(() => location.reload());
@@ -111,101 +131,140 @@
                 me = u;
                 document.getElementById('auth-screen').style.display = 'none';
                 document.getElementById('app-content').style.display = 'block';
-                document.getElementById('u-top').innerHTML = `<img src="${u.photoURL}" class="w-full h-full object-cover">`;
                 await setDoc(doc(db, "users", u.uid), { name: u.displayName, pfp: u.photoURL }, { merge: true });
-                syncProfile(); loadFeed(); loadUsers();
+                syncProfile(); loadFriends(); loadUsers();
             } else {
                 document.getElementById('auth-screen').style.display = 'flex';
                 document.getElementById('app-content').style.display = 'none';
             }
         });
 
-        // YAYINLA
-        document.getElementById('btn-publish').onclick = async () => {
-            const txt = document.getElementById('post-input').value.trim();
-            if(!txt) return;
-            const btn = document.getElementById('btn-publish');
-            btn.disabled = true; btn.innerText = "...";
-            try {
-                await addDoc(collection(db, "hv_posts"), {
-                    text: txt, uid: me.uid, name: me.displayName, pfp: me.photoURL, date: serverTimestamp()
-                });
-                document.getElementById('post-input').value = "";
-                closeFullPage('page-post');
-            } catch (e) { console.error(e); }
-            btn.disabled = false; btn.innerText = "PAYLAŞ";
-        };
+        function loadFriends() {
+            onSnapshot(doc(db, "friends", me.uid), s => {
+                friends = s.exists() ? s.data().list || [] : [];
+                loadFeed();
+            });
+        }
 
+        // AKIŞ VE PROFİL PAYLAŞIMLARI
         function loadFeed() {
             onSnapshot(query(collection(db, "hv_posts"), orderBy("date", "desc")), snap => {
                 const feed = document.getElementById('feed-items'); feed.innerHTML = '';
+                const myPosts = document.getElementById('my-posts'); myPosts.innerHTML = '';
                 snap.forEach(d => {
                     const p = d.data();
-                    const isAdmin = p.name && p.name.includes("Adil Hamza");
-                    feed.innerHTML += `
-                        <div class="hv-card">
-                            <div class="flex items-start gap-3">
-                                <img src="${p.pfp}" class="w-10 h-10 rounded-full object-cover">
-                                <div class="flex-1">
-                                    <span class="text-[10px] font-black text-emerald-500 uppercase">${p.name}</span>
-                                    <div><span class="${isAdmin ? 'badge-admin' : 'badge-user'}">${isAdmin ? 'ADMIN' : 'ÜYE'}</span></div>
-                                    <p class="text-sm font-bold mt-2 text-zinc-200">${p.text}</p>
-                                </div>
-                            </div>
-                        </div>`;
+                    const postHTML = renderPost(p);
+                    if(friends.includes(p.uid) || p.uid === me.uid || isAdmin(me)) {
+                        feed.innerHTML += postHTML;
+                    }
+                    if(p.uid === me.uid) myPosts.innerHTML += postHTML;
                 });
             });
         }
 
-        window.startChat = (tid, name, pfp) => {
+        function renderPost(p) {
+            const isAdm = p.name.includes("Adil Hamza");
+            return `<div class="hv-card">
+                <div class="flex items-start gap-3">
+                    <img src="${p.pfp}" class="w-10 h-10 rounded-full object-cover" onclick="openUserProfile('${p.uid}')">
+                    <div class="flex-1">
+                        <span class="text-[10px] font-black text-emerald-500 uppercase">${p.name}</span>
+                        <div><span class="${isAdm ? 'badge-admin' : 'badge-user'}">${isAdm ? 'ADMIN' : 'ÜYE'}</span></div>
+                        <p class="text-sm font-bold mt-2 text-zinc-200">${p.text}</p>
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        // PROFİL GİZLİLİK KONTROLÜ
+        window.openUserProfile = async (uid) => {
+            const uDoc = await getDoc(doc(db, "users", uid));
+            const u = uDoc.data();
+            const isFriend = friends.includes(uid) || isAdmin(me);
+            
+            document.getElementById('user-profile-content').innerHTML = `
+                <img src="${u.pfp}" class="w-20 h-20 rounded-2xl mx-auto mb-4 object-cover">
+                <h3 class="font-black text-xl">${u.name}</h3>
+                ${isFriend ? `<p class="text-xs text-zinc-500 mt-2">${u.bio || "Biyografi yok."}</p>` : `<p class="text-xs text-red-500 mt-2"><i class="fa-solid fa-lock"></i> Profil Gizli</p>`}
+                <div class="flex gap-2 justify-center mt-4">
+                    ${!isFriend && uid !== me.uid ? `<button onclick="sendFriendRequest('${uid}')" class="bg-emerald-500 text-black px-6 py-2 rounded-xl font-black text-xs">ARKADAŞ EKLE</button>` : ''}
+                    <button onclick="startChat('${uid}', '${u.name}')" class="bg-white text-black px-6 py-2 rounded-xl font-black text-xs">MESAJ AT</button>
+                </div>
+            `;
+
+            const postBox = document.getElementById('user-profile-posts'); postBox.innerHTML = '';
+            if(isFriend) {
+                const q = query(collection(db, "hv_posts"), where("uid", "==", uid));
+                onSnapshot(q, snap => {
+                    postBox.innerHTML = '<h4 class="px-4 text-[10px] font-black text-zinc-500 mb-2">GÖNDERİLER</h4>';
+                    snap.forEach(d => postBox.innerHTML += renderPost(d.data()));
+                });
+            }
+            openFullPage('page-user-profile');
+        };
+
+        window.sendFriendRequest = async (uid) => {
+            await setDoc(doc(db, "friends", me.uid), { list: arrayUnion(uid) }, { merge: true });
+            await setDoc(doc(db, "friends", uid), { list: arrayUnion(me.uid) }, { merge: true });
+            Swal.fire('Başarılı', 'Artık arkadaşsınız! (İstek Kabul Edildi)', 'success');
+        };
+
+        // MESAJ SİLME ÖZELLİĞİ
+        window.startChat = (tid, name) => {
             activeChatId = [me.uid, tid].sort().join("_");
             document.getElementById('chat-name').innerText = name;
             openFullPage('page-chat');
             onSnapshot(query(collection(db, "chats", activeChatId, "messages"), orderBy("date", "asc")), snap => {
                 const box = document.getElementById('chat-messages'); box.innerHTML = '';
                 snap.forEach(d => {
-                    const m = d.data();
+                    const m = d.data(); const mid = d.id;
                     const isMe = m.s === me.uid;
-                    box.innerHTML += `<div class="flex ${isMe ? 'justify-end' : 'justify-start'}">
-                        <div class="${isMe ? 'bg-emerald-600 text-black' : 'bg-zinc-900 text-white'} px-4 py-2 rounded-2xl text-xs font-extrabold max-w-[80%]">${m.t}</div>
+                    const content = m.deleted ? `<span class="msg-deleted">Bu mesaj silindi</span>` : m.t;
+                    box.innerHTML += `<div class="flex ${isMe ? 'justify-end' : 'justify-start'}" onclick="${isMe && !m.deleted ? `deleteMsg('${mid}')` : ''}">
+                        <div class="msg-bubble ${isMe ? 'bg-emerald-600 text-black' : 'bg-zinc-900 text-white'}">${content}</div>
                     </div>`;
                 });
                 box.scrollTop = box.scrollHeight;
             });
         };
 
+        window.deleteMsg = async (mid) => {
+            const { isConfirmed } = await Swal.fire({ title: 'Silinsin mi?', text: "Mesaj herkesten silinecek.", icon: 'warning', showCancelButton: true });
+            if(isConfirmed) await updateDoc(doc(db, "chats", activeChatId, "messages", mid), { t: "silindi", deleted: true });
+        };
+
         document.getElementById('btn-send-msg').onclick = async () => {
-            const input = document.getElementById('chat-input');
-            const txt = input.value.trim();
-            if(!txt || !activeChatId) return;
-            await addDoc(collection(db, "chats", activeChatId, "messages"), { t: txt, s: me.uid, date: serverTimestamp() });
+            const input = document.getElementById('chat-input'); if(!input.value.trim()) return;
+            await addDoc(collection(db, "chats", activeChatId, "messages"), { t: input.value, s: me.uid, date: serverTimestamp(), deleted: false });
             input.value = "";
+        };
+
+        // BİYOGRAFİ GEÇMİŞİ
+        window.updateBio = async () => {
+            const newBio = document.getElementById('bio-input').value.trim(); if(!newBio) return;
+            await updateDoc(doc(db, "users", me.uid), { bio: newBio, bioHistory: arrayUnion(newBio) });
+            syncProfile();
+            document.getElementById('bio-input').value = '';
         };
 
         async function syncProfile() {
             const s = await getDoc(doc(db, "users", me.uid));
             if(s.exists()){
                 const d = s.data();
-                const isAdmin = checkIsAdmin(me);
                 document.getElementById('p-img').src = d.pfp;
                 document.getElementById('p-name').innerText = d.name;
-                document.getElementById('p-rank').innerHTML = isAdmin ? '<span class="badge-admin">SİSTEM YÖNETİCİSİ</span>' : '<span class="badge-user">ÜYE</span>';
+                document.getElementById('p-rank').innerHTML = isAdmin(me) ? '<span class="badge-admin">ADMİN</span>' : '<span class="badge-user">ÜYE</span>';
+                
+                const history = document.getElementById('bio-history'); history.innerHTML = '';
+                if(d.bioHistory) d.bioHistory.reverse().slice(0, 5).forEach(b => history.innerHTML += `<div>• ${b}</div>`);
             }
         }
 
-        function loadUsers() {
-            onSnapshot(collection(db, "users"), snap => {
-                const list = document.getElementById('user-list'); list.innerHTML = '';
-                snap.forEach(d => {
-                    if(d.id === me.uid) return;
-                    list.innerHTML += `<div class="flex items-center gap-4 bg-zinc-900/40 p-4 rounded-2xl border border-white/5" onclick="startChat('${d.id}', '${d.data().name}', '${d.data().pfp}')">
-                        <img src="${d.data().pfp}" class="w-10 h-10 rounded-full">
-                        <div class="flex-1 font-black text-sm">${d.data().name}</div>
-                        <i class="fa-solid fa-paper-plane text-emerald-500 opacity-40"></i>
-                    </div>`;
-                });
-            });
-        }
+        document.getElementById('btn-publish').onclick = async () => {
+            const txt = document.getElementById('post-input').value.trim(); if(!txt) return;
+            await addDoc(collection(db, "hv_posts"), { text: txt, uid: me.uid, name: me.displayName, pfp: me.photoURL, date: serverTimestamp() });
+            document.getElementById('post-input').value = ""; closeFullPage('page-post');
+        };
 
         window.showTab = (t) => {
             document.querySelectorAll('.tab-page').forEach(p => p.classList.add('hidden'));
@@ -214,6 +273,14 @@
         window.openFullPage = (id) => document.getElementById(id).style.display = 'flex';
         window.closeFullPage = (id) => document.getElementById(id).style.display = 'none';
 
+        function loadUsers() {
+            onSnapshot(collection(db, "users"), snap => {
+                const list = document.getElementById('user-list'); list.innerHTML = '';
+                snap.forEach(d => { if(d.id !== me.uid) list.innerHTML += `<div class="flex items-center gap-4 bg-zinc-900/50 p-4 rounded-2xl" onclick="openUserProfile('${d.id}')">
+                    <img src="${d.data().pfp}" class="w-10 h-10 rounded-full"> <div class="flex-1 font-black text-sm">${d.data().name}</div></div>`;
+                });
+            });
+        }
     </script>
 </body>
 </html>
