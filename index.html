@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Hayra Vesile | V571 Pro-Max</title>
+    <title>Hayra Vesile | Ultimate V571</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -12,42 +12,54 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@1,900&display=swap');
         
-        :root { --hv: #10b981; --bg: #000; --card: #0d0d0f; --border: #1e1e21; }
+        :root { --hv: #10b981; --bg: #000; --card: #0d0d0f; --border: #1e1e21; --dis: #ef4444; }
+        
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg); color: #f4f4f5; overflow: hidden; height: 100vh; display: flex; }
+        body { background: var(--bg); color: #f4f4f5; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
 
+        /* LOGO VE ÜST BAR */
         .stilli-logo { font-family: 'Playfair Display', serif; font-style: italic; background: linear-gradient(to right, #10b981, #34d399, #10b981); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-size: 200% auto; animation: shine 3s linear infinite; }
         @keyframes shine { to { background-position: 200% center; } }
 
-        /* SIDEBAR */
-        .sidebar { position: fixed; left: -300px; top: 0; width: 280px; height: 100%; background: #050505; border-right: 1px solid rgba(16,185,129,0.15); z-index: 10000; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); padding: 50px 25px; display: flex; flex-direction: column; }
+        /* SIDEBAR SİSTEMİ */
+        .sidebar { position: fixed; left: -320px; top: 0; width: 300px; height: 100%; background: #050505; border-right: 1px solid rgba(16,185,129,0.15); z-index: 10000; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); padding: 50px 25px; display: flex; flex-direction: column; }
         .sidebar.active { left: 0; box-shadow: 20px 0 100px rgba(0,0,0,1); }
-        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(12px); z-index: 9999; display: none; }
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); z-index: 9999; display: none; }
         
-        .nav-link { display: flex; align-items: center; gap: 14px; padding: 16px; border-radius: 20px; color: #52525b; font-weight: 700; transition: 0.3s; margin-bottom: 5px; cursor: pointer; }
-        .nav-link.active { color: var(--hv); background: rgba(16, 185, 129, 0.08); }
+        .nav-link { display: flex; align-items: center; gap: 15px; padding: 18px; border-radius: 22px; color: #52525b; font-weight: 700; transition: 0.3s; margin-bottom: 8px; cursor: pointer; }
+        .nav-link.active { color: var(--hv); background: rgba(16, 185, 129, 0.1); }
 
-        /* POST KARTLARI */
-        .hv-card { background: var(--card); border: 1px solid var(--border); border-radius: 30px; padding: 22px; margin: 18px; position: relative; }
-        .vesile-tag { font-size: 9px; font-weight: 800; color: var(--hv); letter-spacing: 1px; margin-top: 3px; display: block; opacity: 0.8; }
+        /* ANA AKIŞ VE KARTLAR */
+        .scroll-container { flex: 1; overflow-y: auto; padding-bottom: 120px; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
+        .scroll-container::-webkit-scrollbar { display: none; }
+
+        .hv-card { background: var(--card); border: 1px solid var(--border); border-radius: 35px; padding: 25px; margin: 20px 15px; position: relative; transition: transform 0.2s; }
+        .vesile-tag { font-size: 10px; font-weight: 800; color: var(--hv); letter-spacing: 1.5px; margin-top: 4px; display: block; opacity: 0.7; text-transform: uppercase; }
+
+        /* BEĞENİ ANİMASYONU */
+        .heart-btn { cursor: pointer; transition: 0.3s; position: relative; }
+        .heart-btn.animating i { animation: heartPop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); color: #ef4444 !important; }
+        @keyframes heartPop { 0% { transform: scale(1); } 30% { transform: scale(1.6); } 60% { transform: scale(0.8); } 100% { transform: scale(1); } }
+
+        /* MESAJLAŞMA TASARIMI */
+        .chat-full { position: fixed; inset: 0; background: #000; z-index: 11000; display: none; flex-direction: column; }
+        .chat-header { height: 80px; padding: 0 25px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 15px; }
+        .message-area { flex: 1; overflow-y: auto; padding: 25px; display: flex; flex-direction: column; gap: 15px; background: radial-gradient(circle at top right, #0a0a0a, #000); }
+        .msg-bubble { max-width: 80%; padding: 15px 20px; border-radius: 25px; font-size: 15px; font-weight: 600; line-height: 1.5; animation: bubbleUp 0.3s ease-out; position: relative; }
+        @keyframes bubbleUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* SCROLL */
-        .scroll-v { flex: 1; overflow-y: auto; padding-bottom: 120px; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
-        .scroll-v::-webkit-scrollbar { display: none; }
+        .msg-me { align-self: flex-end; background: var(--hv); color: #000; border-bottom-right-radius: 5px; }
+        .msg-them { align-self: flex-start; background: #27272a; color: #fff; border-bottom-left-radius: 5px; }
 
-        /* CHAT */
-        .full-screen { position: fixed; inset: 0; background: #000; z-index: 11000; display: none; flex-direction: column; }
-        .chat-stream { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
-        .bubble { max-width: 78%; padding: 14px 18px; border-radius: 22px; font-size: 14px; font-weight: 600; line-height: 1.5; }
-        .b-me { align-self: flex-end; background: var(--hv); color: #000; border-bottom-right-radius: 4px; }
-        .b-them { align-self: flex-start; background: #27272a; color: #fff; border-bottom-left-radius: 4px; }
+        /* MESAJ GİRİŞ ALANI */
+        .chat-input-container { padding: 20px 25px 40px; background: #000; border-top: 1px solid var(--border); display: flex; gap: 12px; }
+        .chat-input { flex: 1; background: #18181b; border: 1px solid #27272a; border-radius: 25px; padding: 15px 20px; color: white; outline: none; font-weight: 600; }
+        .send-btn { width: 55px; height: 55px; background: var(--hv); color: #000; border-radius: 20px; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .send-btn:active { transform: scale(0.9); }
 
-        /* BUTONLAR */
-        .btn-reaction { transition: 0.2s; display: flex; align-items: center; gap: 6px; cursor: pointer; }
-        .heart-pop { animation: hp 0.3s; }
-        @keyframes hp { 0% { scale: 1; } 50% { scale: 1.3; } 100% { scale: 1; } }
-
-        .feather-btn { position: fixed; bottom: 35px; right: 25px; width: 66px; height: 66px; background: var(--hv); color: #000; border-radius: 22px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(16,185,129,0.3); z-index: 5000; cursor: pointer; }
+        /* YÜZEN BUTON */
+        .floating-action { position: fixed; bottom: 35px; right: 25px; width: 70px; height: 70px; background: var(--hv); color: #000; border-radius: 25px; display: flex; align-items: center; justify-content: center; box-shadow: 0 15px 40px rgba(16,185,129,0.3); z-index: 5000; cursor: pointer; transition: 0.3s; }
+        .floating-action:active { transform: scale(0.85); }
     </style>
 </head>
 <body>
@@ -55,73 +67,88 @@
     <div id="overlay" class="overlay" onclick="UI.side()"></div>
 
     <aside id="sidebar" class="sidebar">
-        <div class="mb-14">
+        <div class="mb-14 px-2">
             <h2 class="stilli-logo text-4xl">Hayra Vesile</h2>
-            <p class="text-[9px] text-zinc-500 font-black tracking-[0.4em] mt-2 uppercase">Gönülden Gönüle</p>
+            <p class="text-[10px] text-zinc-600 font-bold tracking-[0.4em] mt-2 uppercase">V571 Ultimate Pro</p>
         </div>
         <nav class="flex-1">
-            <div class="nav-link active" onclick="UI.tab('feed', this)"><i class="fa-solid fa-house-user"></i> Akış</div>
-            <div class="nav-link" onclick="UI.tab('users', this)"><i class="fa-solid fa-paper-plane"></i> Mesajlar</div>
-            <div class="nav-link" onclick="UI.tab('profile', this)"><i class="fa-solid fa-user"></i> Profil</div>
+            <div class="nav-link active" onclick="UI.tab('feed', this)"><i class="fa-solid fa-house-user text-xl"></i> Ana Akış</div>
+            <div class="nav-link" onclick="UI.tab('users', this)"><i class="fa-solid fa-comment-dots text-xl"></i> Mesajlar</div>
+            <div class="nav-link" onclick="UI.tab('profile', this)"><i class="fa-solid fa-user-circle text-xl"></i> Profilim</div>
         </nav>
-        <button onclick="Auth.logout()" class="text-red-500/60 font-black text-[11px] mt-auto p-4">ÇIKIŞ YAP</button>
+        <div class="mt-auto p-4 bg-zinc-900/40 rounded-3xl border border-white/5" onclick="UI.about()">
+            <p id="quote-display" class="text-[12px] text-zinc-400 italic">"İyilik, görünmez bir bağdır."</p>
+        </div>
+        <button onclick="Auth.logout()" class="text-red-500/50 font-black text-[11px] mt-8 text-center uppercase tracking-widest">Çıkış Yap</button>
     </aside>
 
-    <div id="auth-screen" class="fixed inset-0 bg-black z-[20000] flex flex-col items-center justify-center p-10">
-        <h1 class="stilli-logo text-6xl mb-12">Hayra Vesile</h1>
-        <button onclick="Auth.login()" class="bg-white text-black px-12 py-5 rounded-[28px] font-black text-xl">Google ile Giriş</button>
+    <div id="auth-gate" class="fixed inset-0 bg-black z-[20000] flex flex-col items-center justify-center p-10 text-center">
+        <h1 class="stilli-logo text-7xl mb-12">Hayra Vesile</h1>
+        <p class="text-zinc-500 mb-10 font-bold tracking-widest uppercase text-xs">Bir iyilik yap, dünyaya can ver.</p>
+        <button onclick="Auth.login()" class="w-full max-w-sm bg-white text-black py-6 rounded-[30px] font-black text-xl shadow-2xl active:scale-95 transition">Google ile Giriş Yap</button>
     </div>
 
-    <div id="app" class="flex-1 flex flex-col" style="display: none;">
-        <header class="h-20 px-6 border-b border-zinc-900 flex justify-between items-center bg-black/60 backdrop-blur-xl sticky top-0 z-50">
+    <div id="app-view" class="flex-1 flex flex-col" style="display: none;">
+        <header class="h-20 px-6 border-b border-zinc-900 flex justify-between items-center bg-black/60 backdrop-blur-2xl sticky top-0 z-50">
             <button onclick="UI.side()" class="text-emerald-500 text-2xl"><i class="fa-solid fa-bars-staggered"></i></button>
             <h1 class="stilli-logo text-2xl">Hayra Vesile</h1>
-            <div id="top-avatar" class="w-10 h-10 rounded-2xl overflow-hidden border border-white/10" onclick="UI.tab('profile')"></div>
+            <div id="u-avatar" class="w-11 h-11 rounded-2xl overflow-hidden border border-white/10" onclick="UI.tab('profile')"></div>
         </header>
 
-        <main class="scroll-v">
-            <div id="tab-feed"><div id="feed-list"></div></div>
-            <div id="tab-users" class="hidden p-6"><div id="user-list" class="space-y-4"></div></div>
+        <main class="scroll-container">
+            <div id="tab-feed"><div id="post-feed"></div></div>
+            <div id="tab-users" class="hidden p-6 space-y-4">
+                <h2 class="text-2xl font-black mb-6">Kişilerle Tanış</h2>
+                <div id="user-list"></div>
+            </div>
             <div id="tab-profile" class="hidden p-8">
-                <div class="flex flex-col items-center mb-10 text-center">
-                    <img id="my-pfp" class="w-32 h-32 rounded-[45px] border-2 border-emerald-500 p-1 mb-5">
-                    <h2 id="my-name" class="text-3xl font-black uppercase tracking-tighter">...</h2>
-                    <p id="my-bio" class="text-sm text-zinc-500 mt-2 italic px-4">...</p>
+                <div class="flex flex-col items-center mb-12 text-center">
+                    <img id="my-pfp-big" class="w-36 h-36 rounded-[50px] border-2 border-emerald-500 p-1.5 mb-6 shadow-2xl">
+                    <h2 id="my-name-big" class="text-3xl font-black uppercase tracking-tighter">...</h2>
+                    <p id="my-bio-big" class="text-sm text-zinc-500 mt-4 italic max-w-xs leading-relaxed">...</p>
                 </div>
-                <div id="my-posts"></div>
+                <div class="h-px bg-zinc-900 w-full mb-8"></div>
+                <h3 class="text-xs font-black text-emerald-500 uppercase tracking-widest mb-6">Paylaşımlarım</h3>
+                <div id="my-posts-feed"></div>
             </div>
         </main>
-        <div onclick="UI.open('post-modal')" class="feather-btn"><i class="fa-solid fa-feather-pointed text-3xl"></i></div>
+
+        <div onclick="UI.open('post-modal')" class="floating-action"><i class="fa-solid fa-plus text-3xl"></i></div>
     </div>
 
-    <div id="chat-modal" class="full-screen">
-        <div class="h-20 px-6 border-b border-zinc-900 flex items-center gap-4">
+    <div id="chat-modal" class="chat-full">
+        <div class="chat-header">
             <button onclick="UI.close('chat-modal')" class="text-emerald-500 text-xl"><i class="fa-solid fa-chevron-left"></i></button>
-            <span id="chat-title" class="font-black text-sm uppercase text-emerald-500">...</span>
+            <div class="flex flex-col">
+                <span id="chat-name" class="font-black text-sm uppercase text-emerald-500 tracking-widest">Sohbet</span>
+                <span class="text-[9px] text-zinc-500 uppercase font-black">Aktif Mesajlaşma</span>
+            </div>
         </div>
-        <div id="chat-box" class="chat-stream"></div>
-        <div class="p-6 bg-black border-t border-zinc-900 flex gap-3">
-            <input type="text" id="chat-input" class="flex-1 bg-zinc-900 p-4 rounded-2xl outline-none font-bold text-sm" placeholder="Mesaj yaz...">
-            <button id="chat-send" class="bg-emerald-500 text-black px-6 rounded-2xl"><i class="fa-solid fa-paper-plane"></i></button>
+        <div id="chat-messages" class="message-area"></div>
+        <div class="chat-input-container">
+            <input type="text" id="chat-input" class="chat-input" placeholder="Hayra dair bir şeyler yaz...">
+            <button id="chat-send" class="send-btn"><i class="fa-solid fa-paper-plane"></i></button>
         </div>
     </div>
 
-    <div id="post-modal" class="full-screen p-8">
-        <div class="flex justify-between mb-10">
-            <button onclick="UI.close('post-modal')" class="text-zinc-500 font-bold uppercase text-xs">Kapat</button>
-            <button id="pub-btn" class="bg-emerald-500 text-black px-10 py-3 rounded-full font-black text-xs uppercase">Yayınla</button>
+    <div id="post-modal" class="chat-full p-8">
+        <div class="flex justify-between items-center mb-14">
+            <button onclick="UI.close('post-modal')" class="text-zinc-500 font-bold uppercase text-xs">Vazgeç</button>
+            <button id="post-publish" class="bg-emerald-500 text-black px-12 py-4 rounded-full font-black text-xs uppercase tracking-tighter">Paylaşımı Gönder</button>
         </div>
-        <textarea id="post-input" class="w-full bg-transparent text-white text-3xl font-bold h-72 outline-none resize-none" placeholder="Hayra ne vesile oldun?"></textarea>
+        <textarea id="post-input" class="w-full bg-transparent text-white text-3xl font-bold h-96 outline-none border-none resize-none" placeholder="Bugün hayra nasıl vesile oldun?"></textarea>
     </div>
 
-    <div id="op-modal" class="full-screen">
-        <div class="p-6"><button onclick="UI.close('op-modal')" class="text-emerald-500 text-2xl"><i class="fa-solid fa-chevron-left"></i></button></div>
-        <div class="scroll-v p-8 flex flex-col items-center">
-            <img id="op-img" class="w-32 h-32 rounded-[45px] border-2 border-emerald-500 p-1 mb-5">
+    <div id="op-profile" class="chat-full">
+        <div class="p-6">
+            <button onclick="UI.close('op-profile')" class="text-emerald-500 text-2xl"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="scroll-container p-8 flex flex-col items-center">
+            <img id="op-img" class="w-36 h-36 rounded-[50px] border-2 border-emerald-500 p-1.5 mb-6">
             <h2 id="op-name" class="text-3xl font-black uppercase tracking-tighter">...</h2>
-            <p id="op-bio" class="text-sm text-zinc-500 mt-2 italic text-center">...</p>
-            <button id="op-chat-link" class="mt-8 bg-white text-black px-10 py-4 rounded-full font-black text-xs uppercase">Mesaj Gönder</button>
-            <div class="h-px bg-zinc-900 w-full my-8"></div>
+            <p id="op-bio" class="text-sm text-zinc-500 mt-4 italic text-center px-6">...</p>
+            <button id="op-chat-btn" class="mt-8 bg-white text-black px-12 py-4 rounded-full font-black text-xs uppercase tracking-widest active:scale-90 transition">Mesaj Gönder</button>
+            <div class="h-px bg-zinc-900 w-full my-12"></div>
             <div id="op-posts" class="w-full"></div>
         </div>
     </div>
@@ -142,7 +169,9 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app), db = getFirestore(app);
-        let me = null, room = null;
+        let me = null, activeRoom = null, currentChatUnsub = null;
+
+        const quotes = ["İyilik yap, denize at.", "Bir gönüle girmek en büyük hayırdır.", "Paylaştığın senindir, biriktirdiğin değil."];
 
         window.Auth = {
             login: () => signInWithPopup(auth, new GoogleAuthProvider()),
@@ -152,11 +181,11 @@
         onAuthStateChanged(auth, async u => {
             if(u) {
                 me = u;
-                document.getElementById('auth-screen').style.display = 'none';
-                document.getElementById('app').style.display = 'flex';
-                document.getElementById('top-avatar').innerHTML = `<img src="${u.photoURL}" class="w-full h-full object-cover">`;
+                document.getElementById('auth-gate').style.display = 'none';
+                document.getElementById('app-view').style.display = 'flex';
+                document.getElementById('u-avatar').innerHTML = `<img src="${u.photoURL}" class="w-full h-full object-cover">`;
                 await setDoc(doc(db, "users", u.uid), { name: u.displayName, pfp: u.photoURL, bio: "Hayra vesile bir can." }, { merge: true });
-                Data.syncFeed(); Data.syncUsers();
+                Data.init();
             }
         });
 
@@ -167,74 +196,108 @@
                 o.style.display = s.classList.contains('active') ? 'block' : 'none';
             },
             tab: (t, el) => {
-                document.querySelectorAll('.scroll-v > div').forEach(d => d.classList.add('hidden'));
+                document.querySelectorAll('.scroll-container > div').forEach(d => d.classList.add('hidden'));
                 document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
                 document.getElementById('tab-'+t).classList.remove('hidden');
                 if(el) el.classList.add('active');
                 UI.side();
-                if(t === 'profile') Data.syncMe();
+                if(t === 'profile') Data.syncProfile();
             },
             open: (id) => document.getElementById(id).style.display = 'flex',
-            close: (id) => document.getElementById(id).style.display = 'none'
+            close: (id) => {
+                document.getElementById(id).style.display = 'none';
+                if(id === 'chat-modal' && currentChatUnsub) currentChatUnsub();
+            },
+            about: () => {
+                const q = quotes[Math.floor(Math.random()*quotes.length)];
+                document.getElementById('quote-display').innerText = q;
+                Swal.fire({ title: 'V571 ULTIMATE', text: q, background: '#0a0a0b', color: '#fff', confirmButtonColor: '#10b981' });
+            }
         };
 
         window.Data = {
+            init: () => { Data.syncFeed(); Data.syncUsers(); },
             syncFeed: () => {
                 onSnapshot(query(collection(db, "posts"), orderBy("time", "desc")), snap => {
-                    const l = document.getElementById('feed-list'); l.innerHTML = '';
-                    snap.forEach(d => l.innerHTML += Data.postTpl(d.id, d.data()));
+                    const l = document.getElementById('post-feed'); l.innerHTML = '';
+                    snap.forEach(d => l.innerHTML += Data.postMarkup(d.id, d.data()));
                 });
             },
-            postTpl: (id, p) => {
-                const liked = p.likes && p.likes.includes(me.uid);
-                const disliked = p.dislikes && p.dislikes.includes(me.uid);
+            postMarkup: (id, p) => {
+                const hasLikes = p.likes && Array.isArray(p.likes);
+                const hasDislikes = p.dislikes && Array.isArray(p.dislikes);
+                const liked = hasLikes && p.likes.includes(me.uid);
+                const disliked = hasDislikes && p.dislikes.includes(me.uid);
+
                 return `
-                    <div class="hv-card">
-                        <div class="flex items-center gap-4 mb-5">
-                            <img src="${p.pfp}" class="w-12 h-12 rounded-2xl" onclick="Data.viewProfile('${p.uid}')">
+                    <div class="hv-card" id="post-${id}">
+                        <div class="flex items-center gap-4 mb-6">
+                            <img src="${p.pfp}" class="w-12 h-12 rounded-2xl cursor-pointer shadow-lg" onclick="Data.viewProfile('${p.uid}')">
                             <div class="flex-1" onclick="Data.viewProfile('${p.uid}')">
-                                <span class="text-sm font-black text-emerald-500 uppercase italic">${p.name}</span>
-                                <span class="vesile-tag uppercase">İyiliğe Vesile Oldu</span>
+                                <span class="text-sm font-extrabold text-emerald-500 uppercase italic tracking-tighter">${p.name}</span>
+                                <span class="vesile-tag">İyilik Elçisi</span>
                             </div>
-                            ${p.uid === me.uid ? `<i onclick="Data.delPost('${id}')" class="fa-solid fa-trash text-red-500/20 text-xs"></i>` : ''}
+                            ${p.uid === me.uid ? `<i onclick="Data.delPost('${id}')" class="fa-solid fa-trash-can text-red-500/20 text-sm"></i>` : ''}
                         </div>
-                        <p class="text-[16px] font-semibold text-zinc-100 leading-relaxed mb-6">${p.text}</p>
-                        <div class="flex items-center gap-6">
-                            <div class="btn-reaction ${liked ? 'text-emerald-500 heart-pop' : 'text-zinc-600'}" onclick="Data.react('${id}', 'likes', ${liked})">
-                                <i class="fa-${liked ? 'solid' : 'regular'} fa-heart text-xl"></i>
-                                <span class="text-xs font-black">${p.likes ? p.likes.length : 0}</span>
+                        <p class="text-[17px] font-semibold text-zinc-100 leading-relaxed mb-8">${p.text}</p>
+                        <div class="flex items-center gap-8">
+                            <div class="heart-btn flex items-center gap-2 ${liked ? 'text-red-500' : 'text-zinc-600'}" 
+                                 onclick="Data.react('${id}', 'likes', ${liked}, this)">
+                                <i class="fa-${liked ? 'solid' : 'regular'} fa-heart text-2xl"></i>
+                                <span class="text-xs font-black">${hasLikes ? p.likes.length : 0}</span>
                             </div>
-                            <div class="btn-reaction ${disliked ? 'text-red-500' : 'text-zinc-600'}" onclick="Data.react('${id}', 'dislikes', ${disliked})">
-                                <i class="fa-${disliked ? 'solid' : 'regular'} fa-thumbs-down text-xl"></i>
-                                <span class="text-xs font-black">${p.dislikes ? p.dislikes.length : 0}</span>
+                            <div class="dis-btn flex items-center gap-2 ${disliked ? 'text-zinc-200' : 'text-zinc-700'}" 
+                                 onclick="Data.react('${id}', 'dislikes', ${disliked}, this)">
+                                <i class="fa-${disliked ? 'solid' : 'regular'} fa-thumbs-down text-2xl"></i>
+                                <span class="text-xs font-black">${hasDislikes ? p.dislikes.length : 0}</span>
                             </div>
                         </div>
                     </div>`;
             },
-            react: async (id, type, status) => {
+            react: async (id, type, status, el) => {
+                if(!status) {
+                    el.classList.add('animating');
+                    setTimeout(() => el.classList.remove('animating'), 600);
+                }
                 const ref = doc(db, "posts", id);
-                await updateDoc(ref, { [type]: status ? arrayRemove(me.uid) : arrayUnion(me.uid) });
+                try {
+                    await updateDoc(ref, { [type]: status ? arrayRemove(me.uid) : arrayUnion(me.uid) });
+                } catch (e) {
+                    // Eğer alan yoksa (ilk kez basılıyorsa) alanı oluştur
+                    await updateDoc(ref, { [type]: [me.uid] });
+                }
             },
-            delPost: async (id) => { if(confirm("Silmek istiyor musun?")) await deleteDoc(doc(db, "posts", id)); },
+            delPost: async (id) => { if(confirm("Bu izi silmek istediğine emin misin?")) await deleteDoc(doc(db, "posts", id)); },
             syncUsers: () => {
                 onSnapshot(collection(db, "users"), snap => {
                     const l = document.getElementById('user-list'); l.innerHTML = '';
                     snap.forEach(d => {
                         if(d.id === me.uid) return;
-                        l.innerHTML += `<div class="bg-zinc-900/40 p-5 rounded-[25px] flex items-center gap-4" onclick="Data.openChat('${d.id}', '${d.data().name}')">
-                            <img src="${d.data().pfp}" class="w-12 h-12 rounded-2xl"><span class="font-black text-sm uppercase">${d.data().name}</span>
-                        </div>`;
+                        l.innerHTML += `
+                            <div class="bg-zinc-900/40 p-5 rounded-[30px] flex items-center gap-5 border border-white/5 active:scale-95 transition" onclick="Data.openChat('${d.id}', '${d.data().name}')">
+                                <img src="${d.data().pfp}" class="w-14 h-14 rounded-[20px] shadow-2xl">
+                                <div class="flex-1">
+                                    <h4 class="font-black text-sm uppercase tracking-tight text-white">${d.data().name}</h4>
+                                    <p class="text-[10px] text-emerald-500 font-bold uppercase mt-1">Sohbeti Başlat</p>
+                                </div>
+                                <i class="fa-solid fa-chevron-right text-zinc-800"></i>
+                            </div>`;
                     });
                 });
             },
             openChat: (tid, name) => {
-                room = [me.uid, tid].sort().join("_");
-                document.getElementById('chat-title').innerText = name;
+                activeRoom = [me.uid, tid].sort().join("_");
+                document.getElementById('chat-name').innerText = name;
                 UI.open('chat-modal');
-                onSnapshot(query(collection(db, "v571_msgs", room, "m"), orderBy("t", "asc")), snap => {
-                    const b = document.getElementById('chat-box'); b.innerHTML = '';
-                    snap.forEach(d => b.innerHTML += `<div class="bubble ${d.data().s === me.uid ? 'b-me' : 'b-them'}">${d.data().v}</div>`);
-                    b.scrollTop = b.scrollHeight;
+                
+                const q = query(collection(db, "V571_Final_Gate", activeRoom, "messages"), orderBy("time", "asc"));
+                currentChatUnsub = onSnapshot(q, snap => {
+                    const box = document.getElementById('chat-messages'); box.innerHTML = '';
+                    snap.forEach(d => {
+                        const m = d.data();
+                        box.innerHTML += `<div class="msg-bubble ${m.sender === me.uid ? 'msg-me' : 'msg-them'}">${m.text}</div>`;
+                    });
+                    box.scrollTop = box.scrollHeight;
                 });
             },
             viewProfile: async (uid) => {
@@ -243,28 +306,30 @@
                 const d = s.data();
                 document.getElementById('op-img').src = d.pfp;
                 document.getElementById('op-name').innerText = d.name;
-                document.getElementById('op-bio').innerText = d.bio;
-                document.getElementById('op-chat-link').onclick = () => { UI.close('op-modal'); Data.openChat(uid, d.name); };
-                UI.open('op-modal');
+                document.getElementById('op-bio').innerText = d.bio || "Hayra vesile bir ruh.";
+                document.getElementById('op-chat-btn').onclick = () => { UI.close('op-profile'); Data.openChat(uid, d.name); };
+                UI.open('op-profile');
+                
                 onSnapshot(query(collection(db, "posts"), orderBy("time", "desc")), snap => {
                     const l = document.getElementById('op-posts'); l.innerHTML = '';
-                    snap.forEach(p => { if(p.data().uid === uid) l.innerHTML += Data.postTpl(p.id, p.data()); });
+                    snap.forEach(p => { if(p.data().uid === uid) l.innerHTML += Data.postMarkup(p.id, p.data()); });
                 });
             },
-            syncMe: async () => {
+            syncProfile: async () => {
                 const s = await getDoc(doc(db, "users", me.uid));
                 const d = s.data();
-                document.getElementById('my-pfp').src = d.pfp;
-                document.getElementById('my-name').innerText = d.name;
-                document.getElementById('my-bio').innerText = d.bio;
+                document.getElementById('my-pfp-big').src = d.pfp;
+                document.getElementById('my-name-big').innerText = d.name;
+                document.getElementById('my-bio-big').innerText = d.bio;
                 onSnapshot(query(collection(db, "posts"), orderBy("time", "desc")), snap => {
-                    const l = document.getElementById('my-posts'); l.innerHTML = '';
-                    snap.forEach(p => { if(p.data().uid === me.uid) l.innerHTML += Data.postTpl(p.id, p.data()); });
+                    const l = document.getElementById('my-posts-feed'); l.innerHTML = '';
+                    snap.forEach(p => { if(p.data().uid === me.uid) l.innerHTML += Data.postMarkup(p.id, p.data()); });
                 });
             }
         };
 
-        document.getElementById('pub-btn').onclick = async () => {
+        // EVENT LISTENERS
+        document.getElementById('post-publish').onclick = async () => {
             const v = document.getElementById('post-input').value.trim();
             if(v) {
                 await addDoc(collection(db, "posts"), { text: v, uid: me.uid, name: me.displayName, pfp: me.photoURL, time: Date.now(), likes: [], dislikes: [] });
@@ -274,11 +339,15 @@
 
         document.getElementById('chat-send').onclick = async () => {
             const i = document.getElementById('chat-input');
-            if(i.value.trim() && room) {
-                await addDoc(collection(db, "v571_msgs", room, "m"), { v: i.value.trim(), s: me.uid, t: Date.now() });
+            if(i.value.trim() && activeRoom) {
+                await addDoc(collection(db, "V571_Final_Gate", activeRoom, "messages"), { 
+                    text: i.value.trim(), sender: me.uid, time: Date.now() 
+                });
                 i.value = '';
             }
         };
+        document.getElementById('chat-input').onkeydown = (e) => { if(e.key === 'Enter') document.getElementById('chat-send').click(); };
+
     </script>
 </body>
 </html>
