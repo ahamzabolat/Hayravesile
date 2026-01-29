@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Hayra Vesile | Admin V571</title>
+    <title>Hayra Vesile | V571 Supreme</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -12,47 +12,44 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@1,900&display=swap');
         
-        :root { --hv: #10b981; --bg: #000; --card: #0f0f11; }
+        :root { --hv: #10b981; --bg: #000; --card: #0a0a0b; }
         
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background: var(--bg); color: #f4f4f5; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
-        /* LOGO VE ANİMASYONLAR */
-        .stilli-logo { font-family: 'Playfair Display', serif; font-style: italic; background: linear-gradient(to right, #10b981, #34d399, #10b981); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-size: 200% auto; animation: shine 3s linear infinite; }
+        /* LOGO VE PARLAMA */
+        .stilli-logo { font-family: 'Playfair Display', serif; font-style: italic; background: linear-gradient(to right, #10b981, #6ee7b7, #10b981); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-size: 200% auto; animation: shine 3s linear infinite; }
         @keyframes shine { to { background-position: 200% center; } }
 
-        /* KAYDIRMA MOTORU (SCROLL FIX) */
-        .master-scroll { flex: 1; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; padding-bottom: 120px; }
-        .master-scroll::-webkit-scrollbar { width: 4px; }
-        .master-scroll::-webkit-scrollbar-thumb { background: rgba(16, 185, 129, 0.3); border-radius: 10px; }
+        /* ULTRA SCROLL MOTORU */
+        .supreme-scroll { flex: 1; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; padding-bottom: 150px; }
+        .supreme-scroll::-webkit-scrollbar { width: 5px; }
+        .supreme-scroll::-webkit-scrollbar-thumb { background: #10b98155; border-radius: 10px; }
 
-        /* GÖNDERİ KARTLARI */
-        .hv-card { border-radius: 35px; padding: 25px; margin: 20px 15px; border: 1px solid rgba(255,255,255,0.03); position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .tag-vesile { font-size: 10px; font-weight: 800; color: #fff; letter-spacing: 1.5px; opacity: 0.8; text-transform: uppercase; }
+        /* SIDEBAR */
+        .sidebar { position: fixed; left: -320px; top: 0; width: 310px; height: 100%; background: #050505; border-right: 1px solid #1e1e21; z-index: 10000; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); padding: 40px 25px; }
+        .sidebar.active { left: 0; box-shadow: 25px 0 80px rgba(0,0,0,0.9); }
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(12px); z-index: 9999; display: none; }
 
-        /* SIDEBAR VE OVERLAY */
-        .sidebar { position: fixed; left: -320px; top: 0; width: 300px; height: 100%; background: #070708; border-right: 1px solid rgba(255,255,255,0.05); z-index: 10000; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); padding: 50px 25px; }
-        .sidebar.active { left: 0; }
-        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); z-index: 9999; display: none; }
-
-        /* MODAL VE DM TASARIMI */
-        .full-modal { position: fixed; inset: 0; background: #000; z-index: 11000; display: none; flex-direction: column; animation: slideUp 0.4s ease-out; }
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        /* KART TASARIMI */
+        .hv-card { border-radius: 35px; padding: 25px; margin: 18px; position: relative; border: 1px solid rgba(255,255,255,0.03); transition: 0.3s; }
+        .hv-card:hover { transform: translateY(-5px); border-color: rgba(16,185,129,0.2); }
         
-        .dm-bubble { max-width: 80%; padding: 16px 20px; border-radius: 25px; font-size: 15px; font-weight: 600; margin-bottom: 8px; line-height: 1.4; }
-        .me { align-self: flex-end; background: var(--hv); color: #000; border-bottom-right-radius: 4px; }
-        .them { align-self: flex-start; background: #202023; color: #fff; border-bottom-left-radius: 4px; }
+        /* DM SİSTEMİ */
+        .dm-modal { position: fixed; inset: 0; background: #000; z-index: 11000; display: none; flex-direction: column; animation: dmIn 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        @keyframes dmIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        
+        .bubble { max-width: 75%; padding: 16px 22px; border-radius: 28px; font-size: 15px; font-weight: 600; margin-bottom: 12px; line-height: 1.5; animation: bubblePop 0.3s ease; }
+        @keyframes bubblePop { from { scale: 0.8; opacity: 0; } to { scale: 1; opacity: 1; } }
+        .me { align-self: flex-end; background: #10b981; color: #000; border-bottom-right-radius: 4px; }
+        .them { align-self: flex-start; background: #1e1e21; color: #fff; border-bottom-left-radius: 4px; }
 
         /* KUŞ TÜYÜ BUTON */
-        .feather-action { position: fixed; bottom: 35px; right: 25px; width: 70px; height: 70px; background: var(--hv); color: #000; border-radius: 25px; display: flex; align-items: center; justify-content: center; box-shadow: 0 15px 40px rgba(16,185,129,0.3); z-index: 5000; cursor: pointer; transition: 0.3s; }
-        .feather-action:active { transform: scale(0.8); }
+        .feather-btn { position: fixed; bottom: 40px; right: 25px; width: 75px; height: 75px; background: #10b981; color: #000; border-radius: 25px; display: flex; align-items: center; justify-content: center; box-shadow: 0 20px 40px rgba(16,185,129,0.3); z-index: 5000; cursor: pointer; transition: 0.4s; }
+        .feather-btn:hover { transform: rotate(10deg) scale(1.1); }
 
-        /* RENK DAİRELERİ */
-        .color-opt { width: 40px; height: 40px; border-radius: 12px; cursor: pointer; border: 2px solid transparent; }
-        .color-opt.active { border-color: white; transform: translateY(-5px); }
-
-        /* DROPDOWN MENU */
-        .dot-menu { position: absolute; top: 25px; right: 25px; cursor: pointer; color: #52525b; padding: 5px; }
+        /* UYGULAMA BİLGİSİ */
+        .info-panel { background: linear-gradient(135deg, #0f0f11, #050505); border: 1px solid #1e1e21; border-radius: 30px; padding: 25px; margin: 20px; }
     </style>
 </head>
 <body>
@@ -60,88 +57,98 @@
     <div id="overlay" class="overlay" onclick="UI.side()"></div>
 
     <aside id="sidebar" class="sidebar flex flex-col">
-        <div class="mb-10 px-2">
-            <h2 class="stilli-logo text-4xl">Hayra Vesile</h2>
-            <p class="text-[9px] text-zinc-600 font-bold tracking-[0.4em] mt-2 uppercase">Gönüllü İyilik Ağı</p>
-        </div>
-        
-        <nav class="flex-1 space-y-2">
-            <div class="p-4 rounded-2xl flex items-center gap-4 text-emerald-500 bg-emerald-500/5 font-bold cursor-pointer" onclick="UI.tab('feed')"><i class="fa-solid fa-house"></i> Ana Sayfa</div>
-            <div class="p-4 rounded-2xl flex items-center gap-4 text-zinc-500 font-bold cursor-pointer" onclick="UI.tab('users')"><i class="fa-solid fa-comments"></i> Mesajlar</div>
-            <div class="p-4 rounded-2xl flex items-center gap-4 text-zinc-500 font-bold cursor-pointer" onclick="UI.tab('profile')"><i class="fa-solid fa-circle-user"></i> Profil</div>
+        <h2 class="stilli-logo text-4xl mb-12">Hayra Vesile</h2>
+        <nav class="flex-1 space-y-3">
+            <div class="p-4 rounded-2xl flex items-center gap-4 text-emerald-500 bg-emerald-500/10 font-bold cursor-pointer" onclick="UI.tab('feed')"><i class="fa-solid fa-seedling"></i> İyilik Akışı</div>
+            <div class="p-4 rounded-2xl flex items-center gap-4 text-zinc-500 font-bold cursor-pointer" onclick="UI.tab('users')"><i class="fa-solid fa-comment-dots"></i> Mesajlar</div>
+            <div class="p-4 rounded-2xl flex items-center gap-4 text-zinc-500 font-bold cursor-pointer" onclick="UI.tab('profile')"><i class="fa-solid fa-user-ninja"></i> Profilim</div>
         </nav>
-
-        <div class="mt-auto p-5 bg-zinc-900/30 rounded-3xl border border-white/5 mb-6">
-            <h4 class="text-[10px] text-emerald-500 font-black uppercase mb-2">Uygulama Bilgisi</h4>
-            <p class="text-[11px] text-zinc-500 leading-relaxed">Hayra Vesile v571 Admin Edition. Bu platformda her paylaşım bir iyilik tohumudur. <br><br> <b>Geliştirici:</b> Adil Hamza</p>
+        
+        <div class="mt-auto pt-6 border-t border-zinc-900">
+            <p class="text-[10px] text-zinc-600 font-black uppercase tracking-widest mb-4">Geliştirici Bilgisi</p>
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center text-black font-black">AH</div>
+                <div>
+                    <p class="text-xs font-bold">Adil Hamza</p>
+                    <p class="text-[9px] text-emerald-500 font-black uppercase">Lead Developer</p>
+                </div>
+            </div>
         </div>
-
-        <button onclick="Auth.logout()" class="text-red-500/40 text-[10px] font-black uppercase tracking-widest p-2">Sistemi Kapat</button>
     </aside>
 
     <div id="auth-gate" class="fixed inset-0 bg-black z-[20000] flex flex-col items-center justify-center p-10">
-        <h1 class="stilli-logo text-7xl mb-12">Hayra Vesile</h1>
-        <button onclick="Auth.login()" class="w-full max-w-sm bg-white text-black py-6 rounded-[35px] font-black text-xl shadow-2xl active:scale-95 transition">Google ile Bağlan</button>
+        <h1 class="stilli-logo text-7xl mb-6">Hayra Vesile</h1>
+        <p class="text-zinc-600 font-bold mb-12 uppercase tracking-tighter">İyilik paylaştıkça çoğalır.</p>
+        <button onclick="Auth.login()" class="w-full max-w-xs bg-white text-black py-6 rounded-[35px] font-black text-xl shadow-2xl active:scale-95 transition">Google ile Başla</button>
     </div>
 
     <div id="app" class="flex-1 flex flex-col" style="display: none;">
-        <header class="h-20 px-6 border-b border-zinc-900 flex justify-between items-center bg-black/60 backdrop-blur-2xl sticky top-0 z-50">
-            <button onclick="UI.side()" class="text-emerald-500 text-2xl"><i class="fa-solid fa-bars-staggered"></i></button>
-            <h1 class="stilli-logo text-2xl">Hayra Vesile</h1>
-            <div id="u-pfp" class="w-10 h-10 rounded-2xl overflow-hidden border border-white/10" onclick="UI.tab('profile')"></div>
+        <header class="h-24 px-6 border-b border-zinc-900 flex justify-between items-center bg-black/80 backdrop-blur-2xl sticky top-0 z-50">
+            <button onclick="UI.side()" class="w-12 h-12 flex items-center justify-center text-emerald-500 text-2xl"><i class="fa-solid fa-bars-staggered"></i></button>
+            <h1 class="stilli-logo text-3xl">Hayra Vesile</h1>
+            <div id="user-pfp-top" class="w-12 h-12 rounded-2xl border border-white/10 overflow-hidden" onclick="UI.tab('profile')"></div>
         </header>
 
-        <main class="master-scroll">
-            <div id="tab-feed">
-                <div id="feed-list"></div>
+        <main class="supreme-scroll">
+            <div class="info-panel">
+                <h3 class="text-emerald-500 font-black uppercase text-xs mb-3 tracking-widest">Uygulama Hakkında</h3>
+                <p class="text-zinc-400 text-sm leading-relaxed">Bu platform, iyiliği yaymak için **Adil Hamza** tarafından geliştirilmiştir. Gönderi silme yetkisi sadece sana ve paylaşana aittir.</p>
             </div>
-            
+
+            <div id="tab-feed">
+                <div id="post-list"></div>
+            </div>
+
             <div id="tab-users" class="hidden p-6">
-                <h2 class="text-2xl font-black mb-8">Kişiler</h2>
-                <div id="user-list" class="space-y-4"></div>
+                <h2 class="text-2xl font-black mb-8">Bağlantı Kur</h2>
+                <div id="user-list-supreme" class="space-y-4"></div>
             </div>
 
             <div id="tab-profile" class="hidden">
-                <div class="p-12 flex flex-col items-center text-center">
-                    <img id="my-pfp-v" class="w-36 h-36 rounded-[50px] border-4 border-emerald-500/10 p-2 mb-6">
-                    <h2 id="my-name-v" class="text-3xl font-black uppercase tracking-tighter">...</h2>
-                    <p id="my-bio-v" class="text-zinc-500 italic mt-3 max-w-xs">...</p>
+                <div class="p-12 flex flex-col items-center">
+                    <img id="my-pfp-supreme" class="w-40 h-40 rounded-[60px] border-4 border-emerald-500 p-2 mb-6">
+                    <h2 id="my-name-supreme" class="text-4xl font-black uppercase tracking-tighter">...</h2>
+                    <p class="text-emerald-500 font-bold mt-2">İyilik Elçisi</p>
                 </div>
-                <div id="my-posts-v"></div>
+                <div id="my-posts-supreme"></div>
             </div>
         </main>
 
-        <div onclick="UI.open('post-modal')" class="feather-action"><i class="fa-solid fa-feather-pointed text-3xl"></i></div>
+        <div onclick="UI.open('post-editor')" class="feather-btn shadow-emerald-900/50"><i class="fa-solid fa-feather-pointed text-4xl"></i></div>
     </div>
 
-    <div id="dm-view" class="full-modal">
-        <div class="h-20 px-6 border-b border-zinc-900 flex items-center justify-between">
-            <div class="flex items-center gap-4">
-                <button onclick="UI.close('dm-view')" class="text-emerald-500 text-xl"><i class="fa-solid fa-chevron-left"></i></button>
-                <span id="dm-name" class="font-black text-sm uppercase tracking-widest text-emerald-500">DM</span>
+    <div id="dm-supreme" class="dm-modal">
+        <div class="h-24 px-8 border-b border-zinc-900 flex items-center justify-between bg-zinc-950">
+            <div class="flex items-center gap-5">
+                <button onclick="UI.close('dm-supreme')" class="text-emerald-500 text-2xl"><i class="fa-solid fa-arrow-left"></i></button>
+                <div class="flex flex-col">
+                    <span id="dm-target-name" class="font-black text-lg uppercase tracking-widest text-white">...</span>
+                    <span class="text-[10px] text-emerald-500 font-bold uppercase">Uçtan Uca Şifreli</span>
+                </div>
             </div>
         </div>
-        <div id="dm-messages" class="master-scroll p-6 flex flex-col"></div>
-        <div class="p-6 bg-black border-t border-zinc-900 flex gap-3">
-            <input type="text" id="dm-input" class="flex-1 bg-zinc-900 p-5 rounded-3xl outline-none font-bold text-sm" placeholder="Mesaj gönder...">
-            <button id="dm-btn" class="bg-emerald-500 text-black w-16 h-16 rounded-3xl flex items-center justify-center shadow-lg active:scale-90"><i class="fa-solid fa-paper-plane"></i></button>
+        <div id="dm-stream" class="supreme-scroll p-6 flex flex-col"></div>
+        <div class="p-6 bg-black border-t border-zinc-900 flex gap-4">
+            <input type="text" id="dm-input-val" class="flex-1 bg-zinc-900 p-5 rounded-[25px] outline-none font-bold text-white shadow-inner" placeholder="Mesajını fısılda...">
+            <button id="dm-trigger" class="bg-emerald-500 text-black w-16 h-16 rounded-[25px] flex items-center justify-center shadow-xl active:scale-90 transition"><i class="fa-solid fa-paper-plane text-xl"></i></button>
         </div>
     </div>
 
-    <div id="post-modal" class="full-modal p-8">
-        <div class="flex justify-between items-center mb-12">
-            <button onclick="UI.close('post-modal')" class="text-zinc-600 font-bold uppercase text-xs">Vazgeç</button>
-            <button id="pub-btn" class="bg-emerald-500 text-black px-12 py-4 rounded-full font-black text-xs uppercase tracking-widest shadow-xl">YAYINLA</button>
+    <div id="post-editor" class="dm-modal p-10">
+        <div class="flex justify-between items-center mb-16">
+            <button onclick="UI.close('post-editor')" class="text-zinc-500 font-black uppercase">İptal</button>
+            <button id="post-confirm" class="bg-emerald-500 text-black px-12 py-5 rounded-full font-black text-sm uppercase tracking-widest shadow-2xl">Paylaş</button>
         </div>
-        <textarea id="post-text" class="w-full bg-transparent text-white text-3xl font-bold h-72 outline-none border-none resize-none mb-10" placeholder="Bugün hayra vesile oldun mu?"></textarea>
+        <textarea id="post-content" class="w-full bg-transparent text-white text-4xl font-bold h-80 outline-none resize-none" placeholder="Dünyayı nasıl güzelleştirdin?"></textarea>
         
-        <p class="text-[10px] font-black text-zinc-600 uppercase mb-5 tracking-widest">Kart Rengi Belirle</p>
-        <div class="flex gap-4" id="color-bar">
-            <div class="color-opt active" style="background: #111113;" data-hex="#111113"></div>
-            <div class="color-opt" style="background: #064e3b;" data-hex="#064e3b"></div>
-            <div class="color-opt" style="background: #1e3a8a;" data-hex="#1e3a8a"></div>
-            <div class="color-opt" style="background: #581c87;" data-hex="#581c87"></div>
-            <div class="color-opt" style="background: #7c2d12;" data-hex="#7c2d12"></div>
+        <div class="mt-10">
+            <p class="text-[10px] text-zinc-600 font-black uppercase mb-6 tracking-widest">Paylaşım Rengi</p>
+            <div class="flex gap-4" id="supreme-colors">
+                <div class="w-12 h-12 rounded-2xl cursor-pointer border-2 border-white" style="background: #0f0f11;" data-color="#0f0f11"></div>
+                <div class="w-12 h-12 rounded-2xl cursor-pointer" style="background: #064e3b;" data-color="#064e3b"></div>
+                <div class="w-12 h-12 rounded-2xl cursor-pointer" style="background: #1e3a8a;" data-color="#1e3a8a"></div>
+                <div class="w-12 h-12 rounded-2xl cursor-pointer" style="background: #4c1d95;" data-color="#4c1d95"></div>
+            </div>
         </div>
     </div>
 
@@ -150,11 +157,11 @@
         import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, doc, updateDoc, getDoc, setDoc, deleteDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        const firebaseConfig = { apiKey: "AIzaSyDZO3lct-xzXAx79lbqgMP7s6WRCirWIHk", authDomain: "hayravesile.firebaseapp.com", projectId: "hayravesile", storageBucket: "hayravesile.appspot.com", messagingSenderId: "980073667334", appId: "1:980073667334:web:1f6260f0abf3bcc820dc87" };
-        const app = initializeApp(firebaseConfig), auth = getAuth(app), db = getFirestore(app);
-        
-        let me = null, activeRoom = null, roomUnsub = null, pickedColor = "#111113";
-        const ADMIN_UID = "BURAYA_KENDI_UID_KODUNU_GELECEK"; // Opsiyonel: Kendi UID'ni yazarsan her şeyi silebilirsin.
+        const fbConfig = { apiKey: "AIzaSyDZO3lct-xzXAx79lbqgMP7s6WRCirWIHk", authDomain: "hayravesile.firebaseapp.com", projectId: "hayravesile", storageBucket: "hayravesile.appspot.com", messagingSenderId: "980073667334", appId: "1:980073667334:web:1f6260f0abf3bcc820dc87" };
+        const app = initializeApp(fbConfig), auth = getAuth(app), db = getFirestore(app);
+
+        let me = null, activeRoom = null, roomUnsub = null, postColor = "#0f0f11";
+        const ADMIN_ID = "SENIN_UID_BURAYA"; // Buraya kendi UID'ni yazarsan full yetki sende olur.
 
         window.Auth = {
             login: () => signInWithPopup(auth, new GoogleAuthProvider()),
@@ -166,19 +173,10 @@
                 me = u;
                 document.getElementById('auth-gate').style.display = 'none';
                 document.getElementById('app').style.display = 'flex';
-                document.getElementById('u-pfp').innerHTML = `<img src="${u.photoURL}" class="w-full h-full object-cover">`;
-                await setDoc(doc(db, "users", u.uid), { name: u.displayName, pfp: u.photoURL, bio: "İyiliğe vesile olmaya geldi." }, { merge: true });
-                Data.run();
+                document.getElementById('user-pfp-top').innerHTML = `<img src="${u.photoURL}" class="w-full h-full object-cover">`;
+                await setDoc(doc(db, "users", u.uid), { name: u.displayName, pfp: u.photoURL, active: true }, { merge: true });
+                Data.init();
             }
-        });
-
-        // RENK SEÇİMİ
-        document.querySelectorAll('.color-opt').forEach(opt => {
-            opt.onclick = () => {
-                document.querySelectorAll('.color-opt').forEach(o => o.classList.remove('active'));
-                opt.classList.add('active');
-                pickedColor = opt.dataset.hex;
-            };
         });
 
         window.UI = {
@@ -188,7 +186,7 @@
                 o.style.display = s.classList.contains('active') ? 'block' : 'none';
             },
             tab: (t) => {
-                document.querySelectorAll('main > div').forEach(d => d.classList.add('hidden'));
+                document.querySelectorAll('main > div').forEach(d => { if(d.id.startsWith('tab-')) d.classList.add('hidden') });
                 document.getElementById('tab-'+t).classList.remove('hidden');
                 UI.side();
                 if(t === 'profile') Data.syncProfile();
@@ -196,123 +194,115 @@
             open: (id) => document.getElementById(id).style.display = 'flex',
             close: (id) => {
                 document.getElementById(id).style.display = 'none';
-                if(id === 'dm-view' && roomUnsub) roomUnsub();
+                if(id === 'dm-supreme' && roomUnsub) roomUnsub();
             }
         };
 
+        document.querySelectorAll('#supreme-colors > div').forEach(d => {
+            d.onclick = () => {
+                document.querySelectorAll('#supreme-colors > div').forEach(x => x.classList.remove('border-2','border-white'));
+                d.classList.add('border-2','border-white');
+                postColor = d.dataset.color;
+            };
+        });
+
         window.Data = {
-            run: () => { Data.syncFeed(); Data.syncUsers(); },
+            init: () => { Data.syncFeed(); Data.syncUsers(); },
             syncFeed: () => {
                 onSnapshot(query(collection(db, "posts"), orderBy("time", "desc")), snap => {
-                    const l = document.getElementById('feed-list'); l.innerHTML = '';
-                    snap.forEach(d => l.innerHTML += Data.postCard(d.id, d.data()));
+                    const l = document.getElementById('post-list'); l.innerHTML = '';
+                    snap.forEach(d => l.innerHTML += Data.renderCard(d.id, d.data()));
                 });
             },
-            postCard: (id, p) => {
+            renderCard: (id, p) => {
                 const liked = p.likes?.includes(me.uid);
-                const isAdmin = me.uid === p.uid || me.uid === ADMIN_UID;
+                const canManage = me.uid === p.uid || me.uid === ADMIN_ID;
                 return `
                     <div class="hv-card" style="background: ${p.color || '#0f0f11'}">
                         <div class="flex items-center gap-4 mb-6">
-                            <img src="${p.pfp}" class="w-12 h-12 rounded-2xl shadow-2xl">
+                            <img src="${p.pfp}" class="w-12 h-12 rounded-2xl shadow-xl">
                             <div class="flex-1">
-                                <span class="text-sm font-extrabold text-white uppercase">${p.name}</span>
-                                <span class="tag-vesile block">İyiliğe Vesile Oldu</span>
+                                <span class="text-sm font-black text-white uppercase">${p.name}</span>
+                                <span class="text-[10px] text-emerald-400 font-black block uppercase tracking-tighter">İyiliğe Vesile Oldu</span>
                             </div>
-                            <div class="dot-menu" onclick="Data.showMenu('${id}', ${isAdmin})">
-                                <i class="fa-solid fa-ellipsis-vertical"></i>
-                            </div>
+                            ${canManage ? `<i onclick="Data.deletePost('${id}')" class="fa-solid fa-trash-can text-white/20 hover:text-red-500 transition cursor-pointer"></i>` : ''}
                         </div>
-                        <p class="text-[17px] font-bold text-white leading-relaxed mb-8">${p.text}</p>
+                        <p class="text-[18px] font-bold text-zinc-100 leading-relaxed mb-8">${p.text}</p>
                         <div class="flex items-center gap-6">
                             <div class="flex items-center gap-2 cursor-pointer" onclick="Data.like('${id}', ${liked})">
-                                <i class="fa-${liked ? 'solid' : 'regular'} fa-heart text-2xl ${liked ? 'text-emerald-500' : 'text-white/30'}"></i>
+                                <i class="fa-${liked ? 'solid' : 'regular'} fa-heart text-2xl ${liked ? 'text-emerald-500' : 'text-white/20'}"></i>
                                 <span class="text-xs font-black text-white">${p.likes?.length || 0}</span>
                             </div>
                         </div>
                     </div>`;
             },
-            showMenu: (id, canDelete) => {
-                if(!canDelete) return;
-                Swal.fire({
-                    title: 'İşlem Seçin',
-                    text: 'Bu gönderiyi silmek istiyor musunuz?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#ef4444',
-                    cancelButtonColor: '#18181b',
-                    confirmButtonText: 'Evet, Sil!',
-                    cancelButtonText: 'Vazgeç',
-                    background: '#0a0a0b',
-                    color: '#fff'
-                }).then((result) => {
-                    if (result.isConfirmed) deleteDoc(doc(db, "posts", id));
-                });
+            like: async (id, s) => {
+                await updateDoc(doc(db, "posts", id), { likes: s ? arrayRemove(me.uid) : arrayUnion(me.uid) });
             },
-            like: async (id, status) => {
-                await updateDoc(doc(db, "posts", id), { likes: status ? arrayRemove(me.uid) : arrayUnion(me.uid) });
+            deletePost: async (id) => {
+                const { isConfirmed } = await Swal.fire({ title: 'Silinsin mi?', text: "Bu iyilik izini kaldırmak üzeresin.", icon: 'warning', showCancelButton: true, confirmButtonColor: '#10b981', cancelButtonColor: '#18181b', background:'#000', color:'#fff' });
+                if(isConfirmed) await deleteDoc(doc(db, "posts", id));
             },
             syncUsers: () => {
                 onSnapshot(collection(db, "users"), snap => {
-                    const l = document.getElementById('user-list'); l.innerHTML = '';
+                    const l = document.getElementById('user-list-supreme'); l.innerHTML = '';
                     snap.forEach(d => {
                         if(d.id === me.uid) return;
                         l.innerHTML += `
-                            <div class="bg-zinc-900/40 p-6 rounded-[30px] flex items-center gap-4 border border-white/5 active:scale-95 transition" onclick="Data.openDm('${d.id}', '${d.data().name}')">
-                                <img src="${d.data().pfp}" class="w-14 h-14 rounded-2xl">
-                                <div class="flex-1">
-                                    <h4 class="font-black text-white text-sm uppercase">${d.data().name}</h4>
-                                    <p class="text-[10px] text-emerald-500 font-bold uppercase mt-1">Hayırlı Mesaj Gönder</p>
+                            <div class="bg-zinc-900/40 p-6 rounded-[35px] flex items-center justify-between border border-white/5" onclick="Data.openDm('${d.id}', '${d.data().name}')">
+                                <div class="flex items-center gap-4">
+                                    <img src="${d.data().pfp}" class="w-14 h-14 rounded-2xl">
+                                    <div>
+                                        <h4 class="font-black text-white text-sm uppercase">${d.data().name}</h4>
+                                        <p class="text-[10px] text-emerald-500 font-bold uppercase">Mesaj Gönder</p>
+                                    </div>
                                 </div>
+                                <i class="fa-solid fa-chevron-right text-zinc-800"></i>
                             </div>`;
                     });
                 });
             },
             openDm: (tid, name) => {
                 activeRoom = [me.uid, tid].sort().join("_");
-                document.getElementById('dm-name').innerText = name;
-                UI.open('dm-view');
-                const q = query(collection(db, "v571_ultra_dm", activeRoom, "chat"), orderBy("t", "asc"));
+                document.getElementById('dm-target-name').innerText = name;
+                UI.open('dm-supreme');
+                const q = query(collection(db, "v571_supreme_chats", activeRoom, "messages"), orderBy("t", "asc"));
                 roomUnsub = onSnapshot(q, snap => {
-                    const box = document.getElementById('dm-messages'); box.innerHTML = '';
+                    const box = document.getElementById('dm-stream'); box.innerHTML = '';
                     snap.forEach(d => {
                         const m = d.data();
-                        box.innerHTML += `<div class="dm-bubble ${m.s === me.uid ? 'me' : 'them'}">${m.v}</div>`;
+                        box.innerHTML += `<div class="bubble ${m.s === me.uid ? 'me' : 'them'}">${m.v}</div>`;
                     });
                     box.scrollTop = box.scrollHeight;
                 });
             },
             syncProfile: async () => {
-                const s = await getDoc(doc(db, "users", me.uid));
-                const d = s.data();
-                document.getElementById('my-pfp-v').src = d.pfp;
-                document.getElementById('my-name-v').innerText = d.name;
-                document.getElementById('my-bio-v').innerText = d.bio;
+                document.getElementById('my-pfp-supreme').src = me.photoURL;
+                document.getElementById('my-name-supreme').innerText = me.displayName;
                 onSnapshot(query(collection(db, "posts"), orderBy("time", "desc")), snap => {
-                    const l = document.getElementById('my-posts-v'); l.innerHTML = '';
-                    snap.forEach(p => { if(p.data().uid === me.uid) l.innerHTML += Data.postCard(p.id, p.data()); });
+                    const l = document.getElementById('my-posts-supreme'); l.innerHTML = '';
+                    snap.forEach(p => { if(p.data().uid === me.uid) l.innerHTML += Data.renderCard(p.id, p.data()); });
                 });
             }
         };
 
-        // GÖNDERME İŞLEMLERİ
-        document.getElementById('pub-btn').onclick = async () => {
-            const v = document.getElementById('post-text').value.trim();
+        document.getElementById('post-confirm').onclick = async () => {
+            const v = document.getElementById('post-content').value.trim();
             if(v) {
-                await addDoc(collection(db, "posts"), { text: v, uid: me.uid, name: me.displayName, pfp: me.photoURL, time: Date.now(), likes: [], color: pickedColor });
-                document.getElementById('post-text').value = ''; UI.close('post-modal');
+                await addDoc(collection(db, "posts"), { text: v, uid: me.uid, name: me.displayName, pfp: me.photoURL, time: Date.now(), likes: [], color: postColor });
+                document.getElementById('post-content').value = ''; UI.close('post-editor');
             }
         };
 
-        document.getElementById('dm-btn').onclick = async () => {
-            const i = document.getElementById('dm-input');
+        document.getElementById('dm-trigger').onclick = async () => {
+            const i = document.getElementById('dm-input-val');
             const val = i.value.trim();
             if(val && activeRoom) {
-                await addDoc(collection(db, "v571_ultra_dm", activeRoom, "chat"), { v: val, s: me.uid, t: Date.now() });
+                await addDoc(collection(db, "v571_supreme_chats", activeRoom, "messages"), { v: val, s: me.uid, t: Date.now() });
                 i.value = '';
             }
         };
-        document.getElementById('dm-input').onkeydown = (e) => { if(e.key === 'Enter') document.getElementById('dm-btn').click(); };
+        document.getElementById('dm-input-val').onkeydown = (e) => { if(e.key === 'Enter') document.getElementById('dm-trigger').click(); };
 
     </script>
 </body>
