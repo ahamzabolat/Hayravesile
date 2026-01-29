@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Hayra Vesile</title>
+    <title>Hayra Vesile | Social</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -14,7 +14,7 @@
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
         :root { --hv: #10b981; --bg: #000; --card: #0a0a0b; --border: #161618; }
         * { margin:0; padding:0; box-sizing:border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background: var(--bg); color: white; }
+        body { background: var(--bg); color: white; overflow-x: hidden; }
         
         .hv-card { background: var(--card); border-bottom: 1px solid var(--border); padding: 15px; width: 100%; }
         .nav-dock { position: fixed; bottom: 0; left: 0; width: 100%; background: #000; border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 15px; z-index: 9000; }
@@ -23,10 +23,12 @@
         .badge-admin { color: #fbbf24; font-size: 10px; font-weight: 900; border: 1px solid #fbbf24; padding: 1px 6px; border-radius: 4px; margin-top: 5px; display: inline-block; }
         .badge-user { color: #666; font-size: 10px; font-weight: 900; border: 1px solid #333; padding: 1px 6px; border-radius: 4px; margin-top: 5px; display: inline-block; }
         
+        input, textarea { background: #111 !important; border: 1px solid #222 !important; color: white !important; outline: none; }
         .small-text { font-size: 13px; line-height: 1.4; color: #efefef; }
-        .bio-text { font-size: 11px; color: #71717a; margin-top: 2px; }
         
-        input, textarea { background: #111 !important; border: 1px solid #222 !important; color: white !important; }
+        /* Paylaş Butonu Stili */
+        .share-btn { transition: 0.2s; cursor: pointer; }
+        .share-btn:active { transform: scale(0.9); color: #10b981; }
     </style>
 </head>
 <body>
@@ -42,12 +44,12 @@
         </div>
 
         <div id="tab-users" class="tab-page hidden p-4">
-            <input type="text" id="search-input" class="w-full rounded-xl p-3 mb-4 outline-none text-sm" placeholder="Kişi ara...">
+            <input type="text" id="search-input" class="w-full rounded-xl p-3 mb-4 text-sm" placeholder="Kişi ara ve Enter'a bas...">
             <div id="user-list" class="space-y-2"></div>
         </div>
 
         <div id="tab-profile" class="tab-page hidden">
-            <div class="p-6 border-b border-white/5 bg-zinc-900/20">
+            <div class="p-6 border-b border-white/5">
                 <div class="flex items-start gap-5">
                     <div class="text-center">
                         <img id="p-img" class="w-20 h-20 rounded-2xl border-2 border-emerald-500 p-1 mb-1 object-cover">
@@ -55,18 +57,14 @@
                     </div>
                     <div class="flex-1">
                         <h2 id="p-name" class="font-black text-xl">...</h2>
-                        <p id="p-bio-show" class="text-xs text-zinc-500 mt-1">Biyografi yok.</p>
+                        <p id="p-bio-show" class="text-xs text-zinc-500 mt-1">...</p>
                         <a id="p-link-show" href="#" target="_blank" class="text-[10px] text-emerald-500 font-bold block mt-1"></a>
-                        <div class="flex gap-4 mt-3">
-                            <div class="text-center"><p id="s-p" class="font-bold text-sm">0</p><span class="text-[9px] opacity-40 uppercase font-black">Post</span></div>
-                            <div class="text-center"><p id="s-l" class="font-bold text-sm">0</p><span class="text-[9px] opacity-40 uppercase font-black">Beğeni</span></div>
-                        </div>
                     </div>
                 </div>
                 <div class="mt-6 space-y-2">
-                    <input type="text" id="b-in" class="w-full p-2 rounded-lg text-xs" placeholder="Biyografini güncelle...">
-                    <input type="text" id="l-in" class="w-full p-2 rounded-lg text-xs" placeholder="Web siten (https://...)">
-                    <button onclick="updateProfile()" class="w-full bg-emerald-500 text-black font-black py-2 rounded-lg text-xs">PROFİLİ KAYDET</button>
+                    <input type="text" id="b-in" class="w-full p-2 rounded-lg text-xs" placeholder="Biyografi...">
+                    <input type="text" id="l-in" class="w-full p-2 rounded-lg text-xs" placeholder="Link...">
+                    <button onclick="updateProfile()" class="w-full bg-emerald-500 text-black font-black py-2 rounded-lg text-xs">KAYDET</button>
                 </div>
             </div>
             <div id="p-grid" class="grid grid-cols-3 gap-1 p-1"></div>
@@ -78,8 +76,8 @@
             <button onclick="closeFullPage('page-post')" class="text-zinc-500 font-bold">İptal</button>
             <button id="btn-publish" class="bg-emerald-500 text-black px-6 py-2 rounded-full font-black text-xs">YAYINLA</button>
         </div>
-        <textarea id="post-input" class="w-full p-4 rounded-2xl text-lg font-bold outline-none h-48" placeholder="Hayra vesile bir mesaj..."></textarea>
-        <input type="text" id="post-link" class="w-full p-3 mt-4 rounded-xl outline-none text-xs" placeholder="Video veya Fotoğraf Linki">
+        <textarea id="post-input" class="w-full p-4 rounded-2xl text-lg font-bold outline-none h-48" placeholder="Hayırlı bir mesaj yaz..."></textarea>
+        <input type="text" id="post-link" class="w-full p-3 mt-4 rounded-xl outline-none text-xs" placeholder="Görsel/Video Linki">
     </div>
 
     <div id="page-chat" class="full-page">
@@ -88,9 +86,9 @@
             <img id="chat-pfp" class="w-8 h-8 rounded-full object-cover">
             <span id="chat-name" class="font-black text-sm">...</span>
         </div>
-        <div id="chat-messages" class="flex-1 overflow-y-auto space-y-3 mb-4 p-2"></div>
-        <div class="flex gap-2">
-            <input type="text" id="chat-input" class="flex-1 p-3 rounded-xl outline-none text-sm" placeholder="Mesaj gönder...">
+        <div id="chat-messages" class="flex-1 overflow-y-auto space-y-3 p-2"></div>
+        <div class="flex gap-2 mt-4">
+            <input type="text" id="chat-input" class="flex-1 p-3 rounded-xl outline-none text-sm" placeholder="Mesaj...">
             <button id="btn-send-msg" class="bg-emerald-500 text-black px-5 rounded-xl"><i class="fa-solid fa-paper-plane"></i></button>
         </div>
     </div>
@@ -136,15 +134,31 @@
             document.querySelectorAll('.tab-page').forEach(p => p.classList.add('hidden'));
             document.getElementById('tab-'+t).classList.remove('hidden');
         };
-
         window.openFullPage = (id) => document.getElementById(id).style.display = 'flex';
         window.closeFullPage = (id) => document.getElementById(id).style.display = 'none';
 
-        // YAYINLA BUTONU (FIXED)
+        // PAYLAŞ (WHATSAPP & KOPYALA)
+        window.sharePost = (text, id) => {
+            const shareUrl = `https://hayravesile.app/post/${id}`; // Temsili link
+            const message = `Hayra Vesile'de yeni bir paylaşım:\n\n"${text}"\n\nBuradan bakabilirsin: ${shareUrl}`;
+            
+            Swal.fire({
+                title: 'Paylaş',
+                html: `<div class="flex flex-col gap-3">
+                    <button onclick="window.open('https://api.whatsapp.com/send?text=${encodeURIComponent(message)}', '_blank')" class="bg-[#25D366] text-white p-3 rounded-xl font-bold"><i class="fa-brands fa-whatsapp"></i> WhatsApp'ta Gönder</button>
+                    <button onclick="navigator.clipboard.writeText('${message}'); Swal.fire('Başarılı', 'Link kopyalandı!', 'success')" class="bg-zinc-800 text-white p-3 rounded-xl font-bold"><i class="fa-solid fa-copy"></i> Linki Kopyala</button>
+                </div>`,
+                showConfirmButton: false,
+                background: '#0a0a0b',
+                color: '#fff'
+            });
+        };
+
+        // YAYINLA
         document.getElementById('btn-publish').onclick = async () => {
             const txt = document.getElementById('post-input').value;
             const lnk = document.getElementById('post-link').value;
-            if(!txt) return;
+            if(!txt.trim()) return;
             const btn = document.getElementById('btn-publish');
             btn.disabled = true; btn.innerText = "...";
             
@@ -156,13 +170,13 @@
             btn.disabled = false; btn.innerText = "YAYINLA";
             document.getElementById('post-input').value = "";
             closeFullPage('page-post');
+            showTab('feed');
         };
 
         function loadFeed() {
             onSnapshot(query(collection(db, "hv_posts"), orderBy("date", "desc")), snap => {
                 const feed = document.getElementById('feed-items'), grid = document.getElementById('p-grid');
                 feed.innerHTML = ''; grid.innerHTML = '';
-                let lS = 0, pS = 0;
 
                 snap.forEach(d => {
                     const p = d.data(), pid = d.id;
@@ -175,7 +189,7 @@
                                 <img src="${p.pfp}" class="w-9 h-9 rounded-full object-cover" onclick="startChat('${p.uid}', '${p.name}', '${p.pfp}')">
                                 <div class="flex-1">
                                     <div class="flex justify-between items-center">
-                                        <span class="text-xs font-black uppercase text-emerald-500">${p.name}</span>
+                                        <span class="text-[10px] font-black uppercase text-emerald-500">${p.name}</span>
                                         ${p.uid === me.uid || me.displayName === "Adil Hamza" ? `<i class="fa-solid fa-trash text-[10px] opacity-20" onclick="deletePost('${pid}')"></i>` : ''}
                                     </div>
                                     <span class="${isAdmin ? 'badge-admin' : 'badge-user'}">${isAdmin ? 'ADMIN' : 'ÜYE'}</span>
@@ -183,22 +197,20 @@
                                 </div>
                             </div>
                             ${p.link ? (p.link.includes('mp4') ? `<video src="${p.link}" controls class="w-full rounded-xl"></video>` : `<img src="${p.link}" class="w-full rounded-xl">`) : ''}
-                            <div class="flex gap-6 mt-4 opacity-50">
+                            <div class="flex gap-8 mt-4 opacity-50">
                                 <button onclick="handleLike('${pid}', ${JSON.stringify(p.likes)})">
                                     <i class="fa-solid fa-heart ${liked ? 'text-red-500 opacity-100' : ''}"></i>
                                     <span class="text-[10px] font-black ml-1">${p.likes?.length || 0}</span>
                                 </button>
                                 <i class="fa-solid fa-comment" onclick="startChat('${p.uid}', '${p.name}', '${p.pfp}')"></i>
+                                <i class="fa-solid fa-share-nodes share-btn" onclick="sharePost('${p.text.replace(/'/g, "\\'")}', '${pid}')"></i>
                             </div>
                         </div>`;
 
                     if(p.uid === me.uid) {
-                        pS++; lS += p.likes?.length || 0;
                         grid.innerHTML += `<div class="bg-zinc-900 aspect-square border border-white/5 p-2 text-[8px] opacity-20 overflow-hidden">${p.text}</div>`;
                     }
                 });
-                document.getElementById('s-p').innerText = pS;
-                document.getElementById('s-l').innerText = lS;
             });
         }
 
@@ -208,7 +220,7 @@
                 await updateDoc(r, { likes: arrayRemove(me.uid) });
             } else {
                 await updateDoc(r, { likes: arrayUnion(me.uid) });
-                confetti({ particleCount: 40, spread: 60, origin: { y: 0.8 }, colors:['#10b981','#ef4444'] });
+                confetti({ particleCount: 30, spread: 60, origin: { y: 0.8 }, colors:['#10b981'] });
             }
         };
 
@@ -218,12 +230,11 @@
                 snap.forEach(d => {
                     if(d.id === me.uid) return;
                     const u = d.data();
-                    list.innerHTML += `
-                        <div class="flex items-center gap-4 bg-zinc-900/50 p-3 rounded-2xl border border-white/5" onclick="startChat('${d.id}', '${u.name}', '${u.pfp}')">
-                            <img src="${u.pfp}" class="w-10 h-10 rounded-full object-cover">
-                            <div class="flex-1"><p class="font-black text-sm">${u.name}</p><p class="text-[10px] text-zinc-600">Mesaj yazmak için dokun</p></div>
-                            <i class="fa-solid fa-paper-plane text-emerald-500 opacity-50"></i>
-                        </div>`;
+                    list.innerHTML += `<div class="flex items-center gap-4 bg-zinc-900/50 p-3 rounded-2xl border border-white/5" onclick="startChat('${d.id}', '${u.name}', '${u.pfp}')">
+                        <img src="${u.pfp}" class="w-10 h-10 rounded-full object-cover">
+                        <div class="flex-1"><p class="font-black text-sm">${u.name}</p></div>
+                        <i class="fa-solid fa-paper-plane text-emerald-500 opacity-50"></i>
+                    </div>`;
                 });
             });
         }
@@ -233,7 +244,6 @@
             document.getElementById('chat-name').innerText = name;
             document.getElementById('chat-pfp').src = pfp;
             openFullPage('page-chat');
-            
             onSnapshot(query(collection(db, "chats", activeChatId, "messages"), orderBy("date", "asc")), snap => {
                 const box = document.getElementById('chat-messages'); box.innerHTML = '';
                 snap.forEach(d => {
@@ -249,7 +259,7 @@
 
         document.getElementById('btn-send-msg').onclick = async () => {
             const input = document.getElementById('chat-input');
-            if(!input.value) return;
+            if(!input.value.trim()) return;
             await addDoc(collection(db, "chats", activeChatId, "messages"), { t: input.value, s: me.uid, date: serverTimestamp() });
             input.value = "";
         };
@@ -261,7 +271,7 @@
                 document.getElementById('p-img').src = d.pfp;
                 document.getElementById('p-name').innerText = d.name;
                 document.getElementById('p-rank').innerHTML = `<span class="${d.name === 'Adil Hamza' ? 'badge-admin' : 'badge-user'}">${d.name === 'Adil Hamza' ? 'ADMIN' : 'ÜYE'}</span>`;
-                document.getElementById('p-bio-show').innerText = d.bio || "Biyografi yok.";
+                document.getElementById('p-bio-show').innerText = d.bio || "Biyografi eklenmemiş.";
                 document.getElementById('p-link-show').innerText = d.link || "";
                 document.getElementById('p-link-show').href = d.link || "#";
                 document.getElementById('b-in').value = d.bio || "";
@@ -270,12 +280,9 @@
         }
 
         window.updateProfile = async () => {
-            await updateDoc(doc(db, "users", me.uid), { 
-                bio: document.getElementById('b-in').value, 
-                link: document.getElementById('l-in').value 
-            });
+            await updateDoc(doc(db, "users", me.uid), { bio: document.getElementById('b-in').value, link: document.getElementById('l-in').value });
             syncProfile();
-            Swal.fire({ title: 'Başarılı!', text: 'Profilin güncellendi.', icon: 'success', confirmButtonColor: '#10b981' });
+            Swal.fire({ title: 'Başarılı!', text: 'Profil güncellendi.', icon: 'success', confirmButtonColor: '#10b981' });
         };
 
         window.deletePost = async (id) => { if(confirm('Silinsin mi?')) await deleteDoc(doc(db, "hv_posts", id)); };
