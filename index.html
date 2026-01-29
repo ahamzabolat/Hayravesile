@@ -3,592 +3,104 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
-    <title>Hayravesile | Premium Social</title>
+    <title>Hayravesile | Elite Social</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
         
         :root {
-            --ig-primary: #059669; /* Senin istediğin yeşil */
-            --ig-bg: #fafafa;
-            --ig-card: #ffffff;
-            --ig-text: #1a1a1a;
-            --ig-border: #efefef;
-        }
-
-        body.dark {
-            --ig-bg: #000000;
-            --ig-card: #000000;
-            --ig-text: #ffffff;
-            --ig-border: #262626;
-        }
-
-        * { font-family: 'Plus Jakarta Sans', sans-serif; transition: background 0.3s, color 0.3s; }
-        body { background: var(--ig-bg); color: var(--ig-text); margin: 0; }
-
-        /* MASAÜSTÜ YAN PANEL */
-        @media (min-width: 768px) {
-            .side-bar { width: 250px; position: fixed; height: 100vh; border-right: 1px solid var(--ig-border); padding: 20px; }
-            .main-view { margin-left: 250px; padding: 30px 0; }
-            .bottom-bar { display: none; }
-        }
-
-        /* MOBİL ALT PANEL */
-        @media (max-width: 767px) {
-            .side-bar { display: none; }
-            .bottom-bar { position: fixed; bottom: 0; width: 100%; height: 60px; background: var(--ig-card); border-top: 1px solid var(--ig-border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
-            .main-view { margin-bottom: 70px; }
-        }
-
-        /* POST TASARIMI */
-        .post-card { background: var(--ig-card); border: 1px solid var(--ig-border); margin-bottom: 25px; border-radius: 12px; overflow: hidden; max-width: 470px; margin-inline: auto; }
-        .post-media { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-top: 1px solid var(--ig-border); border-bottom: 1px solid var(--ig-border); }
-        
-        /* GİRİŞ EKRANI */
-        #auth-screen { position: fixed; inset: 0; background: var(--ig-bg); z-index: 5000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
-        .ig-input { width: 100%; max-width: 350px; background: #f0f2f5; border: 1px solid #ddd; padding: 12px; border-radius: 8px; margin-bottom: 10px; outline: none; font-size: 14px; }
-        .dark .ig-input { background: #121212; border-color: #333; color: white; }
-
-        /* BUTONLAR */
-        .btn-primary { background: var(--ig-primary); color: white; padding: 10px 20px; border-radius: 8px; font-weight: 700; width: 100%; max-width: 350px; }
-        .action-icon { font-size: 24px; cursor: pointer; transition: transform 0.1s; }
-        .action-icon:active { transform: scale(0.9); }
-        .heart-active { color: #ed4956; animation: like-anim 0.3s ease-in-out; }
-        
-        @keyframes like-anim { 0% { transform: scale(1); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
-    </style>
-</head>
-<body>
-
-    <div id="auth-screen">
-        <h1 class="text-4xl font-black italic mb-10 tracking-tighter" style="color: var(--ig-primary)">Hayravesile</h1>
-        
-        <div id="login-form" class="w-full flex flex-col items-center">
-            <input type="email" id="email" placeholder="E-posta" class="ig-input">
-            <input type="password" id="password" placeholder="Şifre (Min 8 Karakter)" class="ig-input">
-            <button onclick="authAction('login')" class="btn-primary mb-4">Giriş Yap</button>
-            <p class="text-sm">Hesabın yok mu? <span class="font-bold cursor-pointer" style="color:var(--ig-primary)" onclick="toggleAuth(true)">Kaydol</span></p>
-        </div>
-
-        <div id="register-form" class="w-full flex flex-col items-center hidden">
-            <input type="text" id="reg-name" placeholder="Ad Soyad" class="ig-input">
-            <input type="email" id="reg-email" placeholder="E-posta" class="ig-input">
-            <input type="password" id="reg-pass" placeholder="Şifre (Min 8 Karakter)" class="ig-input">
-            <button onclick="authAction('register')" class="btn-primary mb-4">Kaydol</button>
-            <p class="text-sm">Zaten üye misin? <span class="font-bold cursor-pointer" style="color:var(--ig-primary)" onclick="toggleAuth(false)">Giriş Yap</span></p>
-        </div>
-        
-        <div class="mt-8 pt-6 border-t w-full max-w-[350px] text-center text-gray-400">
-            <button onclick="googleSign()" class="flex items-center gap-2 justify-center w-full font-bold">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" width="18"> Google ile Devam Et
-            </button>
-        </div>
-    </div>
-
-    <aside class="side-bar">
-        <h2 class="text-2xl font-black italic mb-10 tracking-tighter" style="color: var(--ig-primary)">Hayravesile</h2>
-        <nav class="space-y-6">
-            <div class="flex items-center gap-4 text-lg font-bold cursor-pointer" onclick="location.reload()"><i class="fa-solid fa-house"></i> Ana Sayfa</div>
-            <div class="flex items-center gap-4 text-lg cursor-pointer"><i class="fa-solid fa-magnifying-glass"></i> Keşfet</div>
-            <div class="flex items-center gap-4 text-lg cursor-pointer" onclick="openCreate()"><i class="fa-regular fa-square-plus"></i> Oluştur</div>
-            <div class="flex items-center gap-4 text-lg cursor-pointer" onclick="toggleMode()"><i class="fa-solid fa-moon"></i> Mod Değiştir</div>
-            <div class="flex items-center gap-4 text-lg cursor-pointer" onclick="showSettings()"><i class="fa-solid fa-gear"></i> Ayarlar</div>
-        </nav>
-    </aside>
-
-    <main class="main-view">
-        <div id="app-feed" class="px-2">
-            <div class="flex flex-col items-center mt-20 text-gray-300">
-                <i class="fa-solid fa-circle-notch animate-spin text-4xl mb-4"></i>
-                <p>Uygulama Yükleniyor...</p>
-            </div>
-        </div>
-    </main>
-
-    <div class="bottom-bar">
-        <i class="fa-solid fa-house action-icon" onclick="location.reload()"></i>
-        <i class="fa-solid fa-magnifying-glass action-icon"></i>
-        <i class="fa-regular fa-square-plus action-icon" onclick="openCreate()"></i>
-        <i class="fa-solid fa-clapperboard action-icon"></i>
-        <div id="my-profile-icon" onclick="showSettings()" class="w-7 h-7 rounded-full border border-gray-300 overflow-hidden"></div>
-    </div>
-
-    <div id="create-modal" class="hidden fixed inset-0 bg-black/80 z-[6000] flex items-center justify-center p-4 backdrop-blur-sm">
-        <div class="bg-white dark:bg-zinc-900 w-full max-w-lg rounded-2xl overflow-hidden shadow-2xl">
-            <div class="p-4 border-b flex justify-between font-bold dark:border-zinc-800">
-                <span class="text-gray-400" onclick="closeCreate()">İptal</span>
-                <span>Yeni Gönderi Oluştur</span>
-                <span class="text-blue-500 cursor-pointer" onclick="publish()">Paylaş</span>
-            </div>
-            <div class="p-6">
-                <input type="text" id="p-media" placeholder="Resim veya MP4 Video Linki..." class="ig-input w-full mb-4">
-                <textarea id="p-desc" placeholder="Harika bir açıklama yaz..." class="w-full h-40 outline-none dark:bg-transparent resize-none"></textarea>
-            </div>
-        </div>
-    </div>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyDZO3lct-xzXAx79lbqgMP7s6WRCirWIHk",
-            authDomain: "hayravesile.firebaseapp.com",
-            projectId: "hayravesile",
-            storageBucket: "hayravesile.firebasestorage.app",
-            messagingSenderId: "980073667334",
-            appId: "1:980073667334:web:1f6260f0abf3bcc820dc87"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        // --- AUTH & NAV ---
-        window.toggleAuth = (isReg) => {
-            document.getElementById('login-form').classList.toggle('hidden', isReg);
-            document.getElementById('register-form').classList.toggle('hidden', !isReg);
-        };
-
-        window.authAction = async (type) => {
-            const email = document.getElementById(type === 'login' ? 'email' : 'reg-email').value;
-            const pass = document.getElementById(type === 'login' ? 'password' : 'reg-pass').value;
-            if(pass.length < 8) return alert("Şifre en az 8 karakter!");
-
-            try {
-                if(type === 'register') {
-                    const name = document.getElementById('reg-name').value;
-                    const res = await createUserWithEmailAndPassword(auth, email, pass);
-                    await updateProfile(res.user, { displayName: name });
-                } else {
-                    await signInWithEmailAndPassword(auth, email, pass);
-                }
-                document.getElementById('auth-screen').style.display = 'none';
-            } catch (e) { alert(e.message); }
-        };
-
-        window.googleSign = () => signInWithPopup(auth, new GoogleAuthProvider()).then(() => document.getElementById('auth-screen').style.display = 'none');
-
-        onAuthStateChanged(auth, user => {
-            if(user) {
-                document.getElementById('auth-screen').style.display = 'none';
-                document.getElementById('my-profile-icon').innerHTML = user.photoURL ? `<img src="${user.photoURL}" class="w-full h-full object-cover">` : `<i class="fa-solid fa-user p-1 text-gray-400"></i>`;
-                startFeed();
-            }
-        });
-
-        // --- MODAL KONTROL ---
-        window.openCreate = () => document.getElementById('create-modal').classList.remove('hidden');
-        window.closeCreate = () => document.getElementById('create-modal').classList.add('hidden');
-        window.toggleMode = () => document.body.classList.toggle('dark');
-
-        window.showSettings = () => {
-            document.getElementById('app-feed').innerHTML = `
-                <div class="max-w-md mx-auto mt-10 p-6 bg-white dark:bg-zinc-900 rounded-2xl shadow">
-                    <h2 class="text-2xl font-bold mb-6">Ayarlar</h2>
-                    <div class="space-y-4 font-medium">
-                        <div class="flex items-center gap-3 p-3 hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-lg"><i class="fa-solid fa-user-gear"></i> Profili Düzenle</div>
-                        <div class="flex items-center gap-3 p-3 hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-lg"><i class="fa-solid fa-lock"></i> Gizlilik</div>
-                        <div class="flex items-center gap-3 p-3 hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-lg text-red-500" onclick="auth.signOut().then(()=>location.reload())"><i class="fa-solid fa-power-off"></i> Çıkış Yap</div>
-                    </div>
-                </div>`;
-        };
-
-        // --- VERİ PAYLAŞMA ---
-        window.publish = async () => {
-            const media = document.getElementById('p-media').value;
-            const desc = document.getElementById('p-desc').value;
-            if(!desc) return alert("Mesaj boş olamaz!");
-
-            await addDoc(collection(db, "posts"), {
-                media, desc, author: auth.currentUser.displayName,
-                uid: auth.currentUser.uid, avatar: auth.currentUser.photoURL,
-                likes: [], comments: [], time: serverTimestamp()
-            });
-            closeCreate();
-            document.getElementById('p-media').value = '';
-            document.getElementById('p-desc').value = '';
-        };
-
-        // --- ANA AKIŞ ( FEED ) ---
-        function startFeed() {
-            onSnapshot(query(collection(db, "posts"), orderBy("time", "desc")), snap => {
-                const container = document.getElementById('app-feed');
-                container.innerHTML = '';
-                snap.forEach(docSnap => {
-                    const p = docSnap.data();
-                    const isLiked = p.likes?.includes(auth.currentUser.uid);
-                    const isVideo = p.media?.includes('.mp4');
-
-                    container.innerHTML += `
-                        <div class="post-card shadow-sm">
-                            <div class="p-4 flex items-center justify-between">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-9 h-9 rounded-full overflow-hidden border border-emerald-500">${p.avatar ? `<img src="${p.avatar}">` : `<i class="fa-solid fa-user p-2"></i>`}</div>
-                                    <span class="font-bold text-sm tracking-tight">${p.author}</span>
-                                </div>
-                                <i class="fa-solid fa-ellipsis"></i>
-                            </div>
-                            
-                            ${isVideo ? `<video src="${p.media}" class="w-full" controls loop muted autoplay></video>` : `<img src="${p.media || 'https://via.placeholder.com/600x600?text=Hayravesile'}" class="post-media" ondblclick="likePost('${docSnap.id}', ${JSON.stringify(p.likes)})">`}
-
-                            <div class="p-4">
-                                <div class="flex justify-between items-center mb-4">
-                                    <div class="flex gap-4 text-2xl">
-                                        <i class="${isLiked ? 'fa-solid fa-heart heart-active' : 'fa-regular fa-heart'} cursor-pointer" onclick="likePost('${docSnap.id}', ${JSON.stringify(p.likes)})"></i>
-                                        <i class="fa-regular fa-comment cursor-pointer"></i>
-                                        <i class="fa-regular fa-paper-plane cursor-pointer" onclick="sharePost('${p.desc}')"></i>
-                                    </div>
-                                    <i class="fa-regular fa-bookmark"></i>
-                                </div>
-                                <p class="font-bold text-sm mb-2">${p.likes?.length || 0} beğenme</p>
-                                <p class="text-sm leading-relaxed"><span class="font-bold mr-2">${p.author}</span>${p.desc}</p>
-                                
-                                <div class="mt-4 border-t pt-3 dark:border-zinc-800">
-                                    <div id="comments-${docSnap.id}" class="space-y-2 mb-3">
-                                        ${p.comments?.map(c => `<p class="text-xs"><b>${c.user}</b> ${c.text}</p>`).join('')}
-                                    </div>
-                                    <div class="flex gap-2 items-center">
-                                        <input type="text" id="comm-${docSnap.id}" placeholder="Yorum ekle..." class="text-sm flex-1 bg-transparent outline-none">
-                                        <button onclick="addComment('${docSnap.id}')" class="text-blue-500 font-bold text-sm">Paylaş</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>`;
-                });
-            });
-        }
-
-        window.likePost = async (id, likes) => {
-            const ref = doc(db, "posts", id);
-            likes?.includes(auth.currentUser.uid) ? await updateDoc(ref, { likes: arrayRemove(auth.currentUser.uid) }) : await updateDoc(ref, { likes: arrayUnion(auth.currentUser.uid) });
-        };
-
-        window.addComment = async (id) => {
-            const inp = document.getElementById('comm-'+id);
-            if(!inp.value) return;
-            await updateDoc(doc(db, "posts", id), {
-                comments: arrayUnion({ user: auth.currentUser.displayName, text: inp.value })
-            });
-            inp.value = '';
-        };
-
-        window.sharePost = (desc) => {
-            const url = `https://api.whatsapp.com/send?text=${encodeURIComponent("Hayravesile'de yeni bir iyilik: " + desc)}`;
-            window.open(url, '_blank');
-        };
-    </script>
-</body>
-</html>
-<!doctype html>
-<html lang="tr">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
-    <title>Hayravesile Ultra Pro</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
-        :root { --p: #059669; --bg: #fafafa; --c: #ffffff; --b: #dbdbdb; --t: #1a1a1a; }
-        body.dark { --bg: #000; --c: #000; --b: #262626; --t: #fff; }
-        * { font-family: 'Plus Jakarta Sans', sans-serif; transition: 0.2s; }
-        body { background: var(--bg); color: var(--t); margin: 0; overflow-x: hidden; }
-        
-        /* HİKAYE HALKALARI */
-        .s-container { display: flex; gap: 12px; overflow-x: auto; padding: 15px; background: var(--c); border-bottom: 1px solid var(--b); scrollbar-width: none; }
-        .s-ring { width: 68px; height: 68px; padding: 2px; background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); border-radius: 50%; cursor: pointer; }
-        .s-inner { background: var(--c); padding: 2px; border-radius: 50%; width: 100%; height: 100%; }
-        .s-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
-
-        /* POST KARTLARI */
-        .p-card { background: var(--c); border: 1px solid var(--b); border-radius: 12px; max-width: 470px; margin: 15px auto; overflow: hidden; }
-        .media-box { width: 100%; position: relative; background: #000; display: flex; align-items: center; justify-content: center; min-height: 300px; }
-        .media-box img, .media-box video { width: 100%; max-height: 600px; object-fit: contain; }
-
-        /* TAM EKRAN STORY MODAL */
-        #story-viewer { display: none; position: fixed; inset: 0; background: #000; z-index: 9999; flex-direction: column; align-items: center; justify-content: center; }
-        #story-progress { position: absolute; top: 10px; left: 10px; right: 10px; height: 2px; background: rgba(255,255,255,0.3); }
-        #story-bar { height: 100%; background: #fff; width: 0%; }
-
-        /* ALT NAVİGASYON */
-        .nav-fixed { position: fixed; bottom: 0; width: 100%; max-width: 500px; left: 50%; transform: translateX(-50%); background: var(--c); border-top: 1px solid var(--b); display: flex; justify-content: space-around; padding: 12px; z-index: 1000; }
-        .action-btn { font-size: 24px; cursor: pointer; }
-
-        .hidden { display: none; }
-    </style>
-</head>
-<body>
-
-    <nav class="sticky top-0 bg-white dark:bg-black border-b dark:border-zinc-800 p-4 flex justify-between items-center z-50 max-w-[500px] mx-auto">
-        <h1 class="text-2xl font-black italic tracking-tighter" style="color: var(--p)">Hayravesile</h1>
-        <div class="flex gap-5 text-xl">
-            <i class="fa-regular fa-square-plus" onclick="openUpload()"></i>
-            <i class="fa-regular fa-paper-plane" onclick="alert('Mesajlaşma Yakında!')"></i>
-        </div>
-    </nav>
-
-    <main id="main-area" class="max-w-[500px] mx-auto pb-20">
-        <div class="s-container" id="story-list">
-            <div class="flex flex-col items-center gap-1" onclick="viewStory('https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=2070', 'Hayravesile')">
-                <div class="s-ring"><div class="s-inner"><img src="https://via.placeholder.com/100" class="s-img" id="user-story-img"></div></div>
-                <span class="text-[10px]">Senin Hikayen</span>
-            </div>
-        </div>
-        <div id="feed">
-            <div class="text-center py-20 animate-pulse text-gray-400">İyilikler Yükleniyor...</div>
-        </div>
-    </main>
-
-    <div id="story-viewer" onclick="closeStory()">
-        <div id="story-progress"><div id="story-bar"></div></div>
-        <div class="absolute top-5 left-5 flex items-center gap-2 text-white font-bold">
-            <img id="s-user-img" src="" class="w-8 h-8 rounded-full border">
-            <span id="s-user-name"></span>
-        </div>
-        <img id="s-content" src="" class="max-w-full max-h-[80vh]">
-    </div>
-
-    <div class="nav-fixed">
-        <i class="fa-solid fa-house action-btn" onclick="location.reload()"></i>
-        <i class="fa-solid fa-magnifying-glass action-btn"></i>
-        <i class="fa-solid fa-clapperboard action-btn"></i>
-        <i class="fa-solid fa-heart action-btn"></i>
-        <div id="nav-p-img" onclick="showSettings()" class="w-7 h-7 rounded-full border border-gray-400 overflow-hidden bg-gray-200"></div>
-    </div>
-
-    <div id="u-modal" class="hidden fixed inset-0 bg-black/90 z-[5000] flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-zinc-900 w-full max-w-md rounded-2xl">
-            <div class="p-4 border-b dark:border-zinc-800 flex justify-between font-bold">
-                <button onclick="closeUpload()" class="text-gray-400">Kapat</button>
-                <span>Paylaş</span>
-                <button onclick="saveToFirebase()" class="text-emerald-500" id="save-btn">Paylaş</button>
-            </div>
-            <div class="p-4">
-                <input type="text" id="m-link" placeholder="Fotoğraf veya MP4 Linki..." class="w-full p-3 bg-gray-100 dark:bg-zinc-800 rounded-lg mb-4 outline-none">
-                <textarea id="m-text" placeholder="Bir şeyler yaz..." class="w-full h-32 bg-transparent outline-none resize-none"></textarea>
-            </div>
-        </div>
-    </div>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyDZO3lct-xzXAx79lbqgMP7s6WRCirWIHk",
-            authDomain: "hayravesile.firebaseapp.com",
-            projectId: "hayravesile",
-            storageBucket: "hayravesile.firebasestorage.app",
-            messagingSenderId: "980073667334",
-            appId: "1:980073667334:web:1f6260f0abf3bcc820dc87"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        // --- AUTH ---
-        onAuthStateChanged(auth, user => {
-            if(user) {
-                document.getElementById('nav-p-img').innerHTML = `<img src="${user.photoURL}" class="w-full h-full object-cover">`;
-                document.getElementById('user-story-img').src = user.photoURL;
-                loadContent();
-            } else {
-                signInWithPopup(auth, new GoogleAuthProvider());
-            }
-        });
-
-        // --- STORY LOGIC ---
-        window.viewStory = (url, name) => {
-            const v = document.getElementById('story-viewer');
-            const b = document.getElementById('story-bar');
-            document.getElementById('s-content').src = url;
-            document.getElementById('s-user-name').innerText = name;
-            v.style.display = 'flex';
-            b.style.width = '0%';
-            let w = 0;
-            const int = setInterval(() => {
-                w += 1;
-                b.style.width = w + '%';
-                if(w >= 100) { clearInterval(int); closeStory(); }
-            }, 50);
-            window.currentInt = int;
-        };
-        window.closeStory = () => {
-            document.getElementById('story-viewer').style.display = 'none';
-            clearInterval(window.currentInt);
-        };
-
-        // --- POST LOGIC ---
-        window.openUpload = () => document.getElementById('u-modal').classList.remove('hidden');
-        window.closeUpload = () => document.getElementById('u-modal').classList.add('hidden');
-
-        window.saveToFirebase = async () => {
-            const l = document.getElementById('m-link').value;
-            const t = document.getElementById('m-text').value;
-            if(!t) return;
-            document.getElementById('save-btn').innerText = "...";
-            await addDoc(collection(db, "posts"), {
-                media: l, text: t, author: auth.currentUser.displayName,
-                avatar: auth.currentUser.photoURL, uid: auth.currentUser.uid,
-                likes: [], date: serverTimestamp()
-            });
-            closeUpload();
-            document.getElementById('m-link').value = "";
-            document.getElementById('m-text').value = "";
-            document.getElementById('save-btn').innerText = "Paylaş";
-        };
-
-        function loadContent() {
-            onSnapshot(query(collection(db, "posts"), orderBy("date", "desc")), snap => {
-                const f = document.getElementById('feed');
-                f.innerHTML = '';
-                snap.forEach(ds => {
-                    const p = ds.data();
-                    const isV = p.media?.includes('.mp4');
-                    const isL = p.likes?.includes(auth.currentUser.uid);
-                    f.innerHTML += `
-                        <div class="p-card shadow-sm">
-                            <div class="p-3 flex items-center justify-between">
-                                <div class="flex items-center gap-2">
-                                    <img src="${p.avatar}" class="w-8 h-8 rounded-full border border-emerald-500">
-                                    <span class="font-bold text-sm">${p.author}</span>
-                                </div>
-                                <i class="fa-solid fa-ellipsis"></i>
-                            </div>
-                            <div class="media-box">
-                                ${isV ? `<video src="${p.media}" controls loop muted autoplay></video>` : `<img src="${p.media || 'https://via.placeholder.com/600'}" ondblclick="like('${ds.id}', ${JSON.stringify(p.likes)})">`}
-                            </div>
-                            <div class="p-4">
-                                <div class="flex gap-4 text-2xl mb-2">
-                                    <i class="${isL ? 'fa-solid fa-heart text-red-500' : 'fa-regular fa-heart'} cursor-pointer" onclick="like('${ds.id}', ${JSON.stringify(p.likes)})"></i>
-                                    <i class="fa-regular fa-comment"></i>
-                                    <i class="fa-brands fa-whatsapp text-green-500" onclick="window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent('${p.text}'))"></i>
-                                </div>
-                                <p class="font-bold text-sm mb-1">${p.likes?.length || 0} beğenme</p>
-                                <p class="text-sm"><span class="font-bold mr-2">${p.author}</span>${p.text}</p>
-                            </div>
-                        </div>`;
-                });
-            });
-        }
-
-        window.like = async (id, likes) => {
-            const ref = doc(db, "posts", id);
-            likes?.includes(auth.currentUser.uid) ? await updateDoc(ref, { likes: arrayRemove(auth.currentUser.uid) }) : await updateDoc(ref, { likes: arrayUnion(auth.currentUser.uid) });
-        };
-
-        window.showSettings = () => {
-            document.body.classList.toggle('dark');
-        };
-    </script>
-</body>
-</html>
-<!doctype html>
-<html lang="tr">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
-    <title>Hayravesile | Instagram Edition</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-        
-        :root {
-            --bg: #ffffff;
-            --text: #1a1a1a;
-            --border: #efefef;
-            --card: #ffffff;
             --primary: #059669;
+            --accent: #ed4956;
+            --bg: #fafafa;
+            --card: #ffffff;
+            --text: #0f172a;
+            --border: #e2e8f0;
         }
 
         body.dark {
             --bg: #000000;
-            --text: #ffffff;
-            --border: #262626;
             --card: #000000;
+            --text: #f8fafc;
+            --border: #1e293b;
         }
 
-        * { font-family: 'Inter', sans-serif; transition: 0.2s ease-in-out; }
-        body { background: var(--bg); color: var(--text); margin: 0; }
+        * { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--bg); color: var(--text); transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
 
-        /* Yazıların net görünmesi için zorunlu sınıflar */
-        .text-main { color: var(--text) !important; }
-        .bg-main { background: var(--bg) !important; }
-        .border-main { border-color: var(--border) !important; }
+        /* Modern Cam Efekti */
+        .glass { background: rgba(255, 255, 255, 0.7) !important; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+        .dark .glass { background: rgba(0, 0, 0, 0.7) !important; border-color: #334155 !important; }
 
-        /* Akış ve Kartlar */
-        .feed-container { max-width: 470px; margin: 0 auto; padding-top: 15px; }
-        .post-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 16px; overflow: hidden; }
+        /* Feed & Post */
+        .post-wrapper { max-width: 470px; margin: 0 auto; }
+        .post-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 24px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); }
+        .media-area { position: relative; width: 100%; aspect-ratio: 4/5; background: #000; border-radius: 4px; overflow: hidden; display: flex; align-items: center; }
+        .media-area img, .media-area video { width: 100%; height: 100%; object-fit: cover; }
+
+        /* Story Bars */
+        .story-scroller { display: flex; gap: 14px; overflow-x: auto; padding: 12px 0; scrollbar-width: none; }
+        .story-circle { position: relative; width: 68px; height: 68px; padding: 2px; border-radius: 50%; background: linear-gradient(45deg, #f9ce34, #ee2a7b, #6228d7); cursor: pointer; }
+        .story-inner { background: var(--card); border-radius: 50%; padding: 2px; width: 100%; height: 100%; }
         
-        /* Medya Alanı */
-        .media-container { width: 100%; background: #000; display: flex; align-items: center; justify-content: center; min-height: 300px; max-height: 580px; }
-        .media-container img, .media-container video { width: 100%; height: auto; max-height: 580px; object-fit: contain; }
-
-        /* Navigasyon */
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; max-width: 500px; left: 50%; transform: translateX(-50%); 
-                      background: var(--card); border-top: 1px solid var(--border); display: flex; justify-content: space-around; 
-                      padding: 12px 0; z-index: 1000; }
+        /* Animasyonlar */
+        @keyframes heartPop { 0% { transform: scale(0); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
+        .heart-pop { animation: heartPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         
-        /* Story Halkaları */
-        .story-box { display: flex; gap: 12px; overflow-x: auto; padding: 15px; border-bottom: 1px solid var(--border); scrollbar-width: none; }
-        .ring-gradient { padding: 2px; background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); border-radius: 50%; width: 66px; height: 66px; cursor: pointer; }
-        .ring-inner { background: var(--card); border-radius: 50%; padding: 2px; width: 100%; height: 100%; }
-        .ring-inner img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+        .nav-link { font-size: 26px; color: var(--text); opacity: 0.8; cursor: pointer; }
+        .nav-link:hover { opacity: 1; color: var(--primary); }
 
         .hidden { display: none; }
-        .modal-overlay { background: rgba(0,0,0,0.8); backdrop-blur: 5px; }
     </style>
 </head>
-<body class="pb-20">
+<body class="pb-24">
 
-    <header class="sticky top-0 z-[100] bg-main border-b border-main p-4 flex justify-between items-center max-w-[500px] mx-auto">
+    <header class="sticky top-0 z-[100] glass border-b border-main p-4 flex justify-between items-center max-w-[500px] mx-auto border-main">
         <h1 class="text-2xl font-black italic tracking-tighter" style="color: var(--primary)">Hayravesile</h1>
-        <div class="flex gap-5 text-xl text-main">
-            <i class="fa-regular fa-square-plus cursor-pointer" onclick="toggleModal('post-modal', true)"></i>
-            <i class="fa-solid fa-moon cursor-pointer" onclick="document.body.classList.toggle('dark')"></i>
+        <div class="flex gap-4 items-center">
+            <button onclick="document.body.classList.toggle('dark')" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-800">
+                <i class="fa-solid fa-circle-half-stroke text-xl"></i>
+            </button>
+            <i class="fa-regular fa-paper-plane text-2xl nav-link"></i>
         </div>
     </header>
 
-    <main class="feed-container px-2">
-        <div class="story-box" id="stories">
+    <main class="post-wrapper px-3">
+        <section class="story-scroller border-b border-main mb-4" id="story-area">
             <div class="flex flex-col items-center gap-1">
-                <div class="ring-gradient"><div class="ring-inner"><img src="https://via.placeholder.com/100" id="my-avatar"></div></div>
-                <span class="text-[10px] font-medium text-main">Senin Hikayen</span>
+                <div class="story-circle"><div class="story-inner"><img src="" id="user-avatar-main" class="w-full h-full rounded-full object-cover"></div></div>
+                <span class="text-[11px] font-semibold opacity-70">Sen</span>
             </div>
-        </div>
+        </section>
 
-        <div id="main-feed">
-            <div class="py-20 text-center text-gray-400">Yükleniyor...</div>
+        <div id="feed-container" class="space-y-6">
+            <div class="py-20 flex justify-center"><i class="fa-solid fa-spinner animate-spin text-3xl text-gray-300"></i></div>
         </div>
     </main>
 
-    <div id="post-modal" class="hidden fixed inset-0 z-[2000] modal-overlay flex items-center justify-center p-4">
-        <div class="bg-main border-main w-full max-w-md rounded-xl overflow-hidden shadow-2xl">
-            <div class="p-4 border-b border-main flex justify-between font-bold">
-                <button onclick="toggleModal('post-modal', false)" class="text-gray-400">İptal</button>
-                <span class="text-main">Yeni Gönderi</span>
-                <button onclick="sendToFirebase()" class="text-blue-500" id="publish-btn">Paylaş</button>
+    <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[500px] glass border-t border-main p-4 flex justify-around items-center z-[500] rounded-t-2xl shadow-2xl">
+        <i class="fa-solid fa-house nav-link" onclick="location.reload()"></i>
+        <i class="fa-solid fa-magnifying-glass nav-link"></i>
+        <div class="bg-emerald-500 text-white w-12 h-12 flex items-center justify-center rounded-2xl shadow-lg -mt-8 border-4 border-white dark:border-zinc-900 cursor-pointer" onclick="openPostModal()">
+            <i class="fa-solid fa-plus text-xl"></i>
+        </div>
+        <i class="fa-solid fa-clapperboard nav-link"></i>
+        <div id="nav-profile-img" onclick="showProfile()" class="w-8 h-8 rounded-full border-2 border-emerald-500 overflow-hidden cursor-pointer shadow-md"></div>
+    </nav>
+
+    <div id="post-modal" class="hidden fixed inset-0 z-[1000] bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="bg-card w-full max-w-md rounded-3xl overflow-hidden shadow-2xl border border-main">
+            <div class="p-5 border-b border-main flex justify-between items-center">
+                <span class="font-bold text-gray-500" onclick="closePostModal()">Vazgeç</span>
+                <span class="font-black text-lg">Yarat</span>
+                <button onclick="savePost()" class="text-emerald-500 font-bold px-4 py-1 rounded-full bg-emerald-50 dark:bg-emerald-900/30">Paylaş</button>
             </div>
-            <div class="p-4">
-                <input type="text" id="input-url" placeholder="Görsel veya MP4 Video Linki..." class="w-full p-3 bg-gray-100 dark:bg-zinc-800 rounded-lg mb-4 outline-none text-sm text-main">
-                <textarea id="input-desc" placeholder="Açıklama ekle..." class="w-full h-32 bg-transparent outline-none resize-none text-sm text-main border-b border-main"></textarea>
+            <div class="p-6 space-y-4">
+                <input type="text" id="m-link" placeholder="Fotoğraf veya MP4 linkini yapıştır..." class="w-full p-4 bg-gray-50 dark:bg-zinc-900 border border-main rounded-2xl outline-none focus:ring-2 ring-emerald-500 transition-all">
+                <textarea id="m-text" placeholder="İçinden geçenleri yaz..." class="w-full h-40 p-4 bg-transparent outline-none resize-none border-b border-main text-lg"></textarea>
             </div>
         </div>
     </div>
-
-    <nav class="bottom-nav">
-        <i class="fa-solid fa-house text-2xl text-main" onclick="location.reload()"></i>
-        <i class="fa-solid fa-magnifying-glass text-2xl text-main"></i>
-        <i class="fa-solid fa-clapperboard text-2xl text-main"></i>
-        <i class="fa-regular fa-heart text-2xl text-main"></i>
-        <div id="nav-user-img" class="w-7 h-7 rounded-full border border-gray-400 overflow-hidden bg-gray-300"></div>
-    </nav>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -608,44 +120,40 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // --- AUTH & USER ---
+        // --- AUTH & SETUP ---
         onAuthStateChanged(auth, user => {
             if(user) {
-                document.getElementById('my-avatar').src = user.photoURL;
-                document.getElementById('nav-user-img').innerHTML = `<img src="${user.photoURL}" class="w-full h-full object-cover">`;
-                initFeed();
+                document.getElementById('user-avatar-main').src = user.photoURL;
+                document.getElementById('nav-profile-img').innerHTML = `<img src="${user.photoURL}" class="w-full h-full object-cover">`;
+                renderFeed();
             } else {
                 signInWithPopup(auth, new GoogleAuthProvider());
             }
         });
 
-        // --- UI FUNCS ---
-        window.toggleModal = (id, show) => {
-            document.getElementById(id).classList.toggle('hidden', !show);
-        };
+        window.openPostModal = () => document.getElementById('post-modal').classList.remove('hidden');
+        window.closePostModal = () => document.getElementById('post-modal').classList.add('hidden');
 
-        // --- FIREBASE OPS ---
-        window.sendToFirebase = async () => {
-            const url = document.getElementById('input-url').value;
-            const desc = document.getElementById('input-desc').value;
-            if(!desc) return alert("Açıklama boş olamaz!");
-
-            document.getElementById('publish-btn').innerText = "...";
-            await addDoc(collection(db, "posts"), {
-                media: url, desc: desc, author: auth.currentUser.displayName,
-                uid: auth.currentUser.uid, avatar: auth.currentUser.photoURL,
-                likes: [], date: serverTimestamp()
-            });
+        // --- FIREBASE SAVE ---
+        window.savePost = async () => {
+            const l = document.getElementById('m-link').value;
+            const t = document.getElementById('m-text').value;
+            if(!t) return;
             
-            toggleModal('post-modal', false);
-            document.getElementById('input-url').value = "";
-            document.getElementById('input-desc').value = "";
-            document.getElementById('publish-btn').innerText = "Paylaş";
+            await addDoc(collection(db, "posts"), {
+                media: l, text: t, author: auth.currentUser.displayName,
+                uid: auth.currentUser.uid, avatar: auth.currentUser.photoURL,
+                likes: [], comments: [], time: serverTimestamp()
+            });
+            closePostModal();
+            document.getElementById('m-link').value = "";
+            document.getElementById('m-text').value = "";
         };
 
-        function initFeed() {
-            onSnapshot(query(collection(db, "posts"), orderBy("date", "desc")), snap => {
-                const feed = document.getElementById('main-feed');
+        // --- RENDER ENGINE ---
+        function renderFeed() {
+            onSnapshot(query(collection(db, "posts"), orderBy("time", "desc")), snap => {
+                const feed = document.getElementById('feed-container');
                 feed.innerHTML = '';
                 snap.forEach(ds => {
                     const p = ds.data();
@@ -653,41 +161,65 @@
                     const isLiked = p.likes?.includes(auth.currentUser.uid);
 
                     feed.innerHTML += `
-                        <div class="post-card border-main bg-main shadow-sm">
-                            <div class="p-3 flex items-center gap-3">
-                                <img src="${p.avatar}" class="w-8 h-8 rounded-full border border-emerald-500">
-                                <span class="font-bold text-sm text-main">${p.author}</span>
+                        <article class="post-card border-main">
+                            <div class="p-4 flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-9 h-9 rounded-full border-2 border-emerald-500 p-0.5">
+                                        <img src="${p.avatar}" class="w-full h-full rounded-full object-cover">
+                                    </div>
+                                    <span class="font-bold text-sm tracking-tight">${p.author}</span>
+                                </div>
+                                <i class="fa-solid fa-ellipsis text-gray-400"></i>
                             </div>
-                            
-                            <div class="media-container" ondblclick="handleLike('${ds.id}', ${JSON.stringify(p.likes)})">
-                                ${isVideo ? `<video src="${p.media}" controls loop muted autoplay></video>` : `<img src="${p.media || 'https://via.placeholder.com/600x600?text=Hayravesile'}">`}
+
+                            <div class="media-area" ondblclick="likePost('${ds.id}', ${JSON.stringify(p.likes)})">
+                                ${isVideo ? 
+                                    `<video src="${p.media}" class="w-full h-full" controls loop muted autoplay></video>` : 
+                                    `<img src="${p.media || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1964'}" class="w-full h-full object-cover">`
+                                }
+                                ${isLiked ? '<div class="absolute inset-0 flex items-center justify-center text-white text-6xl heart-pop opacity-0 hover:opacity-100"><i class="fa-solid fa-heart"></i></div>' : ''}
                             </div>
 
                             <div class="p-4">
-                                <div class="flex gap-4 text-2xl mb-3 text-main">
-                                    <i class="${isLiked ? 'fa-solid fa-heart text-red-500' : 'fa-regular fa-heart'} cursor-pointer" onclick="handleLike('${ds.id}', ${JSON.stringify(p.likes)})"></i>
-                                    <i class="fa-regular fa-comment"></i>
-                                    <i class="fa-regular fa-paper-plane" onclick="sharePost('${p.desc}')"></i>
+                                <div class="flex justify-between items-center mb-4">
+                                    <div class="flex gap-5 text-2xl">
+                                        <i class="${isLiked ? 'fa-solid fa-heart text-red-500' : 'fa-regular fa-heart'} cursor-pointer active:scale-125 transition-transform" onclick="likePost('${ds.id}', ${JSON.stringify(p.likes)})"></i>
+                                        <i class="fa-regular fa-comment hover:text-emerald-500 cursor-pointer"></i>
+                                        <i class="fa-regular fa-paper-plane hover:text-blue-500 cursor-pointer" onclick="whatsapp('${p.text}')"></i>
+                                    </div>
+                                    <i class="fa-regular fa-bookmark text-2xl"></i>
                                 </div>
-                                <p class="font-bold text-sm mb-1 text-main">${p.likes?.length || 0} beğenme</p>
-                                <p class="text-sm text-main leading-relaxed">
-                                    <span class="font-bold mr-2">${p.author}</span>${p.desc}
+                                <p class="font-extrabold text-sm mb-2">${p.likes?.length || 0} beğeni</p>
+                                <p class="text-[14px] leading-relaxed">
+                                    <span class="font-bold mr-2">${p.author}</span>${p.text}
                                 </p>
+                                <div class="mt-3 text-gray-400 text-xs uppercase font-bold tracking-widest">Az Önce</div>
                             </div>
-                        </div>`;
+                        </article>`;
                 });
             });
         }
 
-        window.handleLike = async (id, likes) => {
+        window.likePost = async (id, likes) => {
             const ref = doc(db, "posts", id);
             const uid = auth.currentUser.uid;
             likes?.includes(uid) ? await updateDoc(ref, { likes: arrayRemove(uid) }) : await updateDoc(ref, { likes: arrayUnion(uid) });
         };
 
-        window.sharePost = (desc) => {
-            const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent("Hayravesile Paylaşımı: " + desc)}`;
-            window.open(whatsappUrl, '_blank');
+        window.whatsapp = (msg) => window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent('Hayravesile\'den bir mesaj: ' + msg)}`);
+
+        window.showProfile = () => {
+            document.getElementById('feed-container').innerHTML = `
+                <div class="text-center py-10 bg-card rounded-3xl border border-main shadow-lg">
+                    <img src="${auth.currentUser.photoURL}" class="w-24 h-24 rounded-full mx-auto border-4 border-emerald-500 p-1 mb-4 shadow-xl">
+                    <h2 class="text-2xl font-black">${auth.currentUser.displayName}</h2>
+                    <p class="text-gray-500 mb-6">${auth.currentUser.email}</p>
+                    <div class="flex justify-center gap-10 border-t border-main pt-6">
+                        <div><p class="font-black text-xl">12</p><p class="text-xs text-gray-400">GÖNDERİ</p></div>
+                        <div><p class="font-black text-xl">850</p><p class="text-xs text-gray-400">TAKİPÇİ</p></div>
+                    </div>
+                    <button onclick="auth.signOut().then(()=>location.reload())" class="mt-8 bg-red-50 text-red-500 px-8 py-2 rounded-xl font-bold border border-red-100 hover:bg-red-500 hover:text-white transition-all">Çıkış Yap</button>
+                </div>`;
         };
     </script>
 </body>
