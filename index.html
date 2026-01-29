@@ -255,3 +255,174 @@
     </script>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Hayra Vesile | V571 Login</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@1,900&display=swap');
+        :root { --hv: #10b981; --bg: #000; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--bg); color: #f4f4f5; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+        .stilli-logo { font-family: 'Playfair Display', serif; font-style: italic; background: linear-gradient(to right, #10b981, #34d399, #10b981); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-size: 200% auto; animation: shine 3s linear infinite; }
+        @keyframes shine { to { background-position: 200% center; } }
+        
+        /* GİRİŞ EKRANI ÖZEL */
+        .auth-card { background: #0a0a0b; border: 1px solid #1e1e21; border-radius: 40px; width: 100%; max-width: 400px; padding: 30px; }
+        .auth-input { background: #18181b; border: 1px solid #27272a; border-radius: 20px; padding: 18px; width: 100%; color: white; outline: none; margin-bottom: 12px; transition: 0.3s; }
+        .auth-input:focus { border-color: var(--hv); box-shadow: 0 0 15px rgba(16,185,129,0.1); }
+        .auth-btn { background: var(--hv); color: black; font-weight: 800; border-radius: 20px; padding: 18px; width: 100%; transition: 0.3s; margin-top: 10px; }
+        .auth-btn:active { scale: 0.95; }
+        
+        .scroller { flex: 1; overflow-y: auto; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; padding-bottom: 120px; }
+        .scroller::-webkit-scrollbar { display: none; }
+        .post-card { border-radius: 35px; padding: 25px; margin: 15px; border: 1px solid rgba(255,255,255,0.05); position: relative; }
+        .modal-full { position: fixed; inset: 0; background: #000; z-index: 11000; display: none; flex-direction: column; animation: slideUp 0.4s ease; }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        .feather-btn { position: fixed; bottom: 35px; right: 25px; width: 70px; height: 70px; background: var(--hv); color: #000; border-radius: 25px; display: flex; align-items: center; justify-content: center; z-index: 5000; box-shadow: 0 15px 40px rgba(16,185,129,0.4); }
+    </style>
+</head>
+<body>
+
+    <div id="auth-gate" class="fixed inset-0 bg-black z-[20000] flex flex-col items-center justify-center p-6 overflow-y-auto">
+        <h1 class="stilli-logo text-6xl mb-10">İyilik</h1>
+        
+        <div class="auth-card">
+            <div id="login-fields">
+                <input type="text" id="auth-user" class="auth-input" placeholder="Kullanıcı Adı">
+                <input type="email" id="auth-email" class="auth-input" placeholder="E-posta">
+                <input type="password" id="auth-pass" class="auth-input" placeholder="Şifre">
+                <button onclick="Auth.action()" id="main-auth-btn" class="auth-btn uppercase">Giriş Yap / Kayıt Ol</button>
+            </div>
+            
+            <div class="flex items-center my-6">
+                <div class="flex-1 h-px bg-zinc-800"></div>
+                <span class="px-4 text-zinc-600 text-xs font-bold">VEYA</span>
+                <div class="flex-1 h-px bg-zinc-800"></div>
+            </div>
+            
+            <button onclick="Auth.google()" class="w-full bg-white text-black py-4 rounded-[20px] font-black text-sm flex items-center justify-center gap-3">
+                <i class="fa-brands fa-google text-lg"></i> Google ile Devam Et
+            </button>
+        </div>
+        <p class="text-zinc-600 text-[10px] mt-8 uppercase font-bold tracking-widest">Hayra vesile olan, yapan gibidir.</p>
+    </div>
+
+    <div id="app" class="flex-1 flex-col" style="display: none;">
+        <header class="h-20 px-6 border-b border-zinc-900 flex justify-between items-center bg-black/60 backdrop-blur-xl">
+            <h1 class="stilli-logo text-2xl">Hayra Vesile</h1>
+            <div id="u-pfp" class="w-10 h-10 rounded-xl overflow-hidden bg-zinc-800"></div>
+        </header>
+
+        <main class="scroller">
+            <div id="post-list"></div>
+        </main>
+
+        <div onclick="UI.open('post-modal')" class="feather-btn"><i class="fa-solid fa-feather-pointed text-3xl"></i></div>
+    </div>
+
+    <div id="post-modal" class="modal-full p-8">
+        <div class="flex justify-between items-center mb-10">
+            <button onclick="UI.close('post-modal')" class="text-zinc-600 font-bold uppercase">Kapat</button>
+            <button id="pub-btn" class="bg-emerald-500 text-black px-10 py-4 rounded-full font-black text-xs uppercase shadow-xl">Paylaş</button>
+        </div>
+        <textarea id="post-in" class="w-full bg-transparent text-white text-3xl font-bold h-64 outline-none resize-none" placeholder="Bugün ne iyilik yaptın?"></textarea>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, doc, setDoc, updateDoc, arrayUnion, arrayRemove, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const cfg = { apiKey: "AIzaSyDZO3lct-xzXAx79lbqgMP7s6WRCirWIHk", authDomain: "hayravesile.firebaseapp.com", projectId: "hayravesile", storageBucket: "hayravesile.appspot.com", messagingSenderId: "980073667334", appId: "1:980073667334:web:1f6260f0abf3bcc820dc87" };
+        const app = initializeApp(cfg), auth = getAuth(app), db = getFirestore(app);
+
+        let me = null;
+
+        window.Auth = {
+            google: () => signInWithPopup(auth, new GoogleAuthProvider()),
+            action: async () => {
+                const user = document.getElementById('auth-user').value.trim();
+                const email = document.getElementById('auth-email').value.trim();
+                const pass = document.getElementById('auth-pass').value.trim();
+                
+                if(!email || !pass) return Swal.fire('Hata','E-posta ve şifre zorunlu!','error');
+
+                try {
+                    // Önce giriş yapmayı dene
+                    await signInWithEmailAndPassword(auth, email, pass);
+                } catch (err) {
+                    // Giriş başarısızsa kayıt aç (Eğer kullanıcı adı varsa)
+                    if(user) {
+                        const res = await createUserWithEmailAndPassword(auth, email, pass);
+                        await updateProfile(res.user, { displayName: user });
+                    } else {
+                        Swal.fire('Hata','Kayıt olmak için kullanıcı adı yazın!','info');
+                    }
+                }
+            },
+            logout: () => signOut(auth).then(() => location.reload())
+        };
+
+        onAuthStateChanged(auth, async u => {
+            if(u) {
+                me = u;
+                document.getElementById('auth-gate').style.display = 'none';
+                document.getElementById('app').style.display = 'flex';
+                document.getElementById('u-pfp').innerHTML = u.photoURL ? `<img src="${u.photoURL}" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center font-bold text-white bg-emerald-500">${u.displayName?.charAt(0)}</div>`;
+                await setDoc(doc(db, "users", u.uid), { name: u.displayName, pfp: u.photoURL || '', bio: "İyilik Elçisi" }, { merge: true });
+                Data.syncFeed();
+            }
+        });
+
+        window.UI = {
+            open: (id) => document.getElementById(id).style.display = 'flex',
+            close: (id) => document.getElementById(id).style.display = 'none'
+        };
+
+        window.Data = {
+            syncFeed: () => {
+                onSnapshot(query(collection(db, "posts"), orderBy("time", "desc")), snap => {
+                    const l = document.getElementById('post-list'); l.innerHTML = '';
+                    snap.forEach(d => l.innerHTML += Data.markup(d.id, d.data()));
+                });
+            },
+            markup: (id, p) => {
+                const liked = p.likes?.includes(me.uid);
+                return `
+                    <div class="post-card bg-zinc-900/50">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center font-bold text-black">${p.name?.charAt(0)}</div>
+                            <div class="flex-1"><span class="text-sm font-black uppercase text-white">${p.name}</span><span class="text-[10px] text-emerald-500 font-bold block uppercase">İyiliğe Vesile Oldu</span></div>
+                            ${me.uid === p.uid ? `<i onclick="Data.del('${id}')" class="fa-solid fa-trash text-white/10"></i>` : ''}
+                        </div>
+                        <p class="text-lg font-bold text-white mb-6">${p.text}</p>
+                        <div class="flex items-center gap-2 cursor-pointer" onclick="Data.like('${id}', ${liked})">
+                            <i class="fa-${liked ? 'solid' : 'regular'} fa-heart text-2xl ${liked ? 'text-emerald-500' : 'text-white/20'}"></i>
+                            <span class="text-xs font-black text-white">${p.likes?.length || 0}</span>
+                        </div>
+                    </div>`;
+            },
+            like: async (id, s) => {
+                await updateDoc(doc(db, "posts", id), { likes: s ? arrayRemove(me.uid) : arrayUnion(me.uid) });
+            },
+            del: async (id) => { if(confirm("Silinsin mi?")) await deleteDoc(doc(db, "posts", id)); }
+        };
+
+        document.getElementById('pub-btn').onclick = async () => {
+            const v = document.getElementById('post-in').value.trim();
+            if(v) {
+                await addDoc(collection(db, "posts"), { text: v, uid: me.uid, name: me.displayName, pfp: me.photoURL || '', time: Date.now(), likes: [] });
+                document.getElementById('post-in').value = ''; UI.close('post-modal');
+            }
+        };
+    </script>
+</body>
+</html>
