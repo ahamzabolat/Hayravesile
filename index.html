@@ -1,173 +1,128 @@
 <!doctype html>
 <html lang="tr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>Hayravesile</title>
-
-  <meta name="theme-color" content="#005F52" />
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
-  <style>
-    body { font-family: 'Inter', sans-serif; background-color: #fafafa; }
-    .primary-green { color: #005F52; }
-    .bg-primary { background-color: #005F52; }
-    .post-card { transition: transform 0.2s; }
-    .post-card:active { transform: scale(0.98); }
-  </style>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+    <title>Hayravesile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f0fdf4; }
+        .post-card { background: white; border-radius: 1.5rem; overflow: hidden; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); border: 1px solid #dcfce7; }
+    </style>
 </head>
-<body class="pb-20">
+<body class="pb-24">
 
-  <nav class="bg-white border-b sticky top-0 z-50 px-4 py-3 flex justify-between items-center">
-    <h1 class="text-2xl font-extrabold primary-green tracking-tighter">Hayravesile</h1>
-    <div id="authArea">
-      <button onclick="login()" class="bg-primary text-white px-5 py-1.5 rounded-full text-sm font-bold shadow-md hover:bg-emerald-800 transition-colors">Giriş Yap</button>
+    <nav class="bg-white/80 backdrop-blur-md sticky top-0 z-50 px-5 py-4 flex justify-between items-center border-b border-emerald-100">
+        <div class="flex items-center gap-2">
+            <i class="fa-solid fa-heart-pulse text-2xl text-emerald-600"></i>
+            <h1 class="text-xl font-black text-emerald-900 tracking-tighter">HAYRAVESİLE</h1>
+        </div>
+        <div id="userArea"><button onclick="login()" class="bg-emerald-600 text-white px-5 py-1.5 rounded-full text-sm font-bold shadow-lg shadow-emerald-200">Giriş</button></div>
+    </nav>
+
+    <main id="feed" class="max-w-md mx-auto p-4 space-y-6">
+        <div id="loading" class="text-center py-20 text-emerald-800 animate-pulse font-medium">Hayırlar Yükleniyor...</div>
+    </main>
+
+    <button id="addBtn" onclick="openModal()" class="hidden fixed bottom-8 right-6 bg-emerald-600 text-white w-16 h-16 rounded-full shadow-2xl flex items-center justify-center text-2xl transition-transform active:scale-90 z-50">
+        <i class="fa fa-plus"></i>
+    </button>
+
+    <div id="modal" class="hidden fixed inset-0 bg-emerald-900/40 backdrop-blur-sm z-[60] flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="bg-white w-full max-w-md rounded-t-[2rem] sm:rounded-[2rem] p-8 shadow-2xl transition-all">
+            <h2 class="text-2xl font-bold text-emerald-900 mb-6 text-center">İyilik Paylaş</h2>
+            
+            <div class="space-y-4">
+                <div class="bg-emerald-50 p-4 rounded-2xl">
+                    <label class="text-xs font-bold text-emerald-700 block mb-2 uppercase">Fotoğraf Linki (İsteğe Bağlı)</label>
+                    <input type="text" id="imgUrl" placeholder="https://..." class="w-full bg-transparent border-none outline-none text-emerald-900 placeholder:text-emerald-300">
+                </div>
+
+                <div class="bg-emerald-50 p-4 rounded-2xl">
+                    <label class="text-xs font-bold text-emerald-700 block mb-2 uppercase">Mesajın</label>
+                    <textarea id="postText" placeholder="Bugün ne hayır işledik?" class="w-full bg-transparent border-none outline-none text-emerald-900 h-24 resize-none placeholder:text-emerald-300"></textarea>
+                </div>
+
+                <div class="flex gap-3 pt-2">
+                    <button onclick="closeModal()" class="flex-1 py-4 font-bold text-emerald-700">Vazgeç</button>
+                    <button onclick="sendPost()" id="saveBtn" class="flex-[2] bg-emerald-600 text-white py-4 rounded-2xl font-bold shadow-lg shadow-emerald-100">Paylaş</button>
+                </div>
+            </div>
+        </div>
     </div>
-  </nav>
 
-  <main id="feed" class="max-w-md mx-auto mt-4 space-y-6 px-2">
-    <div id="loading" class="text-center py-10 text-gray-400">
-        <i class="fa fa-circle-notch animate-spin text-2xl mb-2"></i>
-        <p>Yükleniyor...</p>
-    </div>
-  </main>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-  <button id="adminBtn" onclick="openModal()" class="hidden fixed bottom-24 right-6 bg-primary text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center text-2xl z-40">
-    <i class="fa fa-plus"></i>
-  </button>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDZO3lct-xzXAx79lbqgMP7s6WRCirWIHk",
+            authDomain: "hayravesile.firebaseapp.com",
+            projectId: "hayravesile",
+            storageBucket: "hayravesile.firebasestorage.app",
+            messagingSenderId: "980073667334",
+            appId: "1:980073667334:web:1f6260f0abf3bcc820dc87"
+        };
 
-  <div id="postModal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-    <div class="bg-white rounded-3xl w-full max-w-sm p-6 shadow-2xl">
-      <h2 class="text-xl font-bold primary-green mb-4 text-center">Hayra Vesile Ol</h2>
-      <div class="space-y-4">
-          <input type="file" id="imgInput" accept="image/*" class="w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-emerald-50 file:text-emerald-700">
-          <textarea id="capInput" placeholder="Neler oluyor?" class="w-full border rounded-2xl p-4 h-32 focus:ring-2 focus:ring-emerald-500 outline-none resize-none"></textarea>
-          <div class="flex gap-3">
-            <button onclick="closeModal()" class="flex-1 bg-gray-100 py-3 rounded-2xl font-semibold">İptal</button>
-            <button id="sendBtn" onclick="upload()" class="flex-1 bg-primary text-white py-3 rounded-2xl font-bold shadow-lg">Paylaş</button>
-          </div>
-      </div>
-    </div>
-  </div>
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
 
-  <div class="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around py-4 text-gray-400 text-2xl z-50">
-    <i class="fa fa-home primary-green"></i>
-    <i class="fa-regular fa-compass"></i>
-    <i class="fa-regular fa-heart"></i>
-    <i class="fa-regular fa-user"></i>
-  </div>
+        window.login = () => signInWithPopup(auth, new GoogleAuthProvider());
+        window.openModal = () => document.getElementById('modal').classList.remove('hidden');
+        window.closeModal = () => document.getElementById('modal').classList.add('hidden');
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, updateDoc, doc, increment, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
-
-    // Senin verdiğin Firebase Bilgileri
-    const firebaseConfig = {
-      apiKey: "AIzaSyDZO3lct-xzXAx79lbqgMP7s6WRCirWIHk",
-      authDomain: "hayravesile.firebaseapp.com",
-      projectId: "hayravesile",
-      storageBucket: "hayravesile.firebasestorage.app",
-      messagingSenderId: "980073667334",
-      appId: "1:980073667334:web:1f6260f0abf3bcc820dc87",
-      measurementId: "G-76WWTXPY4E"
-    };
-
-    const ADMIN_EMAILS = ["a.hamzabolat@gmail.com"]; // Admin sensin
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-    const storage = getStorage(app);
-    const provider = new GoogleAuthProvider();
-
-    // Giriş Kontrolü
-    window.login = () => signInWithPopup(auth, provider).catch(err => alert("Giriş başarısız!"));
-    
-    onAuthStateChanged(auth, user => {
-      const area = document.getElementById('authArea');
-      const btn = document.getElementById('adminBtn');
-      if(user) {
-        area.innerHTML = `<img src="${user.photoURL}" class="w-9 h-9 rounded-full border-2 border-emerald-600">`;
-        if(ADMIN_EMAILS.includes(user.email)) btn.classList.remove('hidden');
-      }
-    });
-
-    // Paylaşım Fonksiyonları
-    window.openModal = () => document.getElementById('postModal').classList.remove('hidden');
-    window.closeModal = () => document.getElementById('postModal').classList.add('hidden');
-
-    window.upload = async () => {
-      const file = document.getElementById('imgInput').files[0];
-      const cap = document.getElementById('capInput').value;
-      const sBtn = document.getElementById('sendBtn');
-      if(!file || !cap) return alert("Lütfen bir resim seçin ve açıklama yazın!");
-
-      sBtn.disabled = true; sBtn.innerText = "Yükleniyor...";
-      try {
-        const sRef = ref(storage, 'posts/' + Date.now() + "_" + file.name);
-        await uploadBytes(sRef, file);
-        const url = await getDownloadURL(sRef);
-        
-        await addDoc(collection(db, "posts"), { 
-            url, 
-            cap, 
-            likes: 0, 
-            user: auth.currentUser.displayName, 
-            uImg: auth.currentUser.photoURL,
-            time: serverTimestamp() 
+        onAuthStateChanged(auth, user => {
+            if(user) {
+                document.getElementById('userArea').innerHTML = `<img src="${user.photoURL}" class="w-10 h-10 rounded-full border-2 border-emerald-500 p-0.5">`;
+                if(user.email === "a.hamzabolat@gmail.com") document.getElementById('addBtn').classList.remove('hidden');
+            }
         });
-        
-        document.getElementById('imgInput').value = '';
-        document.getElementById('capInput').value = '';
-        closeModal();
-      } catch (e) { 
-          console.error(e);
-          alert("Yükleme başarısız! Firebase Kurallarını (Rules) yayınladığınızdan emin olun."); 
-      }
-      finally { sBtn.disabled = false; sBtn.innerText = "Paylaş"; }
-    };
 
-    // Akışı Canlı Dinle
-    const q = query(collection(db, "posts"), orderBy("time", "desc"));
-    onSnapshot(q, snap => {
-      const f = document.getElementById('feed');
-      f.innerHTML = '';
-      if(snap.empty) f.innerHTML = '<p class="text-center text-gray-400 mt-10">Henüz paylaşım yok. İlk hayra sen vesile ol!</p>';
-      
-      snap.forEach(d => {
-        const p = d.data();
-        f.innerHTML += `
-          <div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 post-card">
-            <div class="p-4 flex items-center gap-3">
-              <img src="${p.uImg || 'https://via.placeholder.com/32'}" class="w-8 h-8 rounded-full border">
-              <span class="font-bold text-sm text-gray-800">${p.user}</span>
-            </div>
-            <img src="${p.url}" class="w-full max-h-96 object-cover bg-gray-50">
-            <div class="p-4">
-              <div class="flex gap-4 text-2xl mb-2">
-                <button onclick="like('${d.id}')" class="focus:outline-none"><i class="fa-regular fa-heart hover:text-red-500 transition-colors"></i></button>
-                <i class="fa-regular fa-comment"></i>
-              </div>
-              <p class="text-xs font-bold text-gray-500 mb-1">${p.likes || 0} beğeni</p>
-              <p class="text-sm text-gray-700"><b>${p.user}</b> ${p.cap}</p>
-            </div>
-          </div>`;
-      });
-      document.getElementById('loading').classList.add('hidden');
-    });
+        window.sendPost = async () => {
+            const url = document.getElementById('imgUrl').value;
+            const msg = document.getElementById('postText').value;
+            const btn = document.getElementById('saveBtn');
 
-    window.like = async (id) => {
-      if(!auth.currentUser) return alert("Beğenmek için giriş yapmalısın!");
-      await updateDoc(doc(db, "posts", id), { likes: increment(1) });
-    };
-  </script>
+            if(!msg) return alert("Lütfen bir mesaj yazın!");
+            btn.disabled = true; btn.innerText = "Yükleniyor...";
+
+            await addDoc(collection(db, "posts"), {
+                img: url || null,
+                text: msg,
+                author: auth.currentUser.displayName,
+                avatar: auth.currentUser.photoURL,
+                date: serverTimestamp()
+            });
+
+            btn.disabled = false; btn.innerText = "Paylaş";
+            document.getElementById('imgUrl').value = "";
+            document.getElementById('postText').value = "";
+            closeModal();
+        };
+
+        const q = query(collection(db, "posts"), orderBy("date", "desc"));
+        onSnapshot(q, snap => {
+            const feed = document.getElementById('feed');
+            feed.innerHTML = '';
+            snap.forEach(doc => {
+                const data = doc.data();
+                feed.innerHTML += `
+                    <div class="post-card">
+                        <div class="p-4 flex items-center gap-3">
+                            <img src="${data.avatar}" class="w-8 h-8 rounded-full shadow-sm">
+                            <span class="font-bold text-emerald-900 text-sm">${data.author}</span>
+                        </div>
+                        ${data.img ? `<img src="${data.img}" class="w-full object-cover max-h-80 bg-emerald-50">` : ''}
+                        <div class="p-5">
+                            <p class="text-emerald-900 leading-relaxed">${data.text}</p>
+                        </div>
+                    </div>`;
+            });
+            document.getElementById('loading').style.display = 'none';
+        });
+    </script>
 </body>
 </html>
