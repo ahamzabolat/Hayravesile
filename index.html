@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Hayra Vesile | V571 Fixed</title>
+    <title>Hayra Vesile | V571</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -11,110 +11,155 @@
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
-        :root { --hv: #10b981; --bg: #000; --card: #0a0a0b; --border: #1c1c1e; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+        
+        :root {
+            --hv: #10b981;
+            --bg: #000;
+            --card: #0a0a0b;
+            --border: #1c1c1e;
+        }
+
+        * { 
+            margin: 0; padding: 0; box-sizing: border-box; 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
         body { background: var(--bg); color: white; overflow: hidden; height: 100vh; display: flex; }
 
         /* SIDEBAR */
-        .sidebar { position: fixed; left: -300px; top: 0; width: 280px; height: 100%; background: #050505; border-right: 1px solid rgba(16,185,129,0.3); z-index: 10000; transition: 0.5s cubic-bezier(0.16, 1, 0.3, 1); padding: 40px 20px; display: flex; flex-direction: column; }
+        .sidebar { 
+            position: fixed; left: -300px; top: 0; width: 280px; height: 100%; 
+            background: #050505; border-right: 1px solid rgba(16,185,129,0.3); 
+            z-index: 10000; transition: 0.5s cubic-bezier(0.16, 1, 0.3, 1); 
+            padding: 40px 20px; display: flex; flex-direction: column;
+        }
         .sidebar.active { left: 0; box-shadow: 20px 0 80px rgba(0,0,0,1); }
         .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 9999; display: none; }
+        
         .nav-link { display: flex; align-items: center; gap: 15px; padding: 18px; border-radius: 20px; color: #666; font-weight: 800; cursor: pointer; transition: 0.3s; }
         .nav-link.active { color: var(--hv); background: rgba(16, 185, 129, 0.1); }
 
-        /* MAIN */
+        /* MAIN APP */
         .app-main { flex: 1; display: flex; flex-direction: column; position: relative; }
-        header { height: 75px; padding: 0 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: #000; }
-        .content-scroll { flex: 1; overflow-y: auto; padding-bottom: 120px; }
+        header { 
+            height: 75px; padding: 0 20px; border-bottom: 1px solid var(--border); 
+            display: flex; justify-content: space-between; align-items: center; background: #000; 
+        }
 
-        /* POSTS */
-        .hv-card { background: var(--card); border: 1px solid var(--border); border-radius: 28px; padding: 22px; margin: 15px; position: relative; }
+        .scroll-box { flex: 1; overflow-y: auto; padding-bottom: 120px; }
 
-        /* CHAT SYSTEM - EN KRİTİK YER */
-        .chat-view { position: fixed; inset: 0; background: #000; z-index: 11000; display: none; flex-direction: column; padding: 20px; }
-        .chat-flow { flex: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 10px; }
+        /* CARDS */
+        .hv-card { 
+            background: var(--card); border: 1px solid var(--border); 
+            border-radius: 28px; padding: 22px; margin: 15px; position: relative;
+            animation: slideUp 0.4s ease-out;
+        }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } }
+
+        /* CHAT SYSTEM */
+        .full-modal { position: fixed; inset: 0; background: #000; z-index: 11000; display: none; flex-direction: column; padding: 20px; }
+        .chat-stream { flex: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
         .bubble { max-width: 80%; padding: 14px 18px; border-radius: 22px; font-size: 14px; font-weight: 600; line-height: 1.5; word-wrap: break-word; }
         .b-me { align-self: flex-end; background: var(--hv); color: #000; border-bottom-right-radius: 4px; }
         .b-them { align-self: flex-start; background: #1c1c1e; color: #fff; border-bottom-left-radius: 4px; }
-        
+
         .badge-adm { background: rgba(251,191,36,0.1); color: #fbbf24; font-size: 10px; font-weight: 900; padding: 4px 10px; border-radius: 8px; border: 1px solid #fbbf24; }
+
+        /* KUŞ BUTONU */
+        .feather-btn {
+            position: fixed; bottom: 40px; right: 30px; width: 70px; height: 70px;
+            background: var(--hv); color: #000; border-radius: 25px;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 15px 35px rgba(16,185,129,0.3); z-index: 5000;
+            transition: 0.3s; cursor: pointer;
+        }
+        .feather-btn:active { scale: 0.9; }
     </style>
 </head>
 <body>
 
-    <div id="overlay" class="overlay" onclick="UI.toggleSide()"></div>
+    <div id="overlay" class="overlay" onclick="App.side()"></div>
 
     <aside id="sidebar" class="sidebar">
         <div class="mb-12 px-4">
             <h2 class="text-4xl font-black text-emerald-500 italic tracking-tighter">HAYRA<br>VESİLE</h2>
         </div>
+        
         <nav class="flex-1 space-y-2">
-            <div class="nav-link active" onclick="UI.tab('feed', this)"><i class="fa-solid fa-shapes"></i> Ana Akış</div>
-            <div class="nav-link" onclick="UI.tab('users', this)"><i class="fa-solid fa-paper-plane"></i> Mesajlaşma</div>
-            <div class="nav-link" onclick="UI.tab('profile', this)"><i class="fa-solid fa-id-card"></i> Profilim</div>
+            <div class="nav-link active" onclick="App.tab('feed', this)"><i class="fa-solid fa-house"></i> Ana Akış</div>
+            <div class="nav-link" onclick="App.tab('users', this)"><i class="fa-solid fa-comment"></i> Mesajlar</div>
+            <div class="nav-link" onclick="App.tab('profile', this)"><i class="fa-solid fa-user"></i> Profilim</div>
         </nav>
-        <div class="mt-auto p-4 bg-zinc-900/50 rounded-3xl border border-white/5" onclick="UI.info()">
-            <p class="text-[10px] text-zinc-500 font-black uppercase">V571 Edition</p>
-            <p class="text-xs font-bold text-emerald-500">İYİLİK TARAFINDAN TASARLANDI</p>
+
+        <div class="mt-auto space-y-4">
+            <div class="p-5 bg-zinc-900/50 rounded-3xl border border-white/5" onclick="App.info()">
+                <p class="text-[10px] text-zinc-500 font-black uppercase tracking-widest mb-1">Versiyon</p>
+                <p class="text-xs font-bold text-emerald-500">V571</p>
+                <p class="text-[9px] text-zinc-400 font-bold mt-2">İYİLİK TARAFINDAN TASARLANDI</p>
+            </div>
+            <button onclick="Auth.logout()" class="w-full flex items-center gap-4 text-red-500 font-black text-sm px-4 py-2">
+                <i class="fa-solid fa-power-off"></i> HESAPTAN ÇIKIŞ YAP
+            </button>
         </div>
     </aside>
 
-    <div id="login-page" class="fixed inset-0 bg-black z-[20000] flex flex-col items-center justify-center p-10 text-center">
-        <h1 class="text-5xl font-black text-emerald-500 italic mb-10">HAYRA VESİLE</h1>
-        <button onclick="Auth.login()" class="w-full max-w-sm bg-white text-black py-5 rounded-[30px] font-black text-xl">Google ile Başla</button>
+    <div id="login-screen" class="fixed inset-0 bg-black z-[20000] flex flex-col items-center justify-center p-10 text-center">
+        <h1 class="text-5xl font-black text-emerald-500 italic mb-12">HAYRA VESİLE</h1>
+        <button onclick="Auth.login()" class="w-full max-w-sm bg-white text-black py-5 rounded-[30px] font-black text-xl active:scale-95 transition">Google ile Giriş</button>
     </div>
 
-    <div id="app-view" class="app-main" style="display: none;">
+    <div id="app" class="app-main" style="display: none;">
         <header>
-            <button onclick="UI.toggleSide()" class="text-emerald-500 text-2xl"><i class="fa-solid fa-bars-staggered"></i></button>
-            <h1 class="text-xl font-black text-emerald-500 italic">HAYRA VESİLE</h1>
-            <div id="u-pfp" class="w-10 h-10 rounded-xl overflow-hidden border border-emerald-500/20"></div>
+            <button onclick="App.side()" class="text-emerald-500 text-2xl"><i class="fa-solid fa-bars-staggered"></i></button>
+            <h1 class="text-xl font-black text-emerald-500 italic">HAYRA VESİLE V571</h1>
+            <div id="h-avatar" class="w-10 h-10 rounded-xl overflow-hidden border border-emerald-500/20" onclick="App.tab('profile')"></div>
         </header>
 
-        <main class="content-scroll">
+        <main class="scroll-box">
             <div id="tab-feed">
-                <div id="post-list"></div>
+                <div id="feed-list"></div>
             </div>
             <div id="tab-users" class="hidden p-4 space-y-4">
                 <div id="user-list"></div>
             </div>
             <div id="tab-profile" class="hidden p-8">
-                <div class="flex flex-col items-center mb-10">
-                    <img id="my-img" class="w-32 h-32 rounded-[40px] border-4 border-emerald-500 p-1 mb-4">
-                    <h2 id="my-name" class="text-3xl font-black italic uppercase">...</h2>
-                    <div id="rank-tag" class="mt-2"></div>
+                <div class="flex flex-col items-center mb-10 text-center">
+                    <img id="p-img" class="w-32 h-32 rounded-[40px] border-4 border-emerald-500 p-1 mb-4 shadow-2xl">
+                    <h2 id="p-name" class="text-3xl font-black uppercase italic">...</h2>
+                    <div id="p-badge" class="mt-2"></div>
                 </div>
                 <div class="bg-zinc-900/50 p-6 rounded-[32px] border border-white/5">
-                    <p id="my-bio-text" class="text-sm font-bold text-zinc-300 italic mb-6">...</p>
-                    <textarea id="bio-input" class="w-full bg-black p-4 rounded-2xl text-sm h-24 border border-white/5 outline-none mb-4" placeholder="Yeni biyografin..."></textarea>
-                    <button onclick="Data.saveBio()" class="w-full bg-emerald-500 text-black py-4 rounded-2xl font-black">GÜNCELLE</button>
+                    <p id="p-bio" class="text-sm font-bold text-zinc-300 italic mb-6">...</p>
+                    <textarea id="bio-in" class="w-full bg-black p-4 rounded-2xl text-sm h-24 border border-white/5 outline-none mb-4" placeholder="Kendinden bahset..."></textarea>
+                    <button onclick="Data.saveBio()" class="w-full bg-emerald-500 text-black py-4 rounded-2xl font-black">PROFİLİ GÜNCELLE</button>
                 </div>
             </div>
         </main>
 
-        <button onclick="UI.open('post-modal')" class="fixed bottom-10 right-10 w-16 h-16 bg-emerald-500 text-black rounded-2xl shadow-2xl flex items-center justify-center active:scale-90 transition z-[5000]">
-            <i class="fa-solid fa-plus text-2xl"></i>
-        </button>
+        <div onclick="App.open('post-modal')" class="feather-btn">
+            <i class="fa-solid fa-feather-pointed text-3xl"></i>
+        </div>
     </div>
 
-    <div id="post-modal" class="chat-view">
+    <div id="post-modal" class="full-modal">
         <div class="flex justify-between items-center mb-10">
-            <button onclick="UI.close('post-modal')" class="text-zinc-500 font-black uppercase text-xs">Kapat</button>
-            <button id="pub-btn" class="bg-emerald-500 text-black px-8 py-3 rounded-full font-black text-xs uppercase">YAYINLA</button>
+            <button onclick="App.close('post-modal')" class="text-zinc-500 font-black uppercase text-xs">Vazgeç</button>
+            <button id="post-send" class="bg-emerald-500 text-black px-10 py-3 rounded-full font-black text-xs uppercase">PAYLAŞ</button>
         </div>
-        <textarea id="post-input" class="w-full bg-transparent text-white text-3xl font-black h-80 outline-none" placeholder="Ne hayır işledin?"></textarea>
+        <textarea id="post-txt" class="w-full bg-transparent text-white text-3xl font-black h-80 outline-none" placeholder="Ne hayır işledin?"></textarea>
     </div>
 
-    <div id="chat-modal" class="chat-view">
+    <div id="chat-modal" class="full-modal">
         <div class="flex items-center gap-4 py-4 border-b border-white/5 mb-4">
-            <button onclick="UI.close('chat-modal')" class="text-emerald-500 text-xl"><i class="fa-solid fa-chevron-left"></i></button>
-            <span id="chat-user" class="font-black text-sm uppercase">MESAJLAR</span>
-            <div id="adm-tools" class="ml-auto"></div>
+            <button onclick="App.close('chat-modal')" class="text-emerald-500 text-xl"><i class="fa-solid fa-chevron-left"></i></button>
+            <span id="chat-target-name" class="font-black text-sm uppercase">MESAJLAR</span>
+            <div id="admin-tools" class="ml-auto"></div>
         </div>
-        <div id="chat-box" class="chat-flow"></div>
-        <div class="flex gap-2 bg-zinc-900 p-2 rounded-3xl mt-4">
-            <input type="text" id="msg-in" class="flex-1 bg-transparent p-3 outline-none font-bold text-sm" placeholder="Mesajını yaz...">
-            <button id="msg-send" class="bg-emerald-500 text-black px-6 rounded-2xl font-black"><i class="fa-solid fa-paper-plane"></i></button>
+        <div id="chat-messages" class="chat-stream"></div>
+        <div class="flex gap-2 bg-zinc-900 p-2 rounded-3xl mt-4 border border-white/10">
+            <input type="text" id="msg-input" class="flex-1 bg-transparent p-4 outline-none font-bold text-sm" placeholder="Mesajını gönder...">
+            <button id="msg-btn" class="bg-emerald-500 text-black px-7 rounded-2xl font-black"><i class="fa-solid fa-paper-plane"></i></button>
         </div>
     </div>
 
@@ -123,7 +168,7 @@
         import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, doc, updateDoc, getDoc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        const conf = {
+        const config = {
             apiKey: "AIzaSyDZO3lct-xzXAx79lbqgMP7s6WRCirWIHk",
             authDomain: "hayravesile.firebaseapp.com",
             projectId: "hayravesile",
@@ -132,88 +177,90 @@
             appId: "1:980073667334:web:1f6260f0abf3bcc820dc87"
         };
 
-        const app = initializeApp(conf);
+        const app = initializeApp(config);
         const auth = getAuth(app), db = getFirestore(app);
         let me = null, activeRoom = null;
 
-        const isAdil = (n) => n && n.includes("Adil Hamza");
+        const checkAdmin = (n) => n && n.includes("Adil Hamza");
 
         // --- AUTH ---
         window.Auth = {
             login: () => signInWithPopup(auth, new GoogleAuthProvider()),
-            logout: () => signOut(auth).then(() => location.reload())
+            logout: () => Swal.fire({
+                title: 'Çıkış yapılıyor?', icon: 'warning', showCancelButton: true, confirmButtonColor: '#10b981', background: '#0a0a0b', color: '#fff'
+            }).then(r => r.isConfirmed && signOut(auth).then(() => location.reload()))
         };
 
         onAuthStateChanged(auth, async u => {
             if(u) {
                 me = u;
-                document.getElementById('login-page').style.display = 'none';
-                document.getElementById('app-view').style.display = 'flex';
-                document.getElementById('u-pfp').innerHTML = `<img src="${u.photoURL}" class="w-full h-full object-cover">`;
-                await setDoc(doc(db, "users", u.uid), { name: u.displayName, pfp: u.photoURL }, { merge: true });
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('app').style.display = 'flex';
+                document.getElementById('h-avatar').innerHTML = `<img src="${u.photoURL}" class="w-full h-full object-cover">`;
+                await setDoc(doc(db, "users", u.uid), { name: u.displayName, pfp: u.photoURL, lastSeen: Date.now() }, { merge: true });
                 Data.feed(); Data.users(); Data.sync();
             }
         });
 
         // --- UI ---
-        window.UI = {
-            toggleSide: () => {
+        window.App = {
+            side: () => {
                 const s = document.getElementById('sidebar'), o = document.getElementById('overlay');
                 s.classList.toggle('active');
                 o.style.display = s.classList.contains('active') ? 'block' : 'none';
             },
             tab: (t, el) => {
-                document.querySelectorAll('.content-scroll > div').forEach(d => d.classList.add('hidden'));
+                document.querySelectorAll('.scroll-box > div').forEach(d => d.classList.add('hidden'));
                 document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
                 document.getElementById('tab-'+t).classList.remove('hidden');
                 if(el) el.classList.add('active');
-                UI.toggleSide();
+                App.side();
             },
             open: (id) => document.getElementById(id).style.display = 'flex',
             close: (id) => document.getElementById(id).style.display = 'none',
-            info: () => Swal.fire({ title: 'HAYRA VESİLE V571', html: 'Bu uygulama <b>İYİLİK TARAFINDAN TASARLANDI</b>.', icon: 'info', background: '#0a0a0b', color: '#fff' })
+            info: () => Swal.fire({ title: 'UYGULAMA BİLGİSİ', html: '<b>HAYRA VESİLE V571</b><br><br>İyilik Tarafından Tasarlandı.', icon: 'info', background: '#0a0a0b', color: '#fff' })
         };
 
-        // --- DATA & MESSAGING ---
+        // --- DATA ---
         window.Data = {
             feed: () => {
                 onSnapshot(query(collection(db, "posts"), orderBy("time", "desc")), snap => {
-                    const l = document.getElementById('post-list'); l.innerHTML = '';
+                    const l = document.getElementById('feed-list'); l.innerHTML = '';
                     snap.forEach(d => {
                         const p = d.data();
-                        const canDel = p.uid === me.uid || isAdil(me.displayName);
+                        const canDel = p.uid === me.uid || checkAdmin(me.displayName);
                         l.innerHTML += `<div class="hv-card">
                             <div class="flex items-center gap-4 mb-4">
-                                <img src="${p.pfp}" class="w-10 h-10 rounded-xl">
+                                <img src="${p.pfp}" class="w-11 h-11 rounded-xl">
                                 <div class="flex-1"><span class="text-xs font-black text-emerald-400 uppercase italic">${p.name}</span></div>
-                                ${canDel ? `<i onclick="Data.delPost('${d.id}')" class="fa-solid fa-trash text-red-500/30 cursor-pointer"></i>` : ''}
+                                ${canDel ? `<i onclick="Data.delPost('${d.id}')" class="fa-solid fa-trash-can text-red-500/20 cursor-pointer"></i>` : ''}
                             </div>
-                            <p class="text-sm font-bold text-zinc-100">${p.text}</p>
+                            <p class="text-[15px] font-bold text-zinc-100 leading-relaxed">${p.text}</p>
                         </div>`;
                     });
                 });
             },
-            delPost: async (id) => { if(confirm("Silinsin mi?")) await deleteDoc(doc(db, "posts", id)); },
+            delPost: async (id) => { if(confirm("Silmek istiyor musun?")) await deleteDoc(doc(db, "posts", id)); },
             users: () => {
                 onSnapshot(collection(db, "users"), snap => {
                     const l = document.getElementById('user-list'); l.innerHTML = '';
                     snap.forEach(d => {
                         if(d.id === me.uid) return;
-                        l.innerHTML += `<div class="flex items-center gap-4 bg-zinc-900/40 p-4 rounded-3xl border border-white/5" onclick="Data.openChat('${d.id}', '${d.data().name}')">
-                            <img src="${d.data().pfp}" class="w-12 h-12 rounded-2xl object-cover">
-                            <span class="font-black text-sm uppercase italic">${d.data().name}</span>
+                        l.innerHTML += `<div class="flex items-center gap-4 bg-zinc-900/40 p-5 rounded-[28px] border border-white/5 active:scale-95 transition" onclick="Data.openChat('${d.id}', '${d.data().name}')">
+                            <img src="${d.data().pfp}" class="w-13 h-13 rounded-2xl object-cover shadow-xl">
+                            <span class="font-black text-sm uppercase italic tracking-tight">${d.data().name}</span>
                         </div>`;
                     });
                 });
             },
             openChat: (tid, name) => {
                 activeRoom = [me.uid, tid].sort().join("_");
-                document.getElementById('chat-user').innerText = name;
-                UI.open('chat-modal');
+                document.getElementById('chat-target-name').innerText = name;
+                App.open('chat-modal');
 
-                // GERÇEK ZAMANLI MESAJ DİNLEME
-                onSnapshot(query(collection(db, "rooms", activeRoom, "messages"), orderBy("time", "asc")), snap => {
-                    const box = document.getElementById('chat-box'); box.innerHTML = '';
+                // MESAJLARI DİNLE (FIXED PATH)
+                onSnapshot(query(collection(db, "dm_rooms", activeRoom, "messages"), orderBy("time", "asc")), snap => {
+                    const box = document.getElementById('chat-messages'); box.innerHTML = '';
                     snap.forEach(d => {
                         const m = d.data();
                         box.innerHTML += `<div class="bubble ${m.s === me.uid ? 'b-me' : 'b-them'}">${m.t}</div>`;
@@ -225,33 +272,33 @@
                 const s = await getDoc(doc(db, "users", me.uid));
                 if(s.exists()){
                     const d = s.data();
-                    document.getElementById('my-img').src = d.pfp;
-                    document.getElementById('my-name').innerText = d.name;
-                    document.getElementById('my-bio-text').innerText = d.bio || "Hayra vesile bir can.";
-                    document.getElementById('rank-tag').innerHTML = isAdil(me.displayName) ? '<span class="badge-adm">SİSTEM ADMİNİ</span>' : '';
+                    document.getElementById('p-img').src = d.pfp;
+                    document.getElementById('p-name').innerText = d.name;
+                    document.getElementById('p-bio').innerText = d.bio || "Hayra vesile bir gönüllü.";
+                    document.getElementById('p-badge').innerHTML = checkAdmin(me.displayName) ? '<span class="badge-adm">SİSTEM ADMİNİ</span>' : '';
                 }
             },
             saveBio: async () => {
-                const b = document.getElementById('bio-input').value;
+                const b = document.getElementById('bio-in').value.trim();
                 if(b) { await updateDoc(doc(db, "users", me.uid), { bio: b }); Data.sync(); }
             }
         };
 
-        // --- EVENTS ---
-        document.getElementById('pub-btn').onclick = async () => {
-            const v = document.getElementById('post-input').value;
+        // --- ACTIONS ---
+        document.getElementById('post-send').onclick = async () => {
+            const v = document.getElementById('post-txt').value.trim();
             if(v) {
                 await addDoc(collection(db, "posts"), { text: v, uid: me.uid, name: me.displayName, pfp: me.photoURL, time: Date.now() });
-                document.getElementById('post-input').value = ''; UI.close('post-modal');
+                document.getElementById('post-txt').value = ''; App.close('post-modal');
             }
         };
 
-        document.getElementById('msg-send').onclick = async () => {
-            const i = document.getElementById('msg-in');
+        document.getElementById('msg-btn').onclick = async () => {
+            const i = document.getElementById('msg-input');
             const txt = i.value.trim();
             if(txt && activeRoom) {
-                // MESAJI DOĞRU ODAYA GÖNDERME
-                await addDoc(collection(db, "rooms", activeRoom, "messages"), {
+                // MESAJI ATMA (GARANTİLİ YOL)
+                await addDoc(collection(db, "dm_rooms", activeRoom, "messages"), {
                     t: txt,
                     s: me.uid,
                     time: Date.now()
@@ -259,6 +306,7 @@
                 i.value = '';
             }
         };
+
     </script>
 </body>
 </html>
