@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Hayravesile</title>
+
+  <meta name="theme-color" content="#005F52" />
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="manifest" href='data:application/manifest+json,{"name":"Hayravesile","short_name":"Hayravesile","start_url":".","display":"standalone","background_color":"#ffffff","theme_color":"#005F52","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/10008/10008906.png","sizes":"512x512","type":"image/png"}]}' />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    body { font-family: 'Inter', sans-serif; background-color: #f0fdf4; } /* Açık yeşil arka plan */
+    .primary-green { color: #005F52; }
+    .bg-primary { background-color: #005F52; }
+    .post-card { transition: transform 0.2s; }
+    .post-card:active { transform: scale(0.98); }
+    /* Yükleniyor animasyonu */
+    .loader { border: 4px solid #f3f3f3; border-top: 4px solid #005F52; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 0 auto; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  </style>
+</head>
+<body class="pb-24">
+
+  <nav class="bg-white border-b sticky top-0 z-50 px-4 py-3 flex justify-between items-center shadow-sm">
+    <div class="flex items-center gap-2">
+        <i class="fa-solid fa-leaf text-2xl primary-green"></i>
+        <h1 class="text-xl font-extrabold primary-green tracking-tight">Hayravesile</h1>
+    </div>
+    <div id="authArea">
+      <button onclick="login()" class="bg-primary text-white px-4 py-1.5 rounded-full text-sm font-bold shadow-md active:bg-emerald-800 transition-colors">Giriş Yap</button>
+    </div>
+  </nav>
+
+  <main id="feed" class="max-w-md mx-auto mt-4 space-y-5 px-3">
+    <div id="loading" class="text-center py-10 text-gray-400">
+        <div class="loader mb-3"></div>
+        <p>Hayra vesile olunuyor...</p>
+    </div>
+  </main>
+
+  <button id="adminBtn" onclick="openModal()" class="hidden fixed bottom-24 right-6 bg-primary text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center text-2xl z-40 active:scale-90 transition-transform">
+    <i class="fa fa-plus"></i>
+  </button>
+
+  <div id="postModal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+    <div class="bg-white rounded-3xl w-full max-w-sm p-6 shadow-2xl">
+      <h2 class="text-xl font-bold primary-green mb-4 text-center">Yeni Paylaşım</h2>
+      <div class="space-y-4">
+          <div class="relative border-2 border-dashed border-emerald-200 rounded-xl p-4 text-center hover:bg-emerald-50 transition">
+              <input type="file" id="imgInput" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="previewImage(this)">
+              <div id="previewArea" class="text-emerald-600">
+                  <i class="fa-solid fa-image text-3xl mb-2"></i>
+                  <p class="text-sm font-semibold">Fotoğraf Seç</p>
+              </div>
+              <img id="imgPreview" class="hidden w-full h-40 object-cover rounded-lg mt-2">
+          </div>
+          
+          <textarea id="capInput" placeholder="Bu gönderi ne hakkında?" class="w-full border border-gray-200 rounded-xl p-3 h-28 focus:ring-2 focus:ring-emerald-500 outline-none resize-none bg-gray-50"></textarea>
+          
+          <div class="flex gap-3">
+            <button onclick="closeModal()" class="flex-1 bg-gray-200 py-3 rounded-xl font-semibold text-gray-600">Vazgeç</button>
+            <button id="sendBtn" onclick="upload()" class="flex-1 bg-primary text-white py-3 rounded-xl font-bold shadow-lg">Paylaş</button>
+          </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around py-4 text-gray-400 text-xl z-50 pb-6">
+    <i class="fa-solid fa-house primary-green"></i>
+    <i class="fa-regular fa-compass hover:text-emerald-600 cursor-pointer"></i>
+    <i class="fa-regular fa-heart hover:text-emerald-600 cursor-pointer"></i>
+    <i class="fa-regular fa-user hover:text-emerald-600 cursor-pointer"></i>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, updateDoc, doc, increment, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+
+    // --- SENİN VERDİĞİN FIREBASE BİLGİLERİ (DOĞRUDAN EKLENDİ) ---
+    const firebaseConfig = {
+      apiKey: "AIzaSyDZO3lct-xzXAx79lbqgMP7s6WRCirWIHk",
+      authDomain: "hayravesile.firebaseapp.com",
+      projectId: "hayravesile",
+      storageBucket: "hayravesile.firebasestorage.app",
+      messagingSenderId: "980073667334",
+      appId: "1:980073667334:web:1f6260f0abf3bcc820dc87",
+      measurementId: "G-76WWTXPY4E"
+    };
+
+    // Admin Listesi (Senin Mailin)
+    const ADMIN_EMAILS = ["a.hamzabolat@gmail.com"];
+
+    // Başlatma
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+    const provider = new GoogleAuthProvider();
+
+    // 1. GİRİŞ İŞLEMLERİ
+    window.login = () => signInWithPopup(auth, provider).catch(err => console.error("Giriş Hatası:", err));
+    
+    onAuthStateChanged(auth, user => {
+      const area = document.getElementById('authArea');
+      const btn = document.getElementById('adminBtn');
+      if(user) {
+        area.innerHTML = `<img src="${user.photoURL}" class="w-9 h-9 rounded-full border-2 border-emerald-600 object-cover">`;
+        if(ADMIN_EMAILS.includes(user.email)) {
+            btn.classList.remove('hidden'); // Sadece admin (+)'yı görür
+        }
+      } else {
+        area.innerHTML = `<button onclick="login()" class="bg-primary text-white px-4 py-1.5 rounded-full text-sm font-bold shadow-md">Giriş Yap</button>`;
+        btn.classList.add('hidden');
+      }
+    });
+
+    // 2. MODAL & ÖNİZLEME
+    window.openModal = () => document.getElementById('postModal').classList.remove('hidden');
+    window.closeModal = () => document.getElementById('postModal').classList.add('hidden');
+    
+    window.previewImage = (input) => {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                document.getElementById('imgPreview').src = e.target.result;
+                document.getElementById('imgPreview').classList.remove('hidden');
+                document.getElementById('previewArea').classList.add('hidden');
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    };
+
+    // 3. PAYLAŞIM YAPMA (SADECE ADMİN)
+    window.upload = async () => {
+      const file = document.getElementById('imgInput').files[0];
+      const cap = document.getElementById('capInput').value;
+      const sBtn = document.getElementById('sendBtn');
+      
+      if(!file || !cap) return alert("Lütfen bir resim ve açıklama girin.");
+
+      sBtn.disabled = true; sBtn.innerText = "Yükleniyor...";
+      
+      try {
+        // Resim Yükle
+        const sRef = ref(storage, 'posts/' + Date.now() + "_" + file.name);
+        await uploadBytes(sRef, file);
+        const url = await getDownloadURL(sRef);
+        
+        // Veritabanına Yaz
+        await addDoc(collection(db, "posts"), { 
+            url, 
+            cap, 
+            likes: 0, 
+            user: auth.currentUser.displayName, 
+            uImg: auth.currentUser.photoURL,
+            time: serverTimestamp() 
+        });
+        
+        // Temizle
+        document.getElementById('imgInput').value = '';
+        document.getElementById('capInput').value = '';
+        document.getElementById('imgPreview').classList.add('hidden');
+        document.getElementById('previewArea').classList.remove('hidden');
+        closeModal();
+      } catch (e) { 
+          console.error(e);
+          alert("Hata! Firebase Kurallarını (Rules) kontrol edin. Storage veya Firestore yazma izni kapalı olabilir."); 
+      }
+      finally { sBtn.disabled = false; sBtn.innerText = "Paylaş"; }
+    };
+
+    // 4. ANA SAYFA AKIŞI (HERKES GÖRÜR)
+    const q = query(collection(db, "posts"), orderBy("time", "desc"));
+    onSnapshot(q, snap => {
+      const f = document.getElementById('feed');
+      f.innerHTML = '';
+      
+      if(snap.empty) {
+          f.innerHTML = `
+            <div class="text-center mt-20 opacity-60">
+                <i class="fa-regular fa-images text-4xl mb-3"></i>
+                <p>Henüz paylaşım yapılmadı.</p>
+            </div>`;
+      }
+      
+      snap.forEach(d => {
+        const p = d.data();
+        // Tarihi düzgün gösterme
+        let dateStr = "";
+        if(p.time) dateStr = new Date(p.time.seconds * 1000).toLocaleDateString("tr-TR");
+
+        f.innerHTML += `
+          <div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 post-card">
+            <div class="p-3 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <img src="${p.uImg || 'https://via.placeholder.com/40'}" class="w-9 h-9 rounded-full border object-cover">
+                    <div>
+                        <span class="font-bold text-sm text-gray-800 block leading-tight">${p.user}</span>
+                        <span class="text-xs text-gray-400">${dateStr}</span>
+                    </div>
+                </div>
+                <i class="fa-solid fa-ellipsis text-gray-400"></i>
+            </div>
+            
+            <img src="${p.url}" class="w-full max-h-[450px] object-cover bg-gray-50">
+            
+            <div class="p-4">
+              <div class="flex gap-5 text-2xl mb-3 text-gray-700">
+                <button onclick="like('${d.id}')" class="focus:outline-none group">
+                    <i class="fa-regular fa-heart group-hover:text-red-500 transition-colors"></i>
+                </button>
+                <i class="fa-regular fa-comment hover:text-emerald-600"></i>
+                <i class="fa-regular fa-paper-plane hover:text-emerald-600 ml-auto"></i>
+              </div>
+              
+              <p class="text-sm font-bold text-gray-800 mb-1">${p.likes || 0} beğenme</p>
+              
+              <div class="text-sm text-gray-700">
+                <span class="font-bold mr-1">${p.user}</span> ${p.cap}
+              </div>
+            </div>
+          </div>`;
+      });
+      document.getElementById('loading').classList.add('hidden');
+    });
+
+    // 5. BEĞENİ BUTONU
+    window.like = async (id) => {
+      if(!auth.currentUser) return alert("Beğenmek için giriş yapmalısın!");
+      await updateDoc(doc(db, "posts", id), { likes: increment(1) });
+    };
+  </script>
+</body>
+</html>
