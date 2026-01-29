@@ -2,41 +2,35 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Hayra Vesile | V571</title>
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
         :root { --hv: #10b981; --bg: #000; --card: #0a0a0b; --border: #1c1c1e; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { background: var(--bg); color: white; overflow: hidden; height: 100vh; display: flex; }
 
         /* SIDEBAR */
-        .sidebar { position: fixed; left: -280px; top: 0; width: 270px; height: 100%; background: #050505; border-right: 1px solid rgba(16,185,129,0.3); z-index: 10000; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); padding: 40px 20px; }
-        .sidebar.active { left: 0; box-shadow: 20px 0 50px rgba(0,0,0,0.9); }
-        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); z-index: 9999; display: none; }
+        .sidebar { position: fixed; left: -280px; top: 0; width: 270px; height: 100%; background: #050505; border-right: 1px solid rgba(16,185,129,0.3); z-index: 10000; transition: 0.4s; padding: 40px 20px; }
+        .sidebar.active { left: 0; }
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 9999; display: none; }
         
-        .nav-btn { display: flex; align-items: center; gap: 15px; padding: 16px; border-radius: 15px; color: #777; font-weight: 800; cursor: pointer; transition: 0.3s; margin-bottom: 5px; }
+        .nav-btn { display: flex; align-items: center; gap: 15px; padding: 16px; border-radius: 15px; color: #777; font-weight: 800; cursor: pointer; transition: 0.3s; }
         .nav-btn.active { color: var(--hv); background: rgba(16, 185, 129, 0.1); }
 
-        /* MAIN APP */
-        .main-app { flex: 1; display: flex; flex-direction: column; position: relative; }
-        header { height: 70px; padding: 0 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: #000; }
-        .scroll-box { flex: 1; overflow-y: auto; padding-bottom: 100px; }
-        
-        /* POSTS & CHAT */
-        .post-card { background: var(--card); border: 1px solid var(--border); border-radius: 22px; padding: 18px; margin: 15px; animation: slideUp 0.4s ease-out; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        /* POSTS */
+        .post-card { background: var(--card); border: 1px solid var(--border); border-radius: 22px; padding: 18px; margin: 15px; position: relative; }
+        .delete-btn { position: absolute; top: 15px; right: 15px; color: #ef4444; opacity: 0.5; transition: 0.3s; }
+        .delete-btn:hover { opacity: 1; }
 
-        .bubble { max-width: 85%; padding: 12px 16px; border-radius: 20px; font-size: 14px; font-weight: 600; line-height: 1.4; margin-bottom: 5px; }
+        /* CHAT */
+        .bubble { max-width: 85%; padding: 12px 16px; border-radius: 20px; font-size: 14px; font-weight: 600; margin-bottom: 5px; word-wrap: break-word; }
         .bubble-me { align-self: flex-end; background: var(--hv); color: #000; border-bottom-right-radius: 4px; }
         .bubble-them { align-self: flex-start; background: #1c1c1e; color: #fff; border-bottom-left-radius: 4px; }
         
-        .badge-admin { color: #fbbf24; font-size: 9px; font-weight: 900; border: 1px solid #fbbf24; padding: 2px 6px; border-radius: 5px; background: rgba(251,191,36,0.1); }
         .full-page { position: fixed; inset: 0; background: #000; z-index: 11000; display: none; flex-direction: column; padding: 20px; }
     </style>
 </head>
@@ -46,49 +40,36 @@
 
     <aside id="sidebar" class="sidebar">
         <h2 class="text-2xl font-black text-emerald-500 italic mb-10">MENÜ</h2>
-        <nav>
+        <nav class="space-y-2">
             <div class="nav-btn active" onclick="switchTab('feed', this)"><i class="fa-solid fa-house"></i> Ana Sayfa</div>
             <div class="nav-btn" onclick="switchTab('users', this)"><i class="fa-solid fa-comment"></i> Mesajlar</div>
             <div class="nav-btn" onclick="switchTab('profile', this)"><i class="fa-solid fa-user"></i> Profilim</div>
             <div class="nav-btn mt-10" onclick="showAppInfo()"><i class="fa-solid fa-info-circle"></i> Uygulama Bilgisi</div>
-            <div class="nav-btn text-red-500 mt-2" onclick="logout()"><i class="fa-solid fa-power-off"></i> Çıkış</div>
+            <div class="nav-btn text-red-500" onclick="logout()"><i class="fa-solid fa-power-off"></i> Çıkış</div>
         </nav>
     </aside>
 
     <div id="auth-screen" class="fixed inset-0 bg-black z-[20000] flex flex-col items-center justify-center p-6">
         <h1 class="text-4xl font-black text-emerald-500 mb-10 italic">HAYRA VESİLE</h1>
-        <button onclick="login()" class="w-full max-w-xs bg-white text-black py-4 rounded-2xl font-black text-lg shadow-2xl active:scale-95 transition">Google Giriş</button>
+        <button onclick="login()" class="bg-white text-black px-12 py-4 rounded-2xl font-black text-lg active:scale-95 transition">Google ile Katıl</button>
     </div>
 
-    <div id="app" class="main-app" style="display: none;">
-        <header>
+    <div id="app" class="flex-1 flex flex-col" style="display: none;">
+        <header class="h-16 px-5 border-b border-white/5 flex justify-between items-center bg-black">
             <button onclick="toggleSidebar()" class="text-emerald-500 text-2xl"><i class="fa-solid fa-bars-staggered"></i></button>
             <h1 class="text-xl font-black text-emerald-500 italic">HAYRA VESİLE</h1>
-            <div id="header-img" class="w-10 h-10 rounded-xl overflow-hidden border border-emerald-500/20"></div>
+            <div id="header-img" class="w-9 h-9 rounded-lg overflow-hidden border border-emerald-500/20"></div>
         </header>
 
-        <main class="scroll-box">
+        <main class="flex-1 overflow-y-auto pb-24">
             <div id="tab-feed">
                 <div id="feed-list"></div>
             </div>
-            
             <div id="tab-users" class="hidden p-4 space-y-4">
                 <div id="user-list"></div>
             </div>
-
             <div id="tab-profile" class="hidden p-6">
-                <div class="flex items-center gap-5 mb-8">
-                    <img id="p-img" class="w-24 h-24 rounded-3xl border-2 border-emerald-500 object-cover p-1">
-                    <div>
-                        <h2 id="p-name" class="text-2xl font-black uppercase italic">...</h2>
-                        <div id="p-rank"></div>
-                    </div>
-                </div>
-                <div class="bg-zinc-900/50 p-6 rounded-3xl">
-                    <p id="p-bio" class="text-sm font-bold text-zinc-300 mb-4 italic">...</p>
-                    <textarea id="bio-in" class="w-full bg-black p-4 rounded-2xl text-xs h-24 border border-white/5 outline-none mb-4" placeholder="Biyografini yaz..."></textarea>
-                    <button onclick="saveBio()" class="w-full bg-emerald-500 text-black py-3 rounded-xl font-black text-xs uppercase">KAYDET</button>
-                </div>
+                <div id="profile-content"></div>
             </div>
         </main>
 
@@ -98,11 +79,11 @@
     </div>
 
     <div id="page-post" class="full-page">
-        <div class="flex justify-between items-center mb-10">
-            <button onclick="closePage('page-post')" class="text-zinc-500 font-black">İPTAL</button>
-            <button id="btn-pub" class="bg-emerald-500 text-black px-10 py-3 rounded-full font-black text-xs">YAYINLA</button>
+        <div class="flex justify-between items-center mb-8">
+            <button onclick="closePage('page-post')" class="text-zinc-500 font-bold">İPTAL</button>
+            <button id="btn-pub" class="bg-emerald-500 text-black px-8 py-2 rounded-full font-black text-xs">YAYINLA</button>
         </div>
-        <textarea id="post-in" class="w-full bg-transparent text-white text-2xl font-bold h-64 outline-none border-none" placeholder="Ne paylaşmak istersin?"></textarea>
+        <textarea id="post-in" class="w-full bg-transparent text-white text-2xl font-bold h-64 outline-none" placeholder="Ne hayır işledin?"></textarea>
     </div>
 
     <div id="page-chat" class="full-page">
@@ -111,7 +92,7 @@
             <span id="chat-name" class="font-black text-sm uppercase">SOHBET</span>
         </div>
         <div id="chat-flow" class="flex-1 overflow-y-auto flex flex-col p-2"></div>
-        <div class="flex gap-2 bg-zinc-900 p-2 rounded-2xl border border-white/5 mt-4">
+        <div class="flex gap-2 bg-zinc-900 p-2 rounded-2xl mt-4">
             <input type="text" id="chat-in" class="flex-1 bg-transparent p-3 outline-none font-bold text-sm" placeholder="Mesaj yaz...">
             <button id="btn-msg" class="bg-emerald-500 text-black px-6 rounded-xl font-black"><i class="fa-solid fa-paper-plane"></i></button>
         </div>
@@ -120,7 +101,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, doc, updateDoc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, doc, deleteDoc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const config = {
             apiKey: "AIzaSyDZO3lct-xzXAx79lbqgMP7s6WRCirWIHk",
@@ -135,8 +116,6 @@
         const auth = getAuth(app), db = getFirestore(app);
         let me = null, activeChat = null;
 
-        const isAdil = (n) => n && n.includes("Adil Hamza");
-
         window.login = () => signInWithPopup(auth, new GoogleAuthProvider());
         window.logout = () => signOut(auth).then(() => location.reload());
 
@@ -147,60 +126,57 @@
                 document.getElementById('app').style.display = 'flex';
                 document.getElementById('header-img').innerHTML = `<img src="${u.photoURL}" class="w-full h-full object-cover">`;
                 await setDoc(doc(db, "users", u.uid), { name: u.displayName, pfp: u.photoURL }, { merge: true });
-                sync(); loadFeed(); loadUsers();
+                loadFeed(); loadUsers();
             }
         });
 
-        // GÖNDERİ PAYLAŞMA FİX
+        // GÖNDERİ PAYLAŞ & SİL
         document.getElementById('btn-pub').onclick = async () => {
             const val = document.getElementById('post-in').value.trim();
             if(!val) return;
-            const b = document.getElementById('btn-pub');
-            b.disabled = true; b.innerText = "...";
-            try {
-                // HATA KORUMASI: serverTimestamp yerine Milisaniye kullanıyoruz
-                await addDoc(collection(db, "posts"), {
-                    text: val,
-                    uid: me.uid,
-                    name: me.displayName,
-                    pfp: me.photoURL,
-                    time: Date.now()
-                });
-                document.getElementById('post-in').value = "";
-                closePage('page-post');
-            } catch (e) { alert("Hata: " + e.message); }
-            b.disabled = false; b.innerText = "YAYINLA";
+            await addDoc(collection(db, "posts"), {
+                text: val, uid: me.uid, name: me.displayName, pfp: me.photoURL, time: Date.now()
+            });
+            document.getElementById('post-in').value = "";
+            closePage('page-post');
+        };
+
+        window.deletePost = async (id) => {
+            if(confirm("Bu gönderiyi silmek istediğine emin misin?")) {
+                await deleteDoc(doc(db, "posts", id));
+            }
         };
 
         function loadFeed() {
-            // "posts" koleksiyonunu dinliyoruz
             onSnapshot(query(collection(db, "posts"), orderBy("time", "desc")), snap => {
                 const list = document.getElementById('feed-list'); list.innerHTML = '';
                 snap.forEach(d => {
                     const p = d.data();
+                    const isMyPost = p.uid === me.uid;
                     list.innerHTML += `
                         <div class="post-card">
-                            <div class="flex items-center gap-3 mb-4">
+                            <div class="flex items-center gap-3 mb-3">
                                 <img src="${p.pfp}" class="w-10 h-10 rounded-xl">
-                                <div>
-                                    <span class="text-xs font-black text-emerald-400 uppercase italic">${p.name} ${isAdil(p.name) ? '<span class="badge-admin">ADMİN</span>':''}</span>
-                                </div>
+                                <span class="text-xs font-black text-emerald-400 uppercase italic">${p.name}</span>
                             </div>
                             <p class="text-sm font-bold text-zinc-100">${p.text}</p>
+                            ${isMyPost ? `<button onclick="deletePost('${d.id}')" class="delete-btn"><i class="fa-solid fa-trash"></i></button>` : ''}
                         </div>`;
                 });
             });
         }
 
-        // MESAJLAŞMA FİX (YEŞİL BALONLU)
+        // MESAJLAŞMA MOTORU (FİX)
         window.openChat = (tid, name) => {
             activeChat = [me.uid, tid].sort().join("_");
             document.getElementById('chat-name').innerText = name;
             openPage('page-chat');
+            // Mesajları çekme
             onSnapshot(query(collection(db, "messages", activeChat, "list"), orderBy("time", "asc")), snap => {
                 const box = document.getElementById('chat-flow'); box.innerHTML = '';
                 snap.forEach(d => {
-                    const m = d.data(); const isMe = m.s === me.uid;
+                    const m = d.data();
+                    const isMe = m.s === me.uid;
                     box.innerHTML += `<div class="bubble ${isMe ? 'bubble-me' : 'bubble-them'}">${m.t}</div>`;
                 });
                 box.scrollTop = box.scrollHeight;
@@ -211,19 +187,22 @@
             const i = document.getElementById('chat-in');
             const txt = i.value.trim();
             if(!txt || !activeChat) return;
-            await addDoc(collection(db, "messages", activeChat, "list"), { t: txt, s: me.uid, time: Date.now() });
+            // Mesajı gönder
+            await addDoc(collection(db, "messages", activeChat, "list"), {
+                t: txt, s: me.uid, time: Date.now()
+            });
             i.value = "";
         };
 
+        // NAV & UI
         window.toggleSidebar = () => {
-            const s = document.getElementById('sidebar');
-            const o = document.getElementById('overlay');
+            const s = document.getElementById('sidebar'), o = document.getElementById('overlay');
             s.classList.toggle('active');
             o.style.display = s.classList.contains('active') ? 'block' : 'none';
         };
 
         window.switchTab = (t, el) => {
-            document.querySelectorAll('.scroll-box > div').forEach(d => d.classList.add('hidden'));
+            document.querySelectorAll('main > div').forEach(d => d.classList.add('hidden'));
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             document.getElementById('tab-'+t).classList.remove('hidden');
             el.classList.add('active');
@@ -236,28 +215,9 @@
         window.showAppInfo = () => {
             Swal.fire({
                 title: 'HAYRA VESİLE V571',
-                html: 'Bu uygulama <b>İYİLİK TARAFINDAN TASARLANDI</b>.<br><br>Sürüm: v571 (Final Fix)',
+                html: 'Bu uygulama <b>İYİLİK TARAFINDAN TASARLANDI</b>.<br><br>Sürüm: v571 PRO',
                 icon: 'info', background: '#0a0a0b', color: '#fff', confirmButtonColor: '#10b981'
             });
-        };
-
-        async function sync() {
-            const s = await getDoc(doc(db, "users", me.uid));
-            if(s.exists()){
-                const d = s.data();
-                document.getElementById('p-img').src = d.pfp;
-                document.getElementById('p-name').innerText = d.name;
-                document.getElementById('p-bio').innerText = d.bio || "Hayra Vesile Üyesi";
-                document.getElementById('p-rank').innerHTML = isAdil(me.displayName) ? '<span class="badge-admin">SİSTEM ADMİNİ</span>' : '';
-            }
-        }
-
-        window.saveBio = async () => {
-            const v = document.getElementById('bio-in').value.trim();
-            if(!v) return;
-            await updateDoc(doc(db, "users", me.uid), { bio: v });
-            sync(); document.getElementById('bio-in').value = "";
-            Swal.fire('Başarılı', 'Biyografin güncellendi.', 'success');
         };
 
         function loadUsers() {
@@ -265,11 +225,12 @@
                 const l = document.getElementById('user-list'); l.innerHTML = '';
                 snap.forEach(d => {
                     if(d.id === me.uid) return;
-                    l.innerHTML += `<div class="flex items-center gap-4 bg-zinc-900/40 p-5 rounded-[25px] border border-white/5 active:scale-95 transition" onclick="openChat('${d.id}', '${d.data().name}')">
-                        <img src="${d.data().pfp}" class="w-12 h-12 rounded-2xl object-cover shadow-xl">
-                        <span class="font-black text-sm uppercase italic">${d.data().name}</span>
-                        <i class="fa-solid fa-message ml-auto text-emerald-500 opacity-30"></i>
-                    </div>`;
+                    l.innerHTML += `
+                        <div class="flex items-center gap-4 bg-zinc-900/40 p-4 rounded-2xl" onclick="openChat('${d.id}', '${d.data().name}')">
+                            <img src="${d.data().pfp}" class="w-11 h-11 rounded-xl object-cover">
+                            <span class="font-black text-sm uppercase">${d.data().name}</span>
+                            <i class="fa-solid fa-paper-plane ml-auto text-emerald-500 opacity-30"></i>
+                        </div>`;
                 });
             });
         }
