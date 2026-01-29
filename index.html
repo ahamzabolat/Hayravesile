@@ -3,29 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Hayra Vesile | Elite</title>
+    <title>Hayra Vesile</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;600;800&display=swap');
-        :root { --hv: #10b981; --bg: #000; --card: #0a0a0c; --border: #1a1a1c; }
-        * { margin:0; padding:0; box-sizing:border-box; font-family: 'Plus Jakarta Sans', sans-serif; scrollbar-width: none; }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+        :root { --hv: #10b981; --bg: #000; --card: #0c0c0e; --border: #1a1a1c; }
+        * { margin:0; padding:0; box-sizing:border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { background: var(--bg); color: white; overflow-x: hidden; }
-        ::-webkit-scrollbar { display: none; }
-
-        .hv-card { background: var(--card); border: 1px solid var(--border); border-radius: 35px; margin-bottom: 25px; transition: 0.3s; }
-        .trend-card { border-left: 4px solid var(--hv); }
-        
-        .nav-dock { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 450px; background: rgba(10,10,10,0.9); backdrop-filter: blur(20px); border: 1px solid var(--border); border-radius: 35px; padding: 12px; display: flex; justify-content: space-around; align-items: center; z-index: 9999; }
-        
-        .tab-btn { padding: 8px 16px; border-radius: 20px; font-size: 12px; font-weight: 800; cursor: pointer; transition: 0.3s; }
-        .tab-active { background: var(--hv); color: black; }
-
-        video { width: 100%; aspect-ratio: 9/16; object-fit: cover; border-radius: 25px; }
-        .stat-circle { background: #151518; border-radius: 20px; padding: 15px; text-align: center; border: 1px solid #222; }
+        .hv-card { background: var(--card); border: 1px solid var(--border); border-radius: 30px; margin-bottom: 20px; overflow: hidden; padding: 20px; }
+        .nav-dock { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 450px; background: rgba(10,10,10,0.95); backdrop-filter: blur(20px); border: 1px solid var(--border); border-radius: 35px; display: flex; justify-content: space-around; align-items: center; padding: 12px; z-index: 9999; }
+        .search-res { background: #111; border: 1px solid #222; border-radius: 15px; position: absolute; width: 100%; top: 60px; z-index: 1000; display: none; max-height: 300px; overflow-y: auto; }
+        video { width: 100%; aspect-ratio: 9/16; object-fit: cover; border-radius: 20px; background: #000; }
+        .admin-badge { background: #fbbf24; color: black; font-size: 8px; font-weight: 900; padding: 2px 6px; border-radius: 4px; }
     </style>
 </head>
 <body>
@@ -33,63 +26,43 @@
     <header class="sticky top-0 z-[5000] bg-black/95 border-b border-white/5 p-4">
         <div class="max-w-lg mx-auto space-y-4">
             <div class="flex justify-between items-center">
-                <div class="text-2xl font-black text-emerald-500 flex items-center gap-2">
-                    <span class="bg-emerald-500 text-black px-2 rounded-lg">HV</span>
-                </div>
-                <div class="flex gap-2" id="tabs">
-                    <div class="tab-btn tab-active" onclick="switchTab('all')">AKIŞ</div>
-                    <div class="tab-btn" onclick="switchTab('trends')">TRENDLER</div>
-                </div>
+                <div class="text-2xl font-black text-emerald-500">HAYRA VESİLE</div>
                 <div id="u-top" class="w-10 h-10 rounded-xl border border-emerald-500/20 overflow-hidden" onclick="showPage('profile')"></div>
             </div>
             <div class="relative">
                 <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-zinc-500"></i>
-                <input type="text" id="search-input" class="w-full bg-zinc-900 border border-zinc-800 rounded-2xl p-3 pl-12 text-white outline-none focus:border-emerald-500" placeholder="Hayır ara, kişi bul...">
+                <input type="text" id="main-search" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl p-3 pl-12 text-white outline-none" placeholder="Kişi ara (Ad yazmaya başla...)">
+                <div id="search-results" class="search-res"></div>
             </div>
         </div>
     </header>
 
     <main class="max-w-lg mx-auto pb-40 px-3 pt-6">
-        <div id="feed-container"></div>
-        
-        <div id="view-profile" class="hidden">
-            <div class="text-center py-6">
-                <img id="p-img" class="w-24 h-24 mx-auto rounded-[35px] border-4 border-emerald-500 p-1 mb-4 object-cover">
-                <h2 id="p-name" class="text-2xl font-black">...</h2>
-                
-                <div class="grid grid-cols-3 gap-3 mt-8">
-                    <div class="stat-circle"><p id="s-views" class="text-xl font-black">0</p><p class="text-[9px] opacity-40">İZLENME</p></div>
-                    <div class="stat-circle"><p id="s-likes" class="text-xl font-black">0</p><p class="text-[9px] opacity-40">BEĞENİ</p></div>
-                    <div class="stat-circle"><p id="s-posts" class="text-xl font-black">0</p><p class="text-[9px] opacity-40">POST</p></div>
-                </div>
-
-                <div class="mt-8 space-y-2">
-                    <input type="text" id="bio-in" class="w-full bg-zinc-900 p-3 rounded-xl outline-none text-sm" placeholder="Biyografi ekle...">
-                    <input type="text" id="link-in" class="w-full bg-zinc-900 p-3 rounded-xl outline-none text-sm" placeholder="Link ekle (instagram.com/...)">
-                    <button onclick="updateProfile()" class="w-full bg-emerald-500 text-black p-3 rounded-xl font-black">PROFİLİ GÜNCELLE</button>
-                </div>
-            </div>
-            <div id="p-grid" class="grid grid-cols-2 gap-2 mt-6"></div>
+        <div id="feed"></div>
+        <div id="view-profile" class="hidden text-center py-6">
+            <img id="p-img" class="w-24 h-24 mx-auto rounded-[35px] border-4 border-emerald-500 p-1 mb-4">
+            <h2 id="p-name" class="text-2xl font-black">...</h2>
+            <div id="p-grid" class="grid grid-cols-2 gap-2 mt-10"></div>
         </div>
     </main>
 
-    <div id="modal-post" class="fixed inset-0 bg-black z-[10000] hidden flex-col p-6">
-        <div class="flex justify-between items-center mb-8">
-            <button onclick="closeModal()" class="text-zinc-500 font-bold">Vazgeç</button>
-            <span id="m-title" class="font-black text-emerald-500 text-xl">PAYLAŞ</span>
-            <button id="m-btn" class="bg-emerald-500 text-black px-8 py-2 rounded-2xl font-black">YAYINLA</button>
+    <div id="modal-editor" class="fixed inset-0 bg-black z-[10000] hidden flex-col p-6">
+        <div class="flex justify-between items-center mb-10">
+            <button onclick="closeModal()" class="text-zinc-500 font-bold">Kapat</button>
+            <span id="m-title" class="font-black text-emerald-500">PAYLAŞ</span>
+            <button id="m-save" class="bg-emerald-500 text-black px-8 py-2 rounded-xl font-black">YAYINLA</button>
         </div>
-        <textarea id="m-text" class="w-full bg-transparent text-3xl font-bold outline-none h-40" placeholder="Hayra vesile bir söz..."></textarea>
-        <div id="m-ui" class="border-4 border-dashed border-zinc-900 rounded-[40px] p-12 text-center" onclick="document.getElementById('m-video').click()">
-            <i class="fa-solid fa-clapperboard text-5xl text-emerald-500 mb-4"></i>
-            <p id="m-label" class="text-zinc-600 font-black">VİDEO SEÇ (MP4)</p>
-            <input type="file" id="m-video" class="hidden" accept="video/mp4" onchange="document.getElementById('m-label').innerText='Hazır: '+this.files[0].name">
+        <textarea id="m-text" class="w-full bg-transparent text-2xl font-bold outline-none h-40" placeholder="Hayra vesile olsun..."></textarea>
+        <div id="m-media-box" class="border-2 border-dashed border-zinc-800 rounded-3xl p-10 text-center" onclick="document.getElementById('m-file').click()">
+            <i class="fa-solid fa-video text-4xl text-emerald-500 mb-2"></i>
+            <p id="m-label" class="text-zinc-500">MP4 Ekle</p>
+            <input type="file" id="m-file" class="hidden" accept="video/mp4" onchange="document.getElementById('m-label').innerText=this.files[0].name">
         </div>
     </div>
 
     <nav class="nav-dock">
         <i class="fa-solid fa-house text-2xl text-emerald-500" onclick="showPage('feed')"></i>
-        <div class="w-14 h-14 bg-emerald-500 text-black rounded-2xl flex items-center justify-center text-2xl transform -translate-y-6 border-4 border-black" onclick="openPost()">
+        <div class="w-14 h-14 bg-emerald-500 text-black rounded-2xl flex items-center justify-center text-2xl transform -translate-y-6 border-4 border-black shadow-lg shadow-emerald-500/20" onclick="openNewPost()">
             <i class="fa-solid fa-plus"></i>
         </div>
         <i class="fa-solid fa-user text-2xl text-zinc-600" onclick="showPage('profile')"></i>
@@ -98,171 +71,171 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, updateDoc, deleteDoc, arrayUnion, arrayRemove, increment, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, updateDoc, deleteDoc, arrayUnion, arrayRemove, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
-        const firebaseConfig = {
+        const fb = initializeApp({
             apiKey: "AIzaSyDZO3lct-xzXAx79lbqgMP7s6WRCirWIHk",
             authDomain: "hayravesile.firebaseapp.com",
             projectId: "hayravesile",
             storageBucket: "hayravesile.appspot.com",
             messagingSenderId: "980073667334",
             appId: "1:980073667334:web:1f6260f0abf3bcc820dc87"
-        };
+        });
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const storage = getStorage(app);
-
-        let user = null;
-        let currentMode = 'all'; // all or trends
+        const auth = getAuth(fb), db = getFirestore(fb), storage = getStorage(fb);
+        let user = null, isAdmin = false;
 
         onAuthStateChanged(auth, async u => {
             if(u) {
                 user = u;
+                isAdmin = u.displayName === "Adil Hamza";
                 document.getElementById('u-top').innerHTML = `<img src="${u.photoURL}" class="w-full h-full object-cover">`;
-                await syncUser(u);
-                runApp();
+                await setDoc(doc(db, "users", u.uid), { name: u.displayName, avatar: u.photoURL, banned: false }, { merge: true });
+                checkBan();
+                loadData();
             } else { signInWithPopup(auth, new GoogleAuthProvider()); }
         });
 
-        async function syncUser(u) {
-            const r = doc(db, "users", u.uid);
-            const s = await getDoc(r);
-            if(!s.exists()) await setDoc(r, { name: u.displayName, bio: "", link: "", avatar: u.photoURL });
-            else {
-                document.getElementById('p-img').src = s.data().avatar;
-                document.getElementById('p-name').innerText = s.data().name;
-                document.getElementById('bio-in').value = s.data().bio || "";
-                document.getElementById('link-in').value = s.data().link || "";
-            }
+        async function checkBan() {
+            const s = await getDoc(doc(db, "users", user.uid));
+            if(s.data()?.banned) { document.body.innerHTML = "<h1 class='text-center mt-20 text-red-500 font-black'>HESABINIZ ENGELLENDİ!</h1>"; }
         }
 
         window.showPage = (p) => {
-            document.getElementById('feed-container').classList.toggle('hidden', p !== 'feed');
+            document.getElementById('feed').classList.toggle('hidden', p !== 'feed');
             document.getElementById('view-profile').classList.toggle('hidden', p !== 'profile');
         };
 
-        window.switchTab = (m) => {
-            currentMode = m;
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('tab-active'));
-            event.target.classList.add('tab-active');
-            runApp();
-        };
-
-        window.openPost = () => {
+        window.openNewPost = () => {
             document.getElementById('m-title').innerText = "YENİ PAYLAŞIM";
             document.getElementById('m-text').value = "";
-            document.getElementById('m-ui').classList.remove('hidden');
-            document.getElementById('m-btn').onclick = publish;
-            document.getElementById('modal-post').classList.remove('hidden');
+            document.getElementById('m-media-box').classList.remove('hidden');
+            document.getElementById('m-save').onclick = publish;
+            document.getElementById('modal-editor').classList.remove('hidden');
         };
 
         async function publish() {
-            const btn = document.getElementById('m-btn');
-            const file = document.getElementById('m-video').files[0];
+            const btn = document.getElementById('m-save');
+            const file = document.getElementById('m-file').files[0];
             btn.disabled = true;
 
             let vUrl = null;
             if(file) {
-                const sRef = ref(storage, `elite/${Date.now()}`);
+                const sRef = ref(storage, `hv_posts/${Date.now()}`);
                 await uploadBytes(sRef, file);
                 vUrl = await getDownloadURL(sRef);
             }
 
-            await addDoc(collection(db, "posts"), {
+            await addDoc(collection(db, "hv_posts"), {
                 text: document.getElementById('m-text').value,
                 video: vUrl, uid: user.uid, user: user.displayName,
-                avatar: user.photoURL, likes: [], views: 0, 
-                timestamp: Date.now(), date: serverTimestamp()
+                avatar: user.photoURL, likes: [], comments: [], date: serverTimestamp()
             });
             location.reload();
         }
 
-        function runApp() {
-            const qry = currentMode === 'trends' 
-                ? query(collection(db, "posts"), orderBy("views", "desc"))
-                : query(collection(db, "posts"), orderBy("date", "desc"));
-
-            onSnapshot(qry, snap => {
-                const feed = document.getElementById('feed-container');
-                const grid = document.getElementById('p-grid');
-                let v = 0, l = 0, pCount = 0;
+        function loadData() {
+            // Feed
+            onSnapshot(query(collection(db, "hv_posts"), orderBy("date", "desc")), snap => {
+                const feed = document.getElementById('feed'), grid = document.getElementById('p-grid');
                 feed.innerHTML = ''; grid.innerHTML = '';
-
                 snap.forEach(d => {
-                    const p = d.data();
-                    const pid = d.id;
+                    const p = d.data(), pid = d.id;
+                    const isOwner = p.uid === user.uid;
                     const isLiked = p.likes?.includes(user.uid);
-                    
-                    if(currentMode === 'trends' && (Date.now() - p.timestamp > 604800000)) return; // 7 günden eski trendi gösterme
 
-                    const html = `
-                        <div class="hv-card p-6 ${currentMode === 'trends' ? 'trend-card' : ''}" onmouseover="track('${pid}')">
-                            <div class="flex justify-between items-center mb-5">
+                    feed.innerHTML += `
+                        <div class="hv-card">
+                            <div class="flex justify-between items-center mb-4">
                                 <div class="flex items-center gap-3">
-                                    <img src="${p.avatar}" class="w-10 h-10 rounded-full border border-emerald-500/20">
-                                    <span class="font-black text-xs uppercase tracking-tighter">${p.user}</span>
+                                    <img src="${p.avatar}" class="w-9 h-9 rounded-full">
+                                    <span class="font-black text-xs uppercase">${p.user} ${p.user === 'Adil Hamza' ? '<span class="admin-badge">ADMIN</span>' : ''}</span>
                                 </div>
-                                <div class="text-[10px] font-black bg-zinc-900 px-3 py-1 rounded-full text-zinc-500">
-                                    <i class="fa-solid fa-eye mr-1"></i> ${p.views || 0}
+                                <div class="flex gap-4">
+                                    ${isOwner ? `<i class="fa-solid fa-pen text-zinc-600" onclick="editPost('${pid}', '${p.text}')"></i>` : ''}
+                                    ${isOwner || isAdmin ? `<i class="fa-solid fa-trash text-red-900" onclick="deletePost('${pid}')"></i>` : ''}
+                                    ${isAdmin && !isOwner ? `<i class="fa-solid fa-user-slash text-red-500" onclick="banUser('${p.uid}')"></i>` : ''}
                                 </div>
                             </div>
-                            ${p.text ? `<p class="text-xl font-bold mb-4 leading-snug">${p.text}</p>` : ''}
+                            ${p.text ? `<p class="text-lg font-bold mb-4">${p.text}</p>` : ''}
                             ${p.video ? `<video src="${p.video}" loop muted autoplay playsinline></video>` : ''}
-                            <div class="flex gap-10 mt-6 pt-6 border-t border-white/5">
-                                <div class="flex items-center gap-2" onclick="toggleLike('${pid}', ${JSON.stringify(p.likes)})">
-                                    <i class="fa-solid fa-heart text-2xl ${isLiked ? 'text-red-500' : 'text-zinc-800'}"></i>
+                            <div class="flex gap-8 mt-5 pt-5 border-t border-white/5">
+                                <div class="flex items-center gap-2" onclick="handleLike('${pid}', ${JSON.stringify(p.likes)})">
+                                    <i class="fa-solid fa-heart text-2xl ${isLiked ? 'text-red-500 animate-pulse' : 'text-zinc-800'}"></i>
                                     <span class="font-black text-sm">${p.likes?.length || 0}</span>
                                 </div>
-                                <i class="fa-solid fa-comment text-2xl text-zinc-800" onclick="alert('Yorumlar yakında!')"></i>
-                                ${p.uid === user.uid || user.displayName === "Adil Hamza" ? `<i class="fa-solid fa-trash text-xl text-red-900 ml-auto" onclick="deletePost('${pid}')"></i>` : ''}
+                                <div class="flex items-center gap-2" onclick="openComments('${pid}')">
+                                    <i class="fa-solid fa-comment text-2xl text-zinc-800"></i>
+                                    <span class="font-black text-sm">${p.comments?.length || 0}</span>
+                                </div>
                             </div>
                         </div>`;
-                    feed.innerHTML += html;
-
-                    if(p.uid === user.uid) {
-                        v += p.views || 0; l += p.likes?.length || 0; pCount++;
-                        grid.innerHTML += `<div class="bg-zinc-900 aspect-square rounded-3xl overflow-hidden border border-white/5" onclick="editPost('${pid}', '${p.text}')">
-                            ${p.video ? `<video src="${p.video}" class="w-full h-full object-cover"></video>` : `<p class="p-4 text-[10px]">${p.text}</p>`}
+                    if(isOwner) {
+                        grid.innerHTML += `<div class="bg-zinc-900 aspect-square rounded-2xl overflow-hidden" onclick="editPost('${pid}', '${p.text}')">
+                            ${p.video ? `<video src="${p.video}" class="w-full h-full object-cover"></video>` : `<p class="p-4 text-[9px]">${p.text}</p>`}
                         </div>`;
                     }
                 });
-                document.getElementById('s-views').innerText = v;
-                document.getElementById('s-likes').innerText = l;
-                document.getElementById('s-posts').innerText = pCount;
             });
+
+            // Akıllı Arama
+            document.getElementById('main-search').oninput = async (e) => {
+                const val = e.target.value.toLowerCase();
+                const resBox = document.getElementById('search-results');
+                if(val.length < 2) { resBox.style.display = 'none'; return; }
+                
+                const uSnap = await getDoc(collection(db, "users")); // Not optimal but works for small/mid size
+                // Alternatif: Herkesin ismini içeren bir HV_SEARCH koleksiyonu tutulabilir.
+                // Basitlik için tüm postlardan kullanıcıları çekiyoruz:
+                onSnapshot(collection(db, "users"), s => {
+                    resBox.innerHTML = '';
+                    s.forEach(uDoc => {
+                        const u = uDoc.data();
+                        if(u.name.toLowerCase().includes(val)) {
+                            resBox.style.display = 'block';
+                            resBox.innerHTML += `<div class="p-4 flex items-center gap-3 border-b border-white/5 cursor-pointer hover:bg-zinc-800" onclick="viewUser('${uDoc.id}')">
+                                <img src="${u.avatar}" class="w-8 h-8 rounded-full">
+                                <span class="font-bold text-sm">${u.name}</span>
+                            </div>`;
+                        }
+                    });
+                });
+            };
         }
 
-        window.track = async (id) => {
-            const r = doc(db, "posts", id);
-            await updateDoc(r, { views: increment(1) });
+        window.handleLike = async (id, likes) => {
+            const r = doc(db, "hv_posts", id);
+            likes.includes(user.uid) ? await updateDoc(r, { likes: arrayRemove(user.uid) }) : await updateDoc(r, { likes: arrayUnion(user.uid) });
         };
 
-        window.toggleLike = async (id, likes) => {
-            const r = doc(db, "posts", id);
-            // BEĞENİ GERİ ALMA SİSTEMİ %100 ÇALIŞIR:
-            if(likes.includes(user.uid)) {
-                await updateDoc(r, { likes: arrayRemove(user.uid) });
-            } else {
-                await updateDoc(r, { likes: arrayUnion(user.uid) });
-                confetti({ particleCount: 50, spread: 60, origin: { y: 0.8 }, colors: ['#ef4444'] });
+        window.openComments = async (id) => {
+            const { value: text } = await Swal.fire({ title: 'Yorum Yaz', input: 'text', confirmButtonText: 'Gönder', confirmButtonColor: '#10b981' });
+            if(text) await updateDoc(doc(db, "hv_posts", id), { comments: arrayUnion({ user: user.displayName, text, date: Date.now() }) });
+        };
+
+        window.deletePost = async (id) => { if(confirm('Bu gönderi silinsin mi?')) await deleteDoc(doc(db, "hv_posts", id)); };
+
+        window.editPost = (id, old) => {
+            document.getElementById('m-title').innerText = "DÜZENLE";
+            document.getElementById('m-text').value = old;
+            document.getElementById('m-media-box').classList.add('hidden');
+            document.getElementById('m-save').onclick = async () => {
+                await updateDoc(doc(db, "hv_posts", id), { text: document.getElementById('m-text').value });
+                closeModal();
+            };
+            document.getElementById('modal-editor').classList.remove('hidden');
+        };
+
+        window.banUser = async (uid) => {
+            if(confirm('BU KULLANICIYI ENGELLEMEK İSTİYOR MUSUN?')) {
+                await updateDoc(doc(db, "users", uid), { banned: true });
+                alert('Kullanıcı banlandı.');
             }
         };
 
-        window.deletePost = async (id) => {
-            if(confirm('Silinsin mi?')) await deleteDoc(doc(db, "posts", id));
-        };
-
-        window.updateProfile = async () => {
-            const bio = document.getElementById('bio-in').value;
-            const link = document.getElementById('link-in').value;
-            await updateDoc(doc(db, "users", user.uid), { bio, link });
-            alert('Profil güncellendi!');
-        };
-
-        window.closeModal = () => document.getElementById('modal-post').classList.add('hidden');
+        window.closeModal = () => document.getElementById('modal-editor').classList.add('hidden');
+        window.viewUser = (uid) => { alert('Kullanıcı Profili Özelliği Hazırlanıyor: ' + uid); };
 
     </script>
 </body>
