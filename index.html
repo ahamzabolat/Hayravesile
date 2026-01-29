@@ -3,76 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Hayra Vesile | Master Fix</title>
-    
+    <title>Hayra Vesile | Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
         :root { --hv: #10b981; --bg: #000; --card: #0a0a0b; --border: #161618; }
         * { margin:0; padding:0; box-sizing:border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { background: var(--bg); color: white; overflow: hidden; height: 100vh; }
-        
-        #auth-screen { position: fixed; inset: 0; background: #000; z-index: 20000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .main-scroll { height: calc(100vh - 140px); overflow-y: auto; }
         .hv-card { background: var(--card); border-bottom: 1px solid var(--border); padding: 15px; }
-        .nav-dock { position: fixed; bottom: 0; left: 0; width: 100%; background: #000; border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; padding: 12px; z-index: 9999; }
-        
-        .full-page { position: fixed; inset: 0; background: #000; z-index: 10000; display: none; flex-direction: column; padding: 20px; }
-        .badge-admin { color: #fbbf24; font-size: 10px; font-weight: 900; border: 1px solid #fbbf24; padding: 2px 6px; border-radius: 4px; display: inline-block; }
-        .badge-user { color: #666; font-size: 10px; font-weight: 900; border: 1px solid #333; padding: 2px 6px; border-radius: 4px; display: inline-block; }
-        
-        input, textarea { background: #111 !important; border: 1px solid #222 !important; color: white !important; outline: none; width: 100%; }
+        .nav-dock { position: fixed; bottom: 0; left: 0; width: 100%; background: #000; border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; padding: 15px; z-index: 9000; }
+        .full-page { position: fixed; inset: 0; background: #000; z-index: 10000; display: none; flex-direction: column; padding: 20px; overflow-y: auto; }
+        .badge-admin { color: #fbbf24; font-size: 10px; font-weight: 900; border: 1px solid #fbbf24; padding: 2px 6px; border-radius: 4px; background: rgba(251, 191, 36, 0.1); }
+        .badge-user { color: #666; font-size: 10px; font-weight: 900; border: 1px solid #333; padding: 2px 6px; border-radius: 4px; }
     </style>
 </head>
 <body>
 
-    <div id="auth-screen">
-        <h1 class="text-3xl font-black text-emerald-500 mb-6 uppercase">Hayra Vesile</h1>
-        <button onclick="login()" class="bg-white text-black px-8 py-3 rounded-2xl font-black flex items-center gap-3">
-            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/action/google.svg" class="w-5"> Google ile Başla
+    <div id="auth-screen" class="fixed inset-0 bg-black z-[20000] flex flex-col items-center justify-center">
+        <h1 class="text-4xl font-black text-emerald-500 mb-8 uppercase italic">Hayra Vesile</h1>
+        <button onclick="login()" class="bg-white text-black px-10 py-4 rounded-2xl font-black flex items-center gap-3">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/action/google.svg" class="w-6"> Google ile Giriş Yap
         </button>
     </div>
 
     <div id="app-content" style="display: none;">
         <header class="p-4 border-b border-white/5 flex justify-between items-center bg-black">
-            <h1 class="text-lg font-black text-emerald-500 uppercase">HAYRA VESİLE</h1>
-            <div id="u-top" class="w-8 h-8 rounded-full border border-emerald-500/30 overflow-hidden" onclick="showTab('profile')"></div>
+            <h1 class="text-xl font-black text-emerald-500 uppercase">HAYRA VESİLE</h1>
+            <div id="u-top" class="w-9 h-9 rounded-full border border-emerald-500/30 overflow-hidden" onclick="showTab('profile')"></div>
         </header>
 
         <main class="main-scroll">
             <div id="tab-feed" class="tab-page"><div id="feed-items"></div></div>
             <div id="tab-users" class="tab-page hidden p-4">
-                <input type="text" id="user-search" class="p-3 rounded-xl mb-4" placeholder="Kullanıcı ara..." oninput="filterUsers()">
+                <input type="text" id="user-search" class="w-full p-4 bg-zinc-900 border border-white/5 rounded-2xl mb-4 outline-none" placeholder="Kullanıcı ara..." oninput="filterUsers()">
                 <div id="user-list" class="space-y-2"></div>
             </div>
             <div id="tab-profile" class="tab-page hidden p-6 text-center">
                 <img id="p-img" class="w-24 h-24 rounded-3xl mx-auto border-2 border-emerald-500 p-1 mb-4 object-cover">
                 <h2 id="p-name" class="font-black text-2xl uppercase">...</h2>
                 <div id="p-rank" class="mb-6"></div>
-                <input type="text" id="b-in" class="p-3 rounded-xl text-sm mb-4" placeholder="Biyografin...">
-                <button onclick="updateProfile()" class="bg-emerald-500 text-black w-full font-black py-3 rounded-xl">KAYDET</button>
+                <button onclick="logout()" class="bg-zinc-900 text-red-500 w-full font-bold py-3 rounded-xl mt-10 border border-red-500/20">ÇIKIŞ YAP</button>
             </div>
         </main>
 
         <nav class="nav-dock">
-            <i class="fa-solid fa-house" onclick="showTab('feed')"></i>
-            <div class="w-12 h-12 bg-emerald-500 text-black rounded-2xl flex items-center justify-center" onclick="openFullPage('page-post')">
+            <i class="fa-solid fa-house text-xl" onclick="showTab('feed')"></i>
+            <div class="w-12 h-12 bg-emerald-500 text-black rounded-2xl flex items-center justify-center shadow-lg" onclick="openFullPage('page-post')">
                 <i class="fa-solid fa-plus text-2xl"></i>
             </div>
-            <i class="fa-solid fa-message" onclick="showTab('users')"></i>
-            <i class="fa-solid fa-user" onclick="showTab('profile')"></i>
+            <i class="fa-solid fa-message text-xl" onclick="showTab('users')"></i>
+            <i class="fa-solid fa-user text-xl" onclick="showTab('profile')"></i>
         </nav>
     </div>
 
     <div id="page-post" class="full-page">
-        <div class="flex justify-between items-center mb-6">
-            <button onclick="closeFullPage('page-post')" class="text-zinc-500">İptal</button>
-            <button id="btn-publish" class="bg-emerald-500 text-black px-6 py-2 rounded-full font-black text-xs">YAYINLA</button>
+        <div class="flex justify-between items-center mb-10">
+            <button onclick="closeFullPage('page-post')" class="text-zinc-500 font-bold text-sm">VAZGEÇ</button>
+            <button id="btn-publish" class="bg-emerald-500 text-black px-8 py-2 rounded-full font-black text-xs uppercase">Paylaş</button>
         </div>
-        <textarea id="post-input" class="p-4 rounded-3xl text-lg font-bold h-40" placeholder="Bir hayra vesile ol..."></textarea>
+        <textarea id="post-input" class="w-full bg-transparent text-white text-2xl font-bold h-64 outline-none border-none" placeholder="Ne anlatmak istersin?"></textarea>
     </div>
 
     <div id="page-chat" class="full-page">
@@ -80,16 +72,16 @@
             <i class="fa-solid fa-chevron-left text-xl" onclick="closeFullPage('page-chat')"></i>
             <span id="chat-name" class="font-black text-sm uppercase">Sohbet</span>
         </div>
-        <div id="chat-messages" class="flex-1 overflow-y-auto space-y-4 p-2"></div>
+        <div id="chat-messages" class="flex-1 overflow-y-auto space-y-4"></div>
         <div class="flex gap-2 mt-4 bg-zinc-900 p-2 rounded-2xl">
-            <input type="text" id="chat-input" class="flex-1 bg-transparent p-2 text-sm" placeholder="Mesaj yaz...">
-            <button id="btn-send-msg" class="bg-emerald-500 text-black px-4 py-2 rounded-xl font-bold">GÖNDER</button>
+            <input type="text" id="chat-input" class="flex-1 bg-transparent p-2 outline-none" placeholder="Mesaj yaz...">
+            <button id="btn-send-msg" class="bg-emerald-500 text-black px-6 py-2 rounded-xl font-black">GÖNDER</button>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, updateDoc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const config = {
@@ -105,10 +97,14 @@
         const auth = getAuth(app), db = getFirestore(app);
         let me = null, activeChatId = null;
 
-        // ADMİN KONTROLÜ (SADECE SEN)
-        const isMaster = (name) => name === "Adil Hamza";
+        // KRİTİK: ADMIN KONTROLÜ
+        const checkIsAdmin = (u) => {
+            // İster isme bak, ister UID'ye (Adil Hamza ismi geçiyorsa Admin yap)
+            return u.displayName && u.displayName.includes("Adil Hamza");
+        };
 
         window.login = () => signInWithPopup(auth, new GoogleAuthProvider());
+        window.logout = () => signOut(auth).then(() => location.reload());
 
         onAuthStateChanged(auth, async u => {
             if(u) {
@@ -124,14 +120,7 @@
             }
         });
 
-        window.showTab = (t) => {
-            document.querySelectorAll('.tab-page').forEach(p => p.classList.add('hidden'));
-            document.getElementById('tab-'+t).classList.remove('hidden');
-        };
-        window.openFullPage = (id) => document.getElementById(id).style.display = 'flex';
-        window.closeFullPage = (id) => document.getElementById(id).style.display = 'none';
-
-        // YAYINLA - HATASIZ
+        // YAYINLA
         document.getElementById('btn-publish').onclick = async () => {
             const txt = document.getElementById('post-input').value.trim();
             if(!txt) return;
@@ -139,14 +128,12 @@
             btn.disabled = true; btn.innerText = "...";
             try {
                 await addDoc(collection(db, "hv_posts"), {
-                    text: txt, uid: me.uid, name: me.displayName, pfp: me.photoURL,
-                    date: serverTimestamp()
+                    text: txt, uid: me.uid, name: me.displayName, pfp: me.photoURL, date: serverTimestamp()
                 });
                 document.getElementById('post-input').value = "";
                 closeFullPage('page-post');
-                showTab('feed');
             } catch (e) { console.error(e); }
-            btn.disabled = false; btn.innerText = "YAYINLA";
+            btn.disabled = false; btn.innerText = "PAYLAŞ";
         };
 
         function loadFeed() {
@@ -154,14 +141,14 @@
                 const feed = document.getElementById('feed-items'); feed.innerHTML = '';
                 snap.forEach(d => {
                     const p = d.data();
-                    const admin = isMaster(p.name);
+                    const isAdmin = p.name && p.name.includes("Adil Hamza");
                     feed.innerHTML += `
                         <div class="hv-card">
                             <div class="flex items-start gap-3">
-                                <img src="${p.pfp}" class="w-10 h-10 rounded-full">
+                                <img src="${p.pfp}" class="w-10 h-10 rounded-full object-cover">
                                 <div class="flex-1">
                                     <span class="text-[10px] font-black text-emerald-500 uppercase">${p.name}</span>
-                                    <div><span class="${admin ? 'badge-admin' : 'badge-user'}">${admin ? 'ADMIN' : 'ÜYE'}</span></div>
+                                    <div><span class="${isAdmin ? 'badge-admin' : 'badge-user'}">${isAdmin ? 'ADMIN' : 'ÜYE'}</span></div>
                                     <p class="text-sm font-bold mt-2 text-zinc-200">${p.text}</p>
                                 </div>
                             </div>
@@ -170,30 +157,6 @@
             });
         }
 
-        window.filterUsers = () => {
-            const val = document.getElementById('user-search').value.toLowerCase();
-            document.querySelectorAll('.user-item').forEach(it => {
-                it.style.display = it.getAttribute('data-name').toLowerCase().includes(val) ? 'flex' : 'none';
-            });
-        };
-
-        function loadUsers() {
-            onSnapshot(collection(db, "users"), snap => {
-                const list = document.getElementById('user-list'); list.innerHTML = '';
-                snap.forEach(d => {
-                    if(d.id === me.uid) return;
-                    const u = d.data();
-                    list.innerHTML += `
-                        <div class="user-item flex items-center gap-4 bg-zinc-900/50 p-4 rounded-2xl border border-white/5" data-name="${u.name}" onclick="startChat('${d.id}', '${u.name}', '${u.pfp}')">
-                            <img src="${u.pfp}" class="w-10 h-10 rounded-full">
-                            <div class="flex-1 font-black text-sm">${u.name}</div>
-                            <i class="fa-solid fa-paper-plane text-emerald-500"></i>
-                        </div>`;
-                });
-            });
-        }
-
-        // MESAJ GÖNDERME - TAMİR EDİLDİ
         window.startChat = (tid, name, pfp) => {
             activeChatId = [me.uid, tid].sort().join("_");
             document.getElementById('chat-name').innerText = name;
@@ -221,20 +184,35 @@
 
         async function syncProfile() {
             const s = await getDoc(doc(db, "users", me.uid));
-            if(s.exists()) {
+            if(s.exists()){
                 const d = s.data();
+                const isAdmin = checkIsAdmin(me);
                 document.getElementById('p-img').src = d.pfp;
                 document.getElementById('p-name').innerText = d.name;
-                document.getElementById('p-rank').innerHTML = isMaster(d.name) ? '<span class="badge-admin">ADMİN</span>' : '<span class="badge-user">ÜYE</span>';
-                document.getElementById('b-in').value = d.bio || "";
+                document.getElementById('p-rank').innerHTML = isAdmin ? '<span class="badge-admin">SİSTEM YÖNETİCİSİ</span>' : '<span class="badge-user">ÜYE</span>';
             }
         }
 
-        window.updateProfile = async () => {
-            await updateDoc(doc(db, "users", me.uid), { bio: document.getElementById('b-in').value });
-            syncProfile();
-            Swal.fire('Başarılı', 'Güncellendi!', 'success');
+        function loadUsers() {
+            onSnapshot(collection(db, "users"), snap => {
+                const list = document.getElementById('user-list'); list.innerHTML = '';
+                snap.forEach(d => {
+                    if(d.id === me.uid) return;
+                    list.innerHTML += `<div class="flex items-center gap-4 bg-zinc-900/40 p-4 rounded-2xl border border-white/5" onclick="startChat('${d.id}', '${d.data().name}', '${d.data().pfp}')">
+                        <img src="${d.data().pfp}" class="w-10 h-10 rounded-full">
+                        <div class="flex-1 font-black text-sm">${d.data().name}</div>
+                        <i class="fa-solid fa-paper-plane text-emerald-500 opacity-40"></i>
+                    </div>`;
+                });
+            });
+        }
+
+        window.showTab = (t) => {
+            document.querySelectorAll('.tab-page').forEach(p => p.classList.add('hidden'));
+            document.getElementById('tab-'+t).classList.remove('hidden');
         };
+        window.openFullPage = (id) => document.getElementById(id).style.display = 'flex';
+        window.closeFullPage = (id) => document.getElementById(id).style.display = 'none';
 
     </script>
 </body>
