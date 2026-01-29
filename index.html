@@ -2,8 +2,8 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Hayra Vesile | Elite</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hayra Vesile | Ultra</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -13,56 +13,92 @@
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
         :root { --hv: #10b981; --bg: #000; --card: #0c0c0e; --border: #1a1a1c; }
         * { margin:0; padding:0; box-sizing:border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background: var(--bg); color: white; overflow-x: hidden; }
-        .hv-card { background: var(--card); border: 1px solid var(--border); border-radius: 30px; margin-bottom: 20px; padding: 20px; }
-        .nav-dock { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 450px; background: rgba(10,10,10,0.95); backdrop-filter: blur(20px); border: 1px solid var(--border); border-radius: 35px; display: flex; justify-content: space-around; align-items: center; padding: 12px; z-index: 9999; }
-        .tab-btn { padding: 8px 16px; border-radius: 20px; font-size: 12px; font-weight: 800; cursor: pointer; color: #555; }
-        .tab-active { background: var(--hv); color: black; }
-        .comment-area { background: #151518; border-radius: 20px; padding: 10px; margin-top: 10px; font-size: 12px; }
+        body { background: var(--bg); color: white; }
+        
+        /* GENİŞ TASARIM */
+        .container-max { max-width: 800px; margin: 0 auto; padding: 0 20px; }
+        
+        .hv-card { background: var(--card); border: 1px solid var(--border); border-radius: 30px; margin-bottom: 25px; padding: 25px; transition: 0.3s; }
+        .hv-card:hover { border-color: #333; }
+        
+        .nav-dock { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 500px; background: rgba(10,10,10,0.95); backdrop-filter: blur(20px); border: 1px solid var(--border); border-radius: 40px; display: flex; justify-content: space-around; align-items: center; padding: 15px; z-index: 9999; }
+        
+        .profile-header { background: linear-gradient(to bottom, #111, #000); border-radius: 40px; padding: 40px 20px; border: 1px solid var(--border); }
+        .input-dark { background: #151518; border: 1px solid #222; border-radius: 15px; padding: 12px; color: white; width: 100%; outline: none; }
+        .input-dark:focus { border-color: var(--hv); }
+        
+        video, img.post-img { width: 100%; border-radius: 20px; margin-top: 15px; border: 1px solid #1a1a1c; }
+        .btn-hv { background: var(--hv); color: black; font-weight: 800; padding: 10px 20px; border-radius: 15px; transition: 0.2s; }
+        .btn-hv:active { transform: scale(0.95); }
     </style>
 </head>
 <body>
 
-    <header class="sticky top-0 z-[5000] bg-black/95 border-b border-white/5 p-4">
-        <div class="max-w-lg mx-auto flex justify-between items-center">
-            <div class="text-2xl font-black text-emerald-500">HAYRA VESİLE</div>
-            <div id="u-top" class="w-10 h-10 rounded-xl border border-emerald-500/20 overflow-hidden" onclick="showTab('profile')"></div>
+    <header class="sticky top-0 z-[5000] bg-black/95 border-b border-white/5 p-5">
+        <div class="container-max flex justify-between items-center">
+            <div class="text-2xl font-black text-emerald-500 tracking-tighter" onclick="showTab('feed')">HAYRA VESİLE</div>
+            <div id="u-top" class="w-11 h-11 rounded-2xl border border-emerald-500/30 overflow-hidden cursor-pointer" onclick="showTab('profile')"></div>
         </div>
     </header>
 
-    <main class="max-w-lg mx-auto pb-40 px-3 pt-6">
+    <main class="container-max pb-40 pt-8">
         <div id="tab-feed" class="tab-page">
             <div id="feed-items"></div>
         </div>
 
-        <div id="tab-profile" class="tab-page hidden text-center">
-            <img id="p-img" class="w-24 h-24 mx-auto rounded-[35px] border-4 border-emerald-500 p-1 mb-4">
-            <h2 id="p-name" class="text-2xl font-black mb-6">...</h2>
-            <div class="grid grid-cols-3 gap-3 mb-10">
-                <div class="bg-zinc-900 p-4 rounded-2xl"><p id="stat-posts" class="text-xl font-black">0</p><p class="text-[9px] opacity-40">POST</p></div>
-                <div class="bg-zinc-900 p-4 rounded-2xl"><p id="stat-likes" class="text-xl font-black">0</p><p class="text-[9px] opacity-40">BEĞENİ</p></div>
-                <div class="bg-zinc-900 p-4 rounded-2xl"><p id="stat-friends" class="text-xl font-black">0</p><p class="text-[9px] opacity-40">KİŞİ</p></div>
+        <div id="tab-profile" class="tab-page hidden">
+            <div class="profile-header text-center mb-8">
+                <img id="p-img" class="w-28 h-28 mx-auto rounded-[40px] border-4 border-emerald-500 p-1 mb-4 object-cover">
+                <h2 id="p-name" class="text-3xl font-black mb-2">...</h2>
+                <p id="p-bio-display" class="text-zinc-500 text-sm max-w-md mx-auto mb-4">Biyografi henüz eklenmedi.</p>
+                <a id="p-link-display" href="#" target="_blank" class="text-emerald-500 text-xs font-bold hover:underline"></a>
+                
+                <div class="flex justify-center gap-10 mt-8">
+                    <div class="text-center"><p id="stat-posts" class="text-2xl font-black text-white">0</p><p class="text-[10px] text-zinc-600 font-bold uppercase">Paylaşım</p></div>
+                    <div class="text-center"><p id="stat-likes" class="text-2xl font-black text-white">0</p><p class="text-[10px] text-zinc-600 font-bold uppercase">Beğeni</p></div>
+                </div>
+
+                <div class="mt-8 pt-8 border-t border-white/5 space-y-3 px-4">
+                    <input type="text" id="bio-input" class="input-dark text-sm" placeholder="Biyografini yaz...">
+                    <input type="text" id="link-input" class="input-dark text-sm" placeholder="Sosyal medya veya link (https://...)">
+                    <button onclick="updateProfile()" class="btn-hv w-full text-sm">PROFİLİ GÜNCELLE</button>
+                </div>
             </div>
-            <div id="p-grid" class="grid grid-cols-2 gap-2"></div>
+            <div id="p-grid" class="grid grid-cols-2 md:grid-cols-3 gap-3"></div>
+        </div>
+
+        <div id="tab-user-view" class="tab-page hidden">
+            <div class="profile-header text-center mb-8">
+                <button onclick="showTab('feed')" class="float-left text-zinc-500"><i class="fa-solid fa-arrow-left"></i></button>
+                <img id="v-img" class="w-28 h-28 mx-auto rounded-[40px] border-4 border-zinc-800 p-1 mb-4 object-cover">
+                <h2 id="v-name" class="text-3xl font-black mb-2">...</h2>
+                <p id="v-bio" class="text-zinc-500 text-sm max-w-md mx-auto mb-4"></p>
+                <a id="v-link" href="#" target="_blank" class="text-emerald-500 text-xs font-bold underline"></a>
+            </div>
+            <div id="v-grid" class="grid grid-cols-2 md:grid-cols-3 gap-3"></div>
         </div>
     </main>
 
-    <div id="modal-post" class="fixed inset-0 bg-black z-[10000] hidden flex-col p-6">
-        <div class="flex justify-between items-center mb-8">
-            <button onclick="closeModal()" class="text-zinc-500">İptal</button>
-            <span class="font-black text-emerald-500">YENİ PAYLAŞIM</span>
-            <button id="btn-publish" class="bg-emerald-500 text-black px-6 py-2 rounded-xl font-black">YAYINLA</button>
+    <div id="modal-post" class="fixed inset-0 bg-black/98 z-[10000] hidden flex flex-col p-8">
+        <div class="container-max w-full">
+            <div class="flex justify-between items-center mb-12">
+                <button onclick="closeModal()" class="text-zinc-500 font-bold">Vazgeç</button>
+                <button id="btn-publish" class="btn-hv px-10 py-3 rounded-2xl">YAYINLA</button>
+            </div>
+            <textarea id="post-input" class="w-full bg-transparent text-3xl font-bold outline-none h-48 placeholder-zinc-800" placeholder="Hayra vesile bir şeyler yaz..."></textarea>
+            <div class="mt-4">
+                <label class="text-xs font-bold text-zinc-600 mb-2 block uppercase">Video veya Görsel Linki</label>
+                <input type="text" id="post-link" class="input-dark" placeholder="https://... (mp4 veya resim)">
+            </div>
         </div>
-        <textarea id="post-input" class="w-full bg-transparent text-2xl font-bold outline-none h-40" placeholder="Hayra vesile olsun..."></textarea>
-        <input type="text" id="post-link" class="w-full bg-zinc-900 p-4 rounded-2xl outline-none text-sm border border-zinc-800" placeholder="Video Linki (Opsiyonel)">
     </div>
 
     <nav class="nav-dock">
-        <i class="fa-solid fa-house text-2xl" onclick="showTab('feed')"></i>
-        <div class="w-14 h-14 bg-emerald-500 text-black rounded-2xl flex items-center justify-center text-2xl transform -translate-y-4 border-4 border-black" onclick="openPostModal()">
+        <i class="fa-solid fa-house text-2xl cursor-pointer" onclick="showTab('feed')"></i>
+        <div class="w-16 h-16 bg-emerald-500 text-black rounded-[22px] flex items-center justify-center text-3xl transform -translate-y-6 border-[6px] border-black shadow-2xl cursor-pointer" onclick="openPostModal()">
             <i class="fa-solid fa-plus"></i>
         </div>
-        <i class="fa-solid fa-user text-2xl text-zinc-600" onclick="showTab('profile')"></i>
+        <i class="fa-solid fa-user text-2xl text-zinc-600 cursor-pointer" onclick="showTab('profile')"></i>
     </nav>
 
     <script type="module">
@@ -87,12 +123,27 @@
             if(u) {
                 me = u;
                 document.getElementById('u-top').innerHTML = `<img src="${u.photoURL}" class="w-full h-full object-cover">`;
-                document.getElementById('p-img').src = u.photoURL;
-                document.getElementById('p-name').innerText = u.displayName;
-                await setDoc(doc(db, "users", u.uid), { name: u.displayName, pfp: u.photoURL }, { merge: true });
+                await syncMyProfile();
                 runApp();
             } else { signInWithPopup(auth, new GoogleAuthProvider()); }
         });
+
+        async function syncMyProfile() {
+            const r = doc(db, "users", me.uid);
+            const s = await getDoc(r);
+            if(!s.exists()) {
+                await setDoc(r, { name: me.displayName, pfp: me.photoURL, bio: "", link: "" });
+            } else {
+                const d = s.data();
+                document.getElementById('p-img').src = d.pfp;
+                document.getElementById('p-name').innerText = d.name;
+                document.getElementById('p-bio-display').innerText = d.bio || "Biyografi henüz eklenmedi.";
+                document.getElementById('p-link-display').innerText = d.link || "";
+                document.getElementById('p-link-display').href = d.link || "#";
+                document.getElementById('bio-input').value = d.bio || "";
+                document.getElementById('link-input').value = d.link || "";
+            }
+        }
 
         window.showTab = (t) => {
             document.querySelectorAll('.tab-page').forEach(p => p.classList.add('hidden'));
@@ -102,94 +153,105 @@
         window.openPostModal = () => document.getElementById('modal-post').classList.remove('hidden');
         window.closeModal = () => document.getElementById('modal-post').classList.add('hidden');
 
-        // YAYINLA BUTONU ONARILDI
+        // YAYINLA
         document.getElementById('btn-publish').onclick = async () => {
             const txt = document.getElementById('post-input').value;
             const link = document.getElementById('post-link').value;
-            if(!txt) return Swal.fire('Hata', 'Mesaj yazmalısın!', 'error');
-
-            try {
-                await addDoc(collection(db, "hv_posts"), {
-                    text: txt, link: link || null, uid: me.uid, 
-                    name: me.displayName, pfp: me.photoURL,
-                    likes: [], comments: [], date: serverTimestamp()
-                });
-                closeModal();
-                document.getElementById('post-input').value = "";
-                document.getElementById('post-link').value = "";
-            } catch (e) { Swal.fire('Hata', 'Gönderilemedi!', 'error'); }
+            if(!txt) return;
+            
+            await addDoc(collection(db, "hv_posts"), {
+                text: txt, link: link || null, uid: me.uid, 
+                name: me.displayName, pfp: me.photoURL,
+                likes: [], comments: [], date: serverTimestamp()
+            });
+            closeModal();
+            document.getElementById('post-input').value = "";
+            document.getElementById('post-link').value = "";
         };
 
+        // AKIŞ VE BEĞENİ GERİ ALMA
         function runApp() {
             onSnapshot(query(collection(db, "hv_posts"), orderBy("date", "desc")), snap => {
                 const feed = document.getElementById('feed-items'), grid = document.getElementById('p-grid');
                 feed.innerHTML = ''; grid.innerHTML = '';
-                let myL = 0, myP = 0;
+                let mL = 0, mP = 0;
 
                 snap.forEach(d => {
                     const p = d.data(), pid = d.id;
                     const liked = p.likes?.includes(me.uid);
                     
-                    const card = `
+                    feed.innerHTML += `
                         <div class="hv-card">
-                            <div class="flex justify-between items-center mb-4">
-                                <div class="flex items-center gap-3">
-                                    <img src="${p.pfp}" class="w-8 h-8 rounded-full">
-                                    <span class="font-black text-xs uppercase">${p.name}</span>
+                            <div class="flex justify-between items-center mb-5">
+                                <div class="flex items-center gap-3 cursor-pointer" onclick="viewUser('${p.uid}')">
+                                    <img src="${p.pfp}" class="w-10 h-10 rounded-full border border-white/10">
+                                    <span class="font-bold text-sm tracking-tight">${p.name}</span>
                                 </div>
-                                ${p.uid === me.uid || me.displayName === "Adil Hamza" ? `<i class="fa-solid fa-trash text-red-900" onclick="deletePost('${pid}')"></i>` : ''}
+                                ${p.uid === me.uid || me.displayName === "Adil Hamza" ? `<i class="fa-solid fa-trash text-zinc-800 hover:text-red-500" onclick="deletePost('${pid}')"></i>` : ''}
                             </div>
-                            <p class="text-lg font-bold mb-4">${p.text}</p>
-                            ${p.link ? `<video src="${p.link}" controls class="w-full rounded-2xl mb-4"></video>` : ''}
-                            <div class="flex gap-8 border-t border-white/5 pt-4">
-                                <button onclick="handleLike('${pid}', ${JSON.stringify(p.likes)})">
+                            <p class="text-xl font-semibold leading-relaxed">${p.text}</p>
+                            ${p.link ? (p.link.includes('mp4') ? `<video src="${p.link}" controls></video>` : `<img src="${p.link}" class="post-img">`) : ''}
+                            <div class="flex gap-10 mt-6 pt-6 border-t border-white/5">
+                                <button onclick="handleLike('${pid}', ${JSON.stringify(p.likes)})" class="flex items-center gap-2">
                                     <i class="fa-solid fa-heart text-2xl ${liked ? 'text-red-500' : 'text-zinc-800'}"></i>
-                                    <span class="text-sm font-bold ml-1">${p.likes?.length || 0}</span>
+                                    <span class="font-bold text-sm">${p.likes?.length || 0}</span>
                                 </button>
-                                <button onclick="addComment('${pid}')">
+                                <button onclick="addComment('${pid}')" class="flex items-center gap-2">
                                     <i class="fa-solid fa-comment text-2xl text-zinc-800"></i>
-                                    <span class="text-sm font-bold ml-1">${p.comments?.length || 0}</span>
+                                    <span class="font-bold text-sm">${p.comments?.length || 0}</span>
                                 </button>
-                            </div>
-                            <div class="mt-4 space-y-2">
-                                ${p.comments?.slice(-2).map(c => `<div class="comment-area"><b>${c.user}:</b> ${c.text}</div>`).join('')}
                             </div>
                         </div>`;
-                    feed.innerHTML += card;
 
                     if(p.uid === me.uid) {
-                        myP++; myL += p.likes?.length || 0;
-                        grid.innerHTML += `<div class="bg-zinc-900 aspect-square rounded-2xl flex items-center justify-center p-4 text-[10px] overflow-hidden">${p.text}</div>`;
+                        mP++; mL += p.likes?.length || 0;
+                        grid.innerHTML += `<div class="bg-zinc-900 aspect-square rounded-3xl p-4 text-[10px] overflow-hidden border border-white/5">${p.text}</div>`;
                     }
                 });
-                document.getElementById('stat-posts').innerText = myP;
-                document.getElementById('stat-likes').innerText = myL;
+                document.getElementById('stat-posts').innerText = mP;
+                document.getElementById('stat-likes').innerText = mL;
             });
         }
 
-        // BEĞENİ GERİ ALMA SİSTEMİ %100 ONARILDI
         window.handleLike = async (id, likes) => {
-            const ref = doc(db, "hv_posts", id);
-            if(likes.includes(me.uid)) {
-                await updateDoc(ref, { likes: arrayRemove(me.uid) });
-            } else {
-                await updateDoc(ref, { likes: arrayUnion(me.uid) });
-            }
+            const r = doc(db, "hv_posts", id);
+            likes.includes(me.uid) ? await updateDoc(r, { likes: arrayRemove(me.uid) }) : await updateDoc(r, { likes: arrayUnion(me.uid) });
         };
 
-        // YORUM EKLEME ONARILDI
-        window.addComment = async (id) => {
-            const { value: text } = await Swal.fire({
-                title: 'Yorum Yap',
-                input: 'text',
-                confirmButtonColor: '#10b981',
-                confirmButtonText: 'Gönder'
-            });
-            if(text) {
-                await updateDoc(doc(db, "hv_posts", id), {
-                    comments: arrayUnion({ user: me.displayName, text: text, date: Date.now() })
+        window.updateProfile = async () => {
+            const bio = document.getElementById('bio-input').value;
+            const link = document.getElementById('link-input').value;
+            await updateDoc(doc(db, "users", me.uid), { bio, link });
+            syncMyProfile();
+            Swal.fire('Başarılı', 'Profil güncellendi!', 'success');
+        };
+
+        window.viewUser = async (uid) => {
+            const s = await getDoc(doc(db, "users", uid));
+            if(!s.exists()) return;
+            const d = s.data();
+            document.getElementById('v-img').src = d.pfp;
+            document.getElementById('v-name').innerText = d.name;
+            document.getElementById('v-bio').innerText = d.bio || "Biyografi yok.";
+            document.getElementById('v-link').innerText = d.link || "";
+            document.getElementById('v-link').href = d.link || "#";
+            
+            // Kullanıcının gönderilerini çek
+            const qry = query(collection(db, "hv_posts"), orderBy("date", "desc"));
+            onSnapshot(qry, snap => {
+                const g = document.getElementById('v-grid'); g.innerHTML = '';
+                snap.forEach(doc => {
+                    if(doc.data().uid === uid) {
+                        g.innerHTML += `<div class="bg-zinc-900 aspect-square rounded-3xl p-4 text-[10px] overflow-hidden border border-white/5">${doc.data().text}</div>`;
+                    }
                 });
-            }
+            });
+            showTab('user-view');
+        };
+
+        window.addComment = async (id) => {
+            const { value: t } = await Swal.fire({ title: 'Yorum Yaz', input: 'text', confirmButtonColor: '#10b981' });
+            if(t) await updateDoc(doc(db, "hv_posts", id), { comments: arrayUnion({ user: me.displayName, text: t }) });
         };
 
         window.deletePost = async (id) => { if(confirm('Silinsin mi?')) await deleteDoc(doc(db, "hv_posts", id)); };
