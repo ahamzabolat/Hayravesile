@@ -3,94 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Hayra Vesile | Ultra Fix</title>
+    <title>Hayra Vesile | Edge Menu</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
-        :root { --hv: #10b981; --bg: #000; --card: #0a0a0b; --border: #161618; }
+        :root { --hv: #10b981; --bg: #000; --card: #0d0d0e; --border: #1c1c1e; }
         * { margin:0; padding:0; box-sizing:border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background: var(--bg); color: white; overflow: hidden; height: 100vh; }
-        .main-scroll { height: calc(100vh - 140px); overflow-y: auto; }
-        .hv-card { background: var(--card); border-bottom: 1px solid var(--border); padding: 15px; }
-        .nav-dock { position: fixed; bottom: 0; left: 0; width: 100%; background: #000; border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; padding: 15px; z-index: 9000; }
-        .full-page { position: fixed; inset: 0; background: #000; z-index: 10000; display: none; flex-direction: column; padding: 20px; overflow-y: auto; }
-        .badge-admin { color: #fbbf24; font-size: 10px; font-weight: 900; border: 1px solid #fbbf24; padding: 2px 6px; border-radius: 4px; display: inline-block; }
-        input, textarea { background: #111 !important; border: 1px solid #222 !important; color: white !important; outline: none; }
+        body { background: var(--bg); color: white; overflow: hidden; height: 100vh; display: flex; }
+        
+        /* SOL YEŞİL ŞERİT */
+        .edge-nav {
+            width: 60px;
+            height: 100vh;
+            background: linear-gradient(180deg, rgba(16, 185, 129, 0.1) 0%, rgba(0,0,0,1) 100%);
+            border-right: 1px solid rgba(16, 185, 129, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 20px;
+            gap: 25px;
+            z-index: 9500;
+        }
+        .edge-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            color: #10b981;
+            font-size: 18px;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+        .edge-icon:hover { background: rgba(16, 185, 129, 0.2); transform: translateX(5px); }
+
+        /* ANA İÇERİK ALANI */
+        .app-container { flex: 1; display: flex; flex-direction: column; position: relative; }
+        .main-scroll { height: calc(100vh - 140px); overflow-y: auto; scroll-behavior: smooth; }
+        
+        .hv-post-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 16px; margin: 12px; }
+        .nav-dock { position: fixed; bottom: 0; left: 60px; right: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; padding: 15px; z-index: 9000; }
+        
+        .badge-admin { color: #fbbf24; font-size: 8px; font-weight: 900; border: 1px solid #fbbf24; padding: 1px 6px; border-radius: 4px; background: rgba(251, 191, 36, 0.1); }
+        .full-page { position: fixed; inset: 0; background: #000; z-index: 10000; display: none; flex-direction: column; padding: 20px; }
     </style>
 </head>
 <body>
 
-    <div id="auth-screen" class="fixed inset-0 bg-black z-[20000] flex flex-col items-center justify-center text-center">
+    <aside class="edge-nav">
+        <div class="edge-icon" onclick="Swal.fire('Bildirimler', 'Henüz yeni bildirim yok.', 'info')">
+            <i class="fa-solid fa-bell"></i>
+        </div>
+        <div class="edge-icon" onclick="openFullPage('page-requests')">
+            <i class="fa-solid fa-user-plus"></i>
+        </div>
+        <div class="edge-icon" onclick="showTab('profile')">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+        </div>
+        <div class="edge-icon" onclick="Swal.fire('Ayarlar', 'Gizlilik ve Tema ayarları yakında!', 'question')">
+            <i class="fa-solid fa-gear"></i>
+        </div>
+        <div class="mt-auto mb-10 edge-icon text-red-500" onclick="logout()">
+            <i class="fa-solid fa-power-off"></i>
+        </div>
+    </aside>
+
+    <div id="auth-screen" class="fixed inset-0 bg-black z-[20000] flex flex-col items-center justify-center w-full">
         <h1 class="text-4xl font-black text-emerald-500 mb-8 uppercase italic">Hayra Vesile</h1>
         <button onclick="login()" class="bg-white text-black px-12 py-4 rounded-2xl font-black flex items-center gap-3">
             <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/action/google.svg" class="w-6"> Google Girişi
         </button>
     </div>
 
-    <div id="app-content" style="display: none;">
-        <header class="p-4 border-b border-white/5 flex justify-between items-center bg-black">
-            <h1 class="text-xl font-black text-emerald-500">HAYRA VESİLE</h1>
-            <div id="u-top" class="w-9 h-9 rounded-full border border-emerald-500/30 overflow-hidden" onclick="showTab('profile')"></div>
+    <div id="app-content" class="app-container" style="display: none;">
+        <header class="p-5 border-b border-white/5 flex justify-between items-center bg-black/50">
+            <h1 class="text-xl font-black text-emerald-500 tracking-tighter">HAYRA VESİLE</h1>
+            <div id="u-top" class="w-9 h-9 rounded-xl border border-emerald-500/20 overflow-hidden shadow-lg shadow-emerald-500/10"></div>
         </header>
 
         <main class="main-scroll">
-            <div id="tab-feed" class="tab-page"><div id="feed-items"></div></div>
+            <div id="tab-feed" class="tab-page">
+                <div id="feed-items"></div>
+            </div>
             
             <div id="tab-users" class="tab-page hidden p-4">
-                <input type="text" id="user-search" class="w-full p-4 bg-zinc-900 rounded-2xl mb-4 border border-white/5" placeholder="Kullanıcı ara..." oninput="filterUsers()">
-                <div id="user-list" class="space-y-2"></div>
+                <input type="text" id="user-search" class="w-full p-4 mb-4 bg-zinc-900 border border-white/5 rounded-xl outline-none" placeholder="Arkadaş ara..." oninput="filterUsers()">
+                <div id="user-list" class="space-y-3"></div>
             </div>
 
-            <div id="tab-profile" class="tab-page hidden">
-                <div class="p-6">
-                    <div class="flex items-center gap-4 mb-6">
-                        <img id="p-img" class="w-20 h-20 rounded-2xl border-2 border-emerald-500 p-1 object-cover">
-                        <div>
-                            <h2 id="p-name" class="font-black text-xl uppercase">...</h2>
-                            <div id="p-rank"></div>
-                        </div>
+            <div id="tab-profile" class="tab-page hidden p-6">
+                <div class="flex items-center gap-4 mb-8">
+                    <img id="p-img" class="w-20 h-20 rounded-[25px] border-2 border-emerald-500 p-1 object-cover">
+                    <div>
+                        <h2 id="p-name" class="font-black text-xl uppercase leading-none">...</h2>
+                        <div id="p-rank" class="mt-1"></div>
                     </div>
-                    <div class="bg-zinc-900/50 p-4 rounded-2xl border border-white/5 mb-6">
-                        <p class="text-[10px] text-zinc-500 font-black mb-2 uppercase">Biyografin</p>
-                        <p id="p-bio-text" class="text-sm text-zinc-200 mb-4 font-bold">...</p>
-                        <textarea id="bio-input" class="w-full p-3 rounded-xl text-xs h-20 mb-2" placeholder="Biyografini değiştir..."></textarea>
-                        <button onclick="updateBio()" class="bg-emerald-500 text-black px-4 py-2 rounded-lg font-black text-[10px]">KAYDET</button>
-                    </div>
-                    <button onclick="logout()" class="w-full bg-zinc-900 text-red-500 py-3 rounded-xl font-bold border border-red-500/10">ÇIKIŞ YAP</button>
                 </div>
-                <div id="my-posts"></div>
+                <div class="bg-zinc-900/50 p-5 rounded-3xl border border-white/5">
+                    <p id="p-bio-text" class="text-sm font-bold text-zinc-300 mb-4 italic">...</p>
+                    <textarea id="bio-input" class="w-full p-4 h-20 mb-3 text-xs bg-black rounded-xl" placeholder="Biyografini tazele..."></textarea>
+                    <button onclick="updateBio()" class="w-full bg-emerald-500 text-black py-3 rounded-xl font-black text-xs uppercase">Güncelle</button>
+                </div>
             </div>
         </main>
 
         <nav class="nav-dock">
-            <i class="fa-solid fa-house text-xl" onclick="showTab('feed')"></i>
-            <div class="w-12 h-12 bg-emerald-500 text-black rounded-2xl flex items-center justify-center shadow-lg active:scale-90" onclick="openFullPage('page-post')">
+            <i class="fa-solid fa-house-chimney text-xl opacity-40" onclick="showTab('feed')"></i>
+            <div class="w-14 h-14 bg-emerald-500 text-black rounded-2xl flex items-center justify-center shadow-2xl shadow-emerald-500/30 active:scale-90 transition" onclick="openFullPage('page-post')">
                 <i class="fa-solid fa-plus text-2xl"></i>
             </div>
-            <i class="fa-solid fa-message text-xl" onclick="showTab('users')"></i>
-            <i class="fa-solid fa-user text-xl" onclick="showTab('profile')"></i>
+            <i class="fa-solid fa-paper-plane text-xl opacity-40" onclick="showTab('users')"></i>
         </nav>
     </div>
 
     <div id="page-post" class="full-page">
-        <div class="flex justify-between items-center mb-10">
-            <button onclick="closeFullPage('page-post')" class="text-zinc-500 font-bold">İptal</button>
-            <button id="btn-publish" class="bg-emerald-500 text-black px-8 py-2 rounded-full font-black text-xs uppercase">Yayınla</button>
+        <div class="flex justify-between items-center mb-8">
+            <button onclick="closeFullPage('page-post')" class="text-zinc-500 font-bold">İPTAL</button>
+            <button id="btn-publish" class="bg-emerald-500 text-black px-8 py-2 rounded-full font-black text-xs">YAYINLA</button>
         </div>
-        <textarea id="post-input" class="w-full bg-transparent text-white text-2xl font-bold h-64 outline-none border-none" placeholder="Bugün ne hayır işledin?"></textarea>
+        <textarea id="post-input" class="w-full bg-transparent text-white text-2xl font-bold h-64 border-none outline-none" placeholder="Bir hayra vesile ol..."></textarea>
     </div>
 
     <div id="page-chat" class="full-page">
-        <div class="flex items-center gap-4 mb-4 border-b border-white/5 pb-4">
-            <i class="fa-solid fa-chevron-left text-xl" onclick="closeFullPage('page-chat')"></i>
-            <span id="chat-name" class="font-black text-sm uppercase">Mesajlar</span>
+        <div class="flex items-center gap-4 mb-6 border-b border-white/5 pb-4">
+            <i class="fa-solid fa-arrow-left text-xl text-emerald-500" onclick="closeFullPage('page-chat')"></i>
+            <span id="chat-name" class="font-black text-sm uppercase">Sohbet</span>
         </div>
         <div id="chat-messages" class="flex-1 overflow-y-auto space-y-4"></div>
         <div class="flex gap-2 mt-4 bg-zinc-900 p-2 rounded-2xl">
-            <input type="text" id="chat-input" class="flex-1 bg-transparent p-2 outline-none" placeholder="Mesajını yaz...">
-            <button id="btn-send-msg" class="bg-emerald-500 text-black px-6 py-2 rounded-xl font-black">GÖNDER</button>
+            <input type="text" id="chat-input" class="flex-1 bg-transparent p-3 outline-none" placeholder="Mesajını yaz...">
+            <button id="btn-send-msg" class="bg-emerald-500 text-black px-6 rounded-xl font-black"><i class="fa-solid fa-paper-plane"></i></button>
         </div>
     </div>
 
@@ -121,7 +166,7 @@
             if(u) {
                 me = u;
                 document.getElementById('auth-screen').style.display = 'none';
-                document.getElementById('app-content').style.display = 'block';
+                document.getElementById('app-content').style.display = 'flex';
                 document.getElementById('u-top').innerHTML = `<img src="${u.photoURL}" class="w-full h-full object-cover">`;
                 await setDoc(doc(db, "users", u.uid), { name: u.displayName, pfp: u.photoURL }, { merge: true });
                 syncProfile(); loadFeed(); loadUsers();
@@ -131,20 +176,18 @@
             }
         });
 
-        // YAYINLA - GÜÇLENDİRİLDİ
+        // YAYINLA
         document.getElementById('btn-publish').onclick = async () => {
             const txt = document.getElementById('post-input').value.trim();
             if(!txt) return;
-            const btn = document.getElementById('btn-publish');
-            btn.disabled = true; btn.innerText = "...";
             try {
                 await addDoc(collection(db, "hv_posts"), {
                     text: txt, uid: me.uid, name: me.displayName, pfp: me.photoURL, date: serverTimestamp()
                 });
                 document.getElementById('post-input').value = "";
                 closeFullPage('page-post');
-            } catch (e) { alert("Hata oluştu, tekrar dene!"); }
-            btn.disabled = false; btn.innerText = "Yayınla";
+                showTab('feed');
+            } catch (e) { console.error(e); }
         };
 
         function loadFeed() {
@@ -152,15 +195,17 @@
                 const feed = document.getElementById('feed-items'); feed.innerHTML = '';
                 snap.forEach(d => {
                     const p = d.data();
-                    const isAdm = p.name.includes("Adil Hamza");
+                    const isAdm = p.name && p.name.includes("Adil Hamza");
                     feed.innerHTML += `
-                        <div class="hv-card">
+                        <div class="hv-post-card">
                             <div class="flex items-start gap-3">
-                                <img src="${p.pfp}" class="w-10 h-10 rounded-full object-cover">
+                                <img src="${p.pfp}" class="w-10 h-10 rounded-xl object-cover">
                                 <div class="flex-1">
-                                    <span class="text-[10px] font-black text-emerald-500 uppercase">${p.name}</span>
-                                    <div><span class="${isAdm ? 'badge-admin' : 'text-[8px] text-zinc-500 font-bold'}">${isAdm ? 'ADMIN' : 'ÜYE'}</span></div>
-                                    <p class="text-sm font-bold mt-2 text-zinc-200">${p.text}</p>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-[10px] font-black text-emerald-400 uppercase">${p.name}</span>
+                                        ${isAdm ? '<span class="badge-admin">ADMİN</span>' : ''}
+                                    </div>
+                                    <p class="text-sm font-bold mt-2 text-zinc-100">${p.text}</p>
                                 </div>
                             </div>
                         </div>`;
@@ -168,7 +213,6 @@
             });
         }
 
-        // MESAJ ATMA - GÜÇLENDİRİLDİ
         window.openChat = (tid, name) => {
             activeChatId = [me.uid, tid].sort().join("_");
             document.getElementById('chat-name').innerText = name;
@@ -179,7 +223,7 @@
                     const m = d.data();
                     const isMe = m.s === me.uid;
                     box.innerHTML += `<div class="flex ${isMe ? 'justify-end' : 'justify-start'}">
-                        <div class="${isMe ? 'bg-emerald-600 text-black' : 'bg-zinc-900 text-white'} px-4 py-2 rounded-2xl text-xs font-bold max-w-[80%]">${m.t}</div>
+                        <div class="${isMe ? 'bg-emerald-600 text-black rounded-br-none' : 'bg-zinc-800 text-white rounded-tl-none'} px-4 py-2 rounded-2xl text-xs font-bold max-w-[80%]">${m.t}</div>
                     </div>`;
                 });
                 box.scrollTop = box.scrollHeight;
@@ -190,10 +234,8 @@
             const input = document.getElementById('chat-input');
             const txt = input.value.trim();
             if(!txt || !activeChatId) return;
-            try {
-                await addDoc(collection(db, "chats", activeChatId, "messages"), { t: txt, s: me.uid, date: serverTimestamp() });
-                input.value = "";
-            } catch (e) { console.error(e); }
+            await addDoc(collection(db, "chats", activeChatId, "messages"), { t: txt, s: me.uid, date: serverTimestamp() });
+            input.value = "";
         };
 
         window.updateBio = async () => {
@@ -202,7 +244,7 @@
             await updateDoc(doc(db, "users", me.uid), { bio: val });
             syncProfile();
             document.getElementById('bio-input').value = "";
-            Swal.fire('Tamam!', 'Biyografi güncellendi.', 'success');
+            Swal.fire('Güncellendi!', '', 'success');
         };
 
         async function syncProfile() {
@@ -212,7 +254,7 @@
                 document.getElementById('p-img').src = d.pfp;
                 document.getElementById('p-name').innerText = d.name;
                 document.getElementById('p-bio-text').innerText = d.bio || "Hayra Vesile Üyesi";
-                document.getElementById('p-rank').innerHTML = isAdmin(me) ? '<span class="badge-admin">ADMİN</span>' : '<span class="text-[10px] text-zinc-500 font-bold uppercase">ÜYE</span>';
+                document.getElementById('p-rank').innerHTML = isAdmin(me) ? '<span class="badge-admin">ADMİN</span>' : '<span class="text-[8px] text-zinc-500 font-bold uppercase">ÜYE</span>';
             }
         }
 
@@ -224,7 +266,7 @@
                     list.innerHTML += `<div class="flex items-center gap-4 bg-zinc-900/40 p-4 rounded-2xl border border-white/5" onclick="openChat('${d.id}', '${d.data().name}')">
                         <img src="${d.data().pfp}" class="w-10 h-10 rounded-full">
                         <div class="flex-1 font-black text-sm">${d.data().name}</div>
-                        <i class="fa-solid fa-paper-plane text-emerald-500"></i>
+                        <i class="fa-solid fa-paper-plane text-emerald-500 opacity-40"></i>
                     </div>`;
                 });
             });
