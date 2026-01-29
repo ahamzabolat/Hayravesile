@@ -2,116 +2,373 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Hayra Vesile | Ultimate Pro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Hayra Vesile | Ultimate Architecture V51</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
-        :root { --hv: #10b981; --bg: #000; --card: #0d0d0e; }
-        * { margin:0; padding:0; box-sizing:border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background: var(--bg); color: white; overflow: hidden; height: 100vh; }
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
 
-        /* AÇILIR SOL MENÜ */
-        .sidebar { position: fixed; left: -280px; top: 0; width: 260px; height: 100%; background: #050505; border-right: 1px solid rgba(16,185,129,0.3); z-index: 10000; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
-        .sidebar.open { left: 0; box-shadow: 20px 0 50px rgba(0,0,0,0.8); }
-        .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); display: none; z-index: 9999; }
-        
-        .nav-item { padding: 16px 25px; display: flex; items-center: center; gap: 15px; font-weight: 800; color: #777; transition: 0.3s; cursor: pointer; border-radius: 15px; margin: 5px 10px; }
-        .nav-item.active { color: var(--hv); background: rgba(16, 185, 129, 0.1); }
-        
-        /* ANA EKRAN DÜZENİ */
-        .app-container { display: flex; flex-direction: column; height: 100vh; transition: 0.4s; }
-        header { padding: 18px; border-bottom: 1px solid rgba(255,255,255,0.05); background: #000; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 9000; }
-        .main-content { flex: 1; overflow-y: auto; padding-bottom: 100px; }
-        
-        /* MESAJ BALONLARI */
-        .chat-container { display: flex; flex-direction: column; gap: 10px; padding: 10px; }
-        .bubble { max-width: 80%; padding: 12px 16px; border-radius: 20px; font-size: 14px; font-weight: 600; line-height: 1.4; position: relative; }
-        .bubble-me { align-self: flex-end; background: var(--hv); color: #000; border-bottom-right-radius: 4px; }
-        .bubble-them { align-self: flex-start; background: #1c1c1e; color: #fff; border-bottom-left-radius: 4px; }
-        
-        .badge-admin { color: #fbbf24; font-size: 9px; font-weight: 900; border: 1px solid #fbbf24; padding: 2px 6px; border-radius: 6px; background: rgba(251, 191, 36, 0.1); }
-        .post-card { background: var(--card); border: 1px solid #1c1c1e; border-radius: 22px; padding: 18px; margin: 12px; }
-        .full-modal { position: fixed; inset: 0; background: #000; z-index: 11000; display: none; flex-direction: column; padding: 20px; }
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+        :root {
+            --primary: #10b981;
+            --primary-dark: #065f46;
+            --primary-light: #34d399;
+            --bg-dark: #000000;
+            --bg-card: #0a0a0b;
+            --bg-input: #121214;
+            --border-color: #1c1c1e;
+            --text-main: #ffffff;
+            --text-dim: #a1a1aa;
+            --safe-top: env(safe-area-inset-top);
+            --safe-bottom: env(safe-area-inset-bottom);
+        }
+
+        /* RESET & BASE */
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body { 
+            background-color: var(--bg-dark); 
+            color: var(--text-main); 
+            overflow: hidden; 
+            height: 100vh; 
+            width: 100vw;
+            display: flex;
+        }
+
+        /* SIDEBAR ARCHITECTURE */
+        .hv-sidebar {
+            position: fixed;
+            left: -300px;
+            top: 0;
+            width: 280px;
+            height: 100%;
+            background: linear-gradient(180deg, #050505 0%, #000 100%);
+            border-right: 1px solid rgba(16, 185, 129, 0.2);
+            z-index: 10000;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+            padding: 40px 20px;
+        }
+
+        .hv-sidebar.active {
+            left: 0;
+            box-shadow: 30px 0 60px rgba(0,0,0,0.9);
+        }
+
+        .sidebar-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(8px);
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.4s;
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 16px 20px;
+            border-radius: 18px;
+            color: var(--text-dim);
+            font-weight: 700;
+            font-size: 15px;
+            transition: 0.3s;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+
+        .nav-link i { font-size: 18px; width: 24px; text-align: center; }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        /* APP CONTENT STRUCTURE */
+        .hv-main-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            position: relative;
+            z-index: 10;
+        }
+
+        .hv-header {
+            height: 70px;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 900;
+        }
+
+        .hv-brand {
+            font-size: 22px;
+            font-weight: 900;
+            color: var(--primary);
+            letter-spacing: -1.5px;
+            text-transform: uppercase;
+            font-style: italic;
+            text-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .hv-scroll-container {
+            flex: 1;
+            overflow-y: auto;
+            padding-bottom: 120px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* POST CARD DESIGN */
+        .hv-post-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            margin: 15px;
+            border-radius: 24px;
+            padding: 20px;
+            transition: 0.3s;
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hv-post-card:active { transform: scale(0.98); }
+
+        .pfp-frame {
+            width: 48px;
+            height: 48px;
+            border-radius: 16px;
+            border: 2px solid rgba(16, 185, 129, 0.2);
+            overflow: hidden;
+            background: #111;
+        }
+
+        /* CHAT SYSTEM */
+        .chat-viewport {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 20px;
+        }
+
+        .msg-bubble {
+            max-width: 82%;
+            padding: 14px 18px;
+            font-size: 14px;
+            font-weight: 600;
+            line-height: 1.5;
+            position: relative;
+            word-wrap: break-word;
+        }
+
+        .msg-sent {
+            align-self: flex-end;
+            background: var(--primary);
+            color: #000;
+            border-radius: 22px 22px 4px 22px;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
+        }
+
+        .msg-received {
+            align-self: flex-start;
+            background: #1c1c1e;
+            color: #fff;
+            border-radius: 22px 22px 22px 4px;
+        }
+
+        /* BUTTONS & MODALS */
+        .fab-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 65px;
+            height: 65px;
+            background: var(--primary);
+            color: #000;
+            border-radius: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
+            z-index: 8000;
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .fab-btn:active { transform: scale(0.85); }
+
+        .hv-modal {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            z-index: 11000;
+            display: none;
+            flex-direction: column;
+            padding: env(safe-area-inset-top) 20px env(safe-area-inset-bottom) 20px;
+        }
+
+        .badge-admin {
+            background: rgba(251, 191, 36, 0.1);
+            color: #fbbf24;
+            font-size: 9px;
+            font-weight: 900;
+            padding: 3px 8px;
+            border-radius: 6px;
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* CUSTOM SCROLLBAR */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #2c2c2e; border-radius: 10px; }
     </style>
 </head>
 <body>
 
-    <div id="overlay" class="sidebar-overlay" onclick="toggleSidebar()"></div>
-    <aside id="sidebar" class="sidebar">
-        <div class="p-8">
-            <h2 class="text-2xl font-black text-emerald-500 italic mb-10">MENÜ</h2>
-            <div class="space-y-2">
-                <div class="nav-item active" onclick="switchTab('feed')"><i class="fa-solid fa-house"></i> Ana Sayfa</div>
-                <div class="nav-item" onclick="switchTab('users')"><i class="fa-solid fa-comments"></i> Mesajlar</div>
-                <div class="nav-item" onclick="switchTab('profile')"><i class="fa-solid fa-user-circle"></i> Profilim</div>
-                <div class="nav-item text-red-500 mt-10" onclick="logout()"><i class="fa-solid fa-power-off"></i> Çıkış Yap</div>
+    <div id="sidebarOverlay" class="sidebar-overlay" onclick="AppUI.toggleMenu()"></div>
+
+    <aside id="mainSidebar" class="hv-sidebar">
+        <div class="mb-12 px-4">
+            <h2 class="text-3xl font-black text-emerald-500 italic italic tracking-tighter">HAYRA<br>VESİLE</h2>
+            <p class="text-zinc-600 text-[10px] font-bold mt-2 uppercase tracking-widest">İyilik Platformu v51</p>
+        </div>
+
+        <nav class="flex-1">
+            <div class="nav-link active" onclick="AppUI.switchTab('feed', this)">
+                <i class="fa-solid fa-house-chimney"></i> <span>Ana Sayfa</span>
+            </div>
+            <div class="nav-link" onclick="AppUI.switchTab('users', this)">
+                <i class="fa-solid fa-paper-plane"></i> <span>Mesajlaşma</span>
+            </div>
+            <div class="nav-link" onclick="AppUI.switchTab('profile', this)">
+                <i class="fa-solid fa-user-gear"></i> <span>Profil Ayarları</span>
+            </div>
+            <div class="nav-link" onclick="AppUI.showInfo()">
+                <i class="fa-solid fa-circle-info"></i> <span>Uygulama Bilgisi</span>
+            </div>
+        </nav>
+
+        <div class="mt-auto px-4 pt-10 border-t border-white/5">
+            <div onclick="AppAuth.logout()" class="flex items-center gap-4 text-red-500 font-black text-sm cursor-pointer hover:opacity-70 transition">
+                <i class="fa-solid fa-power-off"></i> GÜVENLİ ÇIKIŞ
             </div>
         </div>
     </aside>
 
-    <div id="auth-screen" class="fixed inset-0 bg-black z-[20000] flex flex-col items-center justify-center">
-        <h1 class="text-4xl font-black text-emerald-500 mb-10 italic">HAYRA VESİLE</h1>
-        <button onclick="login()" class="bg-white text-black px-12 py-4 rounded-full font-black shadow-2xl active:scale-95 transition">Google ile Katıl</button>
-    </div>
+    <section id="authScreen" class="fixed inset-0 bg-black z-[20000] flex flex-col items-center justify-center p-10">
+        <div class="text-center mb-12">
+            <h1 class="text-5xl font-black text-emerald-500 italic mb-4 tracking-tighter">HAYRA VESİLE</h1>
+            <p class="text-zinc-500 font-bold uppercase text-xs tracking-[0.3em]">Birlikte Daha Güçlüyüz</p>
+        </div>
+        <button onclick="AppAuth.login()" class="w-full max-w-xs bg-white text-black py-5 rounded-[24px] font-black text-lg shadow-2xl flex items-center justify-center gap-4 active:scale-95 transition-all">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/action/google.svg" class="w-6"> Google ile Başla
+        </button>
+        <p class="mt-10 text-zinc-600 text-[10px] text-center font-medium max-w-xs">Bu uygulamaya giriş yaparak topluluk kurallarımızı ve iyilik vizyonumuzu kabul etmiş sayılırsınız.</p>
+    </section>
 
-    <div id="app" class="app-container" style="display: none;">
-        <header>
-            <button onclick="toggleSidebar()" class="text-emerald-500 text-2xl"><i class="fa-solid fa-bars-staggered"></i></button>
-            <h1 class="text-xl font-black text-emerald-500 tracking-tighter shadow-emerald-500/20">HAYRA VESİLE</h1>
-            <div id="top-user" class="w-10 h-10 rounded-xl overflow-hidden border border-emerald-500/30"></div>
+    <div id="appInterface" class="hv-main-wrapper" style="display: none;">
+        <header class="hv-header">
+            <button onclick="AppUI.toggleMenu()" class="text-emerald-500 text-2xl w-10 h-10 flex items-center justify-center bg-zinc-900/50 rounded-xl">
+                <i class="fa-solid fa-bars-staggered"></i>
+            </button>
+            <h1 class="hv-brand">Hayra Vesile</h1>
+            <div id="headerPfp" class="w-10 h-10 rounded-xl overflow-hidden border border-emerald-500/30 shadow-lg shadow-emerald-500/10 cursor-pointer" onclick="AppUI.switchTab('profile')"></div>
         </header>
 
-        <main class="main-content">
-            <div id="tab-feed">
-                <div id="feed-container"></div>
-            </div>
-            
-            <div id="tab-users" class="hidden p-4 space-y-3">
-                <div id="user-list"></div>
-            </div>
+        <main class="hv-scroll-container">
+            <section id="tab-feed" class="tab-pane">
+                <div id="feedList"></div>
+            </section>
 
-            <div id="tab-profile" class="hidden p-6">
-                <div class="flex items-center gap-5 mb-8">
-                    <img id="my-pfp" class="w-24 h-24 rounded-[30px] border-2 border-emerald-500 object-cover p-1">
-                    <div>
-                        <h2 id="my-name" class="text-2xl font-black uppercase italic">...</h2>
-                        <div id="my-badge" class="mt-1"></div>
+            <section id="tab-users" class="tab-pane hidden p-4">
+                <div class="mb-6">
+                    <input type="text" id="userSearch" class="w-full bg-zinc-900 border border-white/5 p-5 rounded-2xl outline-none focus:border-emerald-500/50 transition-all font-bold text-sm" placeholder="Arkadaşlarını ara...">
+                </div>
+                <div id="userList" class="space-y-4"></div>
+            </section>
+
+            <section id="tab-profile" class="tab-pane hidden p-6">
+                <div class="flex flex-col items-center text-center mb-10">
+                    <div class="relative">
+                        <img id="profileImage" class="w-32 h-32 rounded-[40px] border-4 border-emerald-500 object-cover shadow-2xl p-1 mb-4">
+                        <div class="absolute bottom-4 right-0 bg-emerald-500 text-black w-8 h-8 rounded-full flex items-center justify-center border-4 border-black">
+                            <i class="fa-solid fa-check text-xs"></i>
+                        </div>
                     </div>
+                    <h2 id="profileName" class="text-3xl font-black uppercase italic tracking-tighter">...</h2>
+                    <div id="profileRank" class="mt-2"></div>
                 </div>
-                <div class="bg-zinc-900/50 p-6 rounded-3xl">
-                    <p class="text-[10px] text-zinc-500 font-black mb-2 uppercase">Hakkında</p>
-                    <p id="my-bio" class="text-sm font-bold text-zinc-200 mb-6">...</p>
-                    <textarea id="bio-input" class="w-full bg-black p-4 rounded-2xl text-xs h-24 border border-white/5 outline-none mb-4" placeholder="Kendinden bahset..."></textarea>
-                    <button onclick="saveBio()" class="w-full bg-emerald-500 text-black py-3 rounded-xl font-black text-xs uppercase">Biyografiyi Kaydet</button>
+
+                <div class="bg-zinc-900/50 p-6 rounded-[32px] border border-white/5">
+                    <label class="text-[10px] text-zinc-500 font-black uppercase tracking-widest mb-2 block ml-2">Biyografi & Vizyon</label>
+                    <p id="profileBioDisplay" class="text-sm font-bold text-zinc-200 mb-6 italic leading-relaxed px-2">...</p>
+                    <textarea id="bioInput" class="w-full bg-black/50 p-5 rounded-2xl text-sm h-32 border border-white/5 outline-none focus:border-emerald-500/30 mb-4 transition-all" placeholder="Biyografini buraya yaz..."></textarea>
+                    <button onclick="AppData.updateBio()" class="w-full bg-emerald-500 text-black py-4 rounded-2xl font-black text-sm uppercase tracking-tighter shadow-xl active:scale-95 transition-all">GÜNCELLE</button>
                 </div>
-            </div>
+            </section>
         </main>
 
-        <button onclick="openModal('modal-post')" class="fixed bottom-8 right-8 w-16 h-16 bg-emerald-500 text-black rounded-2xl shadow-2xl flex items-center justify-center active:scale-90 transition z-[8000]">
-            <i class="fa-solid fa-paper-plane text-2xl"></i>
+        <button onclick="AppUI.openModal('postModal')" class="fab-btn">
+            <i class="fa-solid fa-plus"></i>
         </button>
     </div>
 
-    <div id="modal-post" class="full-modal">
-        <div class="flex justify-between items-center mb-10">
-            <button onclick="closeModal('modal-post')" class="text-zinc-500 font-black">VAZGEÇ</button>
-            <button id="publish-btn" class="bg-emerald-500 text-black px-10 py-3 rounded-full font-black text-xs uppercase">YAYINLA</button>
+    <div id="postModal" class="hv-modal">
+        <div class="flex justify-between items-center py-4 mb-10">
+            <button onclick="AppUI.closeModal('postModal')" class="text-zinc-500 font-black text-sm uppercase">İPTAL</button>
+            <button id="publishBtn" class="bg-emerald-500 text-black px-10 py-3 rounded-full font-black text-xs uppercase shadow-xl tracking-widest">YAYINLA</button>
         </div>
-        <textarea id="post-input" class="w-full bg-transparent text-white text-3xl font-black h-80 outline-none border-none" placeholder="Bugün ne hayır işledin?"></textarea>
+        <div class="flex gap-4">
+            <div id="postAvatar" class="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0"></div>
+            <textarea id="postInput" class="flex-1 bg-transparent text-white text-2xl font-bold h-96 border-none outline-none resize-none pt-2" placeholder="Hayra vesile bir söz paylaş..."></textarea>
+        </div>
     </div>
 
-    <div id="modal-chat" class="full-modal">
-        <div class="flex items-center gap-4 mb-6 border-b border-white/5 pb-4">
-            <i class="fa-solid fa-chevron-left text-xl text-emerald-500" onclick="closeModal('modal-chat')"></i>
-            <span id="chat-title" class="font-black text-sm uppercase">SOHBET</span>
+    <div id="chatModal" class="hv-modal">
+        <div class="flex items-center gap-5 py-4 border-b border-white/5 mb-2">
+            <button onclick="AppUI.closeModal('chatModal')" class="w-10 h-10 flex items-center justify-center bg-zinc-900 rounded-xl text-emerald-500">
+                <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            <div id="chatUserPfp" class="w-10 h-10 rounded-xl overflow-hidden border border-white/10"></div>
+            <span id="chatUserName" class="font-black text-sm uppercase tracking-tight">...</span>
         </div>
-        <div id="chat-messages" class="flex-1 overflow-y-auto chat-container"></div>
-        <div class="flex gap-2 bg-zinc-900 p-2 rounded-2xl border border-white/5 mt-4">
-            <input type="text" id="chat-input" class="flex-1 bg-transparent p-3 outline-none font-bold text-sm" placeholder="Bir şeyler yaz...">
-            <button id="send-msg-btn" class="bg-emerald-500 text-black px-6 rounded-xl font-black"><i class="fa-solid fa-arrow-up"></i></button>
+        <div id="chatBox" class="flex-1 overflow-y-auto chat-viewport"></div>
+        <div class="flex gap-3 bg-zinc-900 p-3 rounded-[24px] border border-white/5 mb-4 shadow-2xl">
+            <input type="text" id="chatInput" class="flex-1 bg-transparent px-4 py-2 outline-none font-bold text-sm" placeholder="Mesajını buraya yaz...">
+            <button id="sendMsgBtn" class="bg-emerald-500 text-black w-12 h-12 rounded-xl flex items-center justify-center font-black active:scale-90 transition-all shadow-lg">
+                <i class="fa-solid fa-arrow-up"></i>
+            </button>
         </div>
     </div>
 
@@ -120,7 +377,8 @@
         import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, doc, updateDoc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        const config = {
+        // CONFIGURATION
+        const firebaseConfig = {
             apiKey: "AIzaSyDZO3lct-xzXAx79lbqgMP7s6WRCirWIHk",
             authDomain: "hayravesile.firebaseapp.com",
             projectId: "hayravesile",
@@ -129,137 +387,292 @@
             appId: "1:980073667334:web:1f6260f0abf3bcc820dc87"
         };
 
-        const app = initializeApp(config);
-        const auth = getAuth(app), db = getFirestore(app);
-        let me = null, activeChat = null;
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        
+        let currentUser = null;
+        let activeChatId = null;
 
-        const isAdil = (n) => n && n.includes("Adil Hamza");
+        // AUTH MODULE
+        window.AppAuth = {
+            login: async () => {
+                const provider = new GoogleAuthProvider();
+                try {
+                    await signInWithPopup(auth, provider);
+                } catch (e) {
+                    Swal.fire('Giriş Hatası', 'Google ile giriş yapılamadı.', 'error');
+                }
+            },
+            logout: () => {
+                Swal.fire({
+                    title: 'Çıkış Yapılsın mı?',
+                    text: "Oturumunuz sonlandırılacaktır.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#10b981',
+                    cancelButtonColor: '#ef4444',
+                    confirmButtonText: 'Evet, Çık',
+                    cancelButtonText: 'Hayır'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        signOut(auth).then(() => location.reload());
+                    }
+                });
+            }
+        };
 
-        window.login = () => signInWithPopup(auth, new GoogleAuthProvider());
-        window.logout = () => signOut(auth).then(() => location.reload());
+        // UI MODULE
+        window.AppUI = {
+            toggleMenu: () => {
+                const sidebar = document.getElementById('mainSidebar');
+                const overlay = document.getElementById('sidebarOverlay');
+                sidebar.classList.toggle('active');
+                overlay.classList.toggle('active');
+            },
+            switchTab: (tabId, element) => {
+                document.querySelectorAll('.tab-pane').forEach(t => t.classList.add('hidden'));
+                document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+                
+                document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+                if(element) element.classList.add('active');
+                
+                if(window.innerWidth < 1024) AppUI.toggleMenu();
+            },
+            openModal: (modalId) => {
+                const modal = document.getElementById(modalId);
+                modal.style.display = 'flex';
+                anime({
+                    targets: modal,
+                    opacity: [0, 1],
+                    translateY: [100, 0],
+                    easing: 'easeOutExpo',
+                    duration: 500
+                });
+            },
+            closeModal: (modalId) => {
+                const modal = document.getElementById(modalId);
+                anime({
+                    targets: modal,
+                    opacity: 0,
+                    translateY: 100,
+                    easing: 'easeInExpo',
+                    duration: 300,
+                    complete: () => modal.style.display = 'none'
+                });
+            },
+            showInfo: () => {
+                Swal.fire({
+                    title: 'Hayra Vesile v51',
+                    html: 'Bu uygulama iyiliği yaymak için Adil Hamza tarafından tasarlandı.<br><br><b>Sistem:</b> Firebase Realtime Sync',
+                    icon: 'info',
+                    background: '#0a0a0b',
+                    color: '#fff',
+                    confirmButtonColor: '#10b981'
+                });
+            }
+        };
 
-        onAuthStateChanged(auth, async u => {
-            if(u) {
-                me = u;
-                document.getElementById('auth-screen').style.display = 'none';
-                document.getElementById('app').style.display = 'flex';
-                document.getElementById('top-user').innerHTML = `<img src="${u.photoURL}" class="w-full h-full object-cover">`;
-                await setDoc(doc(db, "users", u.uid), { name: u.displayName, pfp: u.photoURL }, { merge: true });
-                syncProfile(); loadFeed(); loadUsers();
+        // DATA MODULE (THE ENGINE)
+        window.AppData = {
+            createPost: async () => {
+                const input = document.getElementById('postInput');
+                const content = input.value.trim();
+                if(!content) return;
+
+                const btn = document.getElementById('publishBtn');
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+
+                try {
+                    await addDoc(collection(db, "hv_posts"), {
+                        text: content,
+                        uid: currentUser.uid,
+                        name: currentUser.displayName,
+                        pfp: currentUser.photoURL,
+                        timestamp: Date.now() // Precise timing
+                    });
+                    
+                    input.value = "";
+                    AppUI.closeModal('postModal');
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Yayınlandı!',
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 2000,
+                        background: '#10b981',
+                        color: '#000'
+                    });
+                } catch (error) {
+                    console.error("Post Error:", error);
+                    Swal.fire('Hata', 'Gönderi paylaşılamadı. Lütfen internetinizi kontrol edin.', 'error');
+                } finally {
+                    btn.disabled = false;
+                    btn.innerText = "YAYINLA";
+                }
+            },
+            
+            updateBio: async () => {
+                const input = document.getElementById('bioInput');
+                const bio = input.value.trim();
+                if(!bio) return;
+
+                try {
+                    await updateDoc(doc(db, "users", currentUser.uid), { bio: bio });
+                    input.value = "";
+                    await AppData.syncProfile();
+                    Swal.fire('Başarılı', 'Biyografiniz güncellendi.', 'success');
+                } catch (e) {
+                    Swal.fire('Hata', 'Biyografi güncellenemedi.', 'error');
+                }
+            },
+
+            syncProfile: async () => {
+                const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+                if(userDoc.exists()) {
+                    const data = userDoc.data();
+                    document.getElementById('profileImage').src = data.pfp || currentUser.photoURL;
+                    document.getElementById('profileName').innerText = data.name || currentUser.displayName;
+                    document.getElementById('profileBioDisplay').innerText = data.bio || "Hayra vesile bir şeyler yazmaya ne dersin?";
+                    
+                    const isAdmin = data.name && data.name.includes("Adil Hamza");
+                    document.getElementById('profileRank').innerHTML = isAdmin ? 
+                        '<span class="badge-admin">SİSTEM ADMİNİ</span>' : 
+                        '<span class="text-[10px] text-zinc-500 font-black uppercase">DOĞRULANMIŞ ÜYE</span>';
+                }
+            },
+
+            sendDirectMessage: async () => {
+                const input = document.getElementById('chatInput');
+                const msg = input.value.trim();
+                if(!msg || !activeChatId) return;
+
+                try {
+                    await addDoc(collection(db, "chats", activeChatId, "messages"), {
+                        t: msg,
+                        s: currentUser.uid,
+                        date: Date.now()
+                    });
+                    input.value = "";
+                } catch (e) {
+                    console.error("Chat Error:", e);
+                }
+            }
+        };
+
+        // EVENT LISTENERS & OBSERVERS
+        onAuthStateChanged(auth, async (user) => {
+            if(user) {
+                currentUser = user;
+                document.getElementById('authScreen').style.display = 'none';
+                document.getElementById('appInterface').style.display = 'flex';
+                
+                // Set Header & Post Avatars
+                document.getElementById('headerPfp').innerHTML = `<img src="${user.photoURL}" class="w-full h-full object-cover">`;
+                document.getElementById('postAvatar').innerHTML = `<img src="${user.photoURL}" class="w-full h-full object-cover">`;
+
+                // Sync User to DB
+                await setDoc(doc(db, "users", user.uid), {
+                    name: user.displayName,
+                    pfp: user.photoURL,
+                    lastSeen: Date.now()
+                }, { merge: true });
+
+                initCoreSync();
+            } else {
+                document.getElementById('authScreen').style.display = 'flex';
+                document.getElementById('appInterface').style.display = 'none';
             }
         });
 
-        // MENÜ KONTROL
-        window.toggleSidebar = () => {
-            const side = document.getElementById('sidebar');
-            const over = document.getElementById('overlay');
-            side.classList.toggle('open');
-            over.style.display = side.classList.contains('open') ? 'block' : 'none';
-        };
-
-        // PAYLAŞIM GÖNDERME (HATA KORUMALI)
-        document.getElementById('publish-btn').onclick = async () => {
-            const val = document.getElementById('post-input').value.trim();
-            if(!val) return;
-            const btn = document.getElementById('publish-btn');
-            btn.disabled = true; btn.innerText = "...";
-            try {
-                await addDoc(collection(db, "hv_posts"), {
-                    text: val, uid: me.uid, name: me.displayName, pfp: me.photoURL, date: Date.now()
-                });
-                document.getElementById('post-input').value = "";
-                closeModal('modal-post');
-            } catch (e) { Swal.fire('Hata', 'Gönderilemedi, tekrar dene.', 'error'); }
-            btn.disabled = false; btn.innerText = "YAYINLA";
-        };
-
-        function loadFeed() {
-            onSnapshot(query(collection(db, "hv_posts"), orderBy("date", "desc")), snap => {
-                const container = document.getElementById('feed-container'); container.innerHTML = '';
+        function initCoreSync() {
+            // Load Feed
+            const feedQuery = query(collection(db, "hv_posts"), orderBy("timestamp", "desc"));
+            onSnapshot(feedQuery, (snap) => {
+                const container = document.getElementById('feedList');
+                container.innerHTML = '';
                 snap.forEach(d => {
                     const p = d.data();
+                    const isAdmin = p.name && p.name.includes("Adil Hamza");
                     container.innerHTML += `
-                        <div class="post-card">
-                            <div class="flex items-center gap-3 mb-4">
-                                <img src="${p.pfp}" class="w-11 h-11 rounded-xl shadow-lg">
-                                <div>
+                        <div class="hv-post-card">
+                            <div class="flex items-center gap-4 mb-4">
+                                <div class="pfp-frame">
+                                    <img src="${p.pfp}" class="w-full h-full object-cover">
+                                </div>
+                                <div class="flex-1">
                                     <div class="flex items-center gap-2">
-                                        <span class="text-xs font-black text-emerald-400 uppercase italic">${p.name}</span>
-                                        ${isAdil(p.name) ? '<span class="badge-admin">ADMİN</span>' : ''}
+                                        <h4 class="text-xs font-black text-emerald-400 uppercase tracking-tight">${p.name}</h4>
+                                        ${isAdmin ? '<span class="badge-admin">ADMİN</span>' : ''}
                                     </div>
-                                    <span class="text-[9px] text-zinc-600 font-bold">Şimdi paylaşıldı</span>
+                                    <p class="text-[9px] text-zinc-600 font-bold uppercase mt-1">Paylaşıldı</p>
                                 </div>
                             </div>
                             <p class="text-[15px] font-bold text-zinc-100 leading-relaxed">${p.text}</p>
-                        </div>`;
+                            <div class="flex gap-6 mt-6 pt-4 border-t border-white/5">
+                                <button class="text-zinc-600 hover:text-red-500 transition"><i class="fa-regular fa-heart"></i></button>
+                                <button class="text-zinc-600 hover:text-emerald-500 transition"><i class="fa-regular fa-comment"></i></button>
+                                <button class="text-zinc-600 hover:text-blue-500 transition ml-auto"><i class="fa-solid fa-share-nodes"></i></button>
+                            </div>
+                        </div>
+                    `;
                 });
             });
+
+            // Load Users
+            onSnapshot(collection(db, "users"), (snap) => {
+                const list = document.getElementById('userList');
+                list.innerHTML = '';
+                snap.forEach(d => {
+                    if(d.id === currentUser.uid) return;
+                    const u = d.data();
+                    list.innerHTML += `
+                        <div class="flex items-center gap-4 bg-zinc-900/30 p-4 rounded-3xl border border-white/5 hover:border-emerald-500/20 active:scale-95 transition-all cursor-pointer" onclick="openPrivateChat('${d.id}', '${u.name}', '${u.pfp}')">
+                            <img src="${u.pfp}" class="w-12 h-12 rounded-2xl object-cover shadow-xl">
+                            <div class="flex-1">
+                                <h4 class="font-black text-sm uppercase tracking-tight">${u.name}</h4>
+                                <p class="text-[10px] text-emerald-500 font-black">ÇEVRİMİÇİ</p>
+                            </div>
+                            <i class="fa-solid fa-message text-zinc-700 mr-2"></i>
+                        </div>
+                    `;
+                });
+            });
+
+            AppData.syncProfile();
         }
 
-        // MESAJ SİSTEMİ (YEŞİL BALON)
-        window.openChat = (tid, name) => {
-            activeChat = [me.uid, tid].sort().join("_");
-            document.getElementById('chat-title').innerText = name;
-            openModal('modal-chat');
-            onSnapshot(query(collection(db, "chats", activeChat, "messages"), orderBy("date", "asc")), snap => {
-                const box = document.getElementById('chat-messages'); box.innerHTML = '';
+        window.openPrivateChat = (targetUid, targetName, targetPfp) => {
+            activeChatId = [currentUser.uid, targetUid].sort().join("_");
+            document.getElementById('chatUserName').innerText = targetName;
+            document.getElementById('chatUserPfp').innerHTML = `<img src="${targetPfp}" class="w-full h-full object-cover">`;
+            
+            AppUI.openModal('chatModal');
+
+            const chatQuery = query(collection(db, "chats", activeChatId, "messages"), orderBy("date", "asc"));
+            onSnapshot(chatQuery, (snap) => {
+                const box = document.getElementById('chatBox');
+                box.innerHTML = '';
                 snap.forEach(d => {
                     const m = d.data();
-                    const isMe = m.s === me.uid;
-                    box.innerHTML += `<div class="bubble ${isMe ? 'bubble-me' : 'bubble-them'}">${m.t}</div>`;
+                    const isMe = m.s === currentUser.uid;
+                    box.innerHTML += `<div class="msg-bubble ${isMe ? 'msg-sent' : 'msg-received'}">${m.t}</div>`;
                 });
                 box.scrollTop = box.scrollHeight;
             });
         };
 
-        document.getElementById('send-msg-btn').onclick = async () => {
-            const i = document.getElementById('chat-input');
-            if(!i.value.trim()) return;
-            await addDoc(collection(db, "chats", activeChat, "messages"), { t: i.value, s: me.uid, date: Date.now() });
-            i.value = "";
-        };
+        // BINDING
+        document.getElementById('publishBtn').addEventListener('click', AppData.createPost);
+        document.getElementById('sendMsgBtn').addEventListener('click', AppData.sendDirectMessage);
+        
+        // ENTER KEY SUPPORT
+        document.getElementById('chatInput').addEventListener('keypress', (e) => {
+            if(e.key === 'Enter') AppData.sendDirectMessage();
+        });
 
-        window.switchTab = (t) => {
-            document.querySelectorAll('.main-content > div').forEach(d => d.classList.add('hidden'));
-            document.getElementById('tab-'+t).classList.remove('hidden');
-            toggleSidebar();
-        };
-
-        window.openModal = (id) => document.getElementById(id).style.display = 'flex';
-        window.closeModal = (id) => document.getElementById(id).style.display = 'none';
-
-        async function syncProfile() {
-            const s = await getDoc(doc(db, "users", me.uid));
-            if(s.exists()){
-                const d = s.data();
-                document.getElementById('my-pfp').src = d.pfp;
-                document.getElementById('my-name').innerText = d.name;
-                document.getElementById('my-bio').innerText = d.bio || "Hayra Vesile Üyesi";
-                document.getElementById('my-badge').innerHTML = isAdil(me.displayName) ? '<span class="badge-admin">SİSTEM ADMİNİ</span>' : '';
-            }
-        }
-
-        window.saveBio = async () => {
-            const v = document.getElementById('bio-input').value.trim();
-            if(!v) return;
-            await updateDoc(doc(db, "users", me.uid), { bio: v });
-            syncProfile(); document.getElementById('bio-input').value = "";
-            Swal.fire({ title: 'Başarılı!', text: 'Biyografin artık güncel.', icon: 'success', background: '#0d0d0e', color: '#fff' });
-        };
-
-        function loadUsers() {
-            onSnapshot(collection(db, "users"), snap => {
-                const l = document.getElementById('user-list'); l.innerHTML = '';
-                snap.forEach(d => {
-                    if(d.id === me.uid) return;
-                    l.innerHTML += `<div class="flex items-center gap-4 bg-zinc-900/40 p-5 rounded-[25px] border border-white/5 active:scale-95 transition" onclick="openChat('${d.id}', '${d.data().name}')">
-                        <img src="${d.data().pfp}" class="w-12 h-12 rounded-2xl object-cover shadow-xl">
-                        <span class="font-black text-sm uppercase italic">${d.data().name}</span>
-                        <i class="fa-solid fa-chevron-right ml-auto text-emerald-500 opacity-30 text-xs"></i>
-                    </div>`;
-                });
-            });
-        }
     </script>
 </body>
 </html>
