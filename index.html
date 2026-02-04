@@ -4,17 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Faruki</title>
+    
     <style>
-        /* SİSTEM AYARLARI - KAYDIRMA KİLİDİNİ AÇAR */
+        /* TEMEL SIFIRLAMA VE KAYDIRMA AYARLARI */
         html, body {
             margin: 0;
             padding: 0;
             background-color: #000;
             color: #fff;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica;
+            font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto;
+            /* Kaydırma kilidini açan sihirli dokunuşlar */
             height: auto !important;
             min-height: 100vh !important;
-            overflow-y: auto !important; /* Mouse ve dokunmatik kaydırma aktif */
+            overflow-y: auto !important;
             -webkit-overflow-scrolling: touch;
         }
 
@@ -25,58 +27,64 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            padding-bottom: 100px; /* Alt menü boşluğu */
         }
 
-        /* ÜST LOGO ALANI */
+        /* ÜST BAR (STICKY) */
         .navbar {
-            padding: 20px;
-            text-align: center;
-            border-bottom: 1px solid #111;
             position: sticky;
             top: 0;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0, 0, 0, 0.9);
             backdrop-filter: blur(10px);
-            z-index: 100;
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid #111;
+            z-index: 1000;
         }
 
         .navbar h1 {
-            color: #22c55e;
+            color: #22c55e; /* İslami Yeşil */
             margin: 0;
-            font-size: 24px;
-            letter-spacing: 2px;
+            font-size: 22px;
+            letter-spacing: 3px;
+            font-weight: 800;
         }
 
-        /* MP3 EKLEME ALANI (PROFESYONEL) */
-        .upload-section {
+        /* MP3 EKLEME ALANI */
+        .post-box {
             background: #0a0a0a;
             margin: 15px;
-            padding: 20px;
+            padding: 15px;
             border-radius: 20px;
-            border: 1px dashed #22c55e;
-            text-align: center;
+            border: 1px solid #1a1a1a;
         }
 
-        .upload-btn {
+        .upload-area {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .btn-upload {
             background: #22c55e;
-            color: black;
+            color: #000;
             border: none;
-            padding: 12px 25px;
-            border-radius: 30px;
+            padding: 10px 20px;
+            border-radius: 25px;
             font-weight: bold;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin: 10px auto;
+            width: 100%;
+            font-size: 14px;
         }
 
-        /* MP3 KARTLARI (AKIŞ) */
+        /* AKIŞ (FEED) VE MP3 KARTLARI */
         .feed {
+            flex: 1;
             padding: 10px;
+            padding-bottom: 100px; /* Alt menü boşluğu */
         }
 
-        .audio-post {
+        .card {
             background: #111;
             border-radius: 20px;
             padding: 15px;
@@ -84,32 +92,32 @@
             border: 1px solid #1a1a1a;
         }
 
-        .post-info {
+        .card-header {
             display: flex;
             align-items: center;
             gap: 10px;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
 
         .avatar {
-            width: 40px;
-            height: 40px;
+            width: 35px;
+            height: 35px;
             background: #22c55e;
             border-radius: 50%;
         }
 
-        .username {
-            font-weight: bold;
-            font-size: 14px;
-        }
+        .user-info b { font-size: 14px; }
+        .user-info span { font-size: 11px; color: #555; display: block; }
 
+        /* SES OYNATICI TASARIMI */
         audio {
             width: 100%;
-            height: 40px;
-            filter: invert(1); /* Koyu tema için beyaz oynatıcı */
+            height: 35px;
+            margin-top: 10px;
+            filter: invert(1); /* Karanlık tema uyumu */
         }
 
-        /* ALT SABİT MENÜ */
+        /* ALT MENÜ */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -123,17 +131,10 @@
             z-index: 1000;
         }
 
-        .nav-item {
-            color: #555;
-            font-size: 20px;
-            cursor: pointer;
-        }
+        .nav-item { font-size: 20px; cursor: pointer; color: #444; }
+        .nav-item.active { color: #22c55e; }
 
-        .nav-item.active {
-            color: #22c55e;
-        }
-
-        /* SCROLLBAR GÖRÜNÜMÜ */
+        /* SCROLLBAR */
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-thumb { background: #22c55e; border-radius: 10px; }
     </style>
@@ -145,26 +146,28 @@
         <h1>FARUKİ</h1>
     </div>
 
-    <div class="upload-section">
-        <p style="margin:0; font-size: 13px; color: #888;">Yeni bir ses kaydı veya MP3 paylaş</p>
-        <button class="upload-btn" onclick="document.getElementById('file-input').click()">
-            <span>+</span> MP3 YÜKLE
-        </button>
-        <input type="file" id="file-input" accept="audio/*" style="display: none;">
+    <div class="post-box">
+        <div class="upload-area">
+            <span style="font-size: 12px; color: #666;">Sesini duyur veya bir tilavet paylaş</span>
+            <button class="btn-upload" onclick="document.getElementById('audio-input').click()">
+                🎵 MP3 SEÇ VE PAYLAŞ
+            </button>
+            <input type="file" id="audio-input" accept="audio/*" style="display: none;">
+        </div>
     </div>
 
-    <div class="feed" id="main-feed">
-        <div class="audio-post">
-            <div class="post-info">
+    <div class="feed" id="feed">
+        <div class="card">
+            <div class="card-header">
                 <div class="avatar"></div>
-                <div>
-                    <div class="username">Farukiyim</div>
-                    <div style="font-size: 10px; color: #555;">2 saat önce</div>
+                <div class="user-info">
+                    <b>Faruki Yönetim</b>
+                    <span>Şimdi paylaşıldı</span>
                 </div>
             </div>
-            <p style="font-size: 14px; margin-bottom: 10px;">Bakara Suresi Tamamı - Tilavet</p>
+            <div style="font-size: 14px; color: #ccc;">Bakara Suresi - Uzun Versiyon</div>
             <audio controls preload="metadata">
-                <source src="URL_BURAYA" type="audio/mpeg">
+                <source src="SES_DOSYASI_LINKI.mp3" type="audio/mpeg">
             </audio>
         </div>
     </div>
@@ -173,18 +176,16 @@
 <div class="bottom-nav">
     <div class="nav-item active">🏠</div>
     <div class="nav-item">🔍</div>
-    <div class="nav-item">➕</div>
+    <div class="nav-item">💬</div>
     <div class="nav-item">👤</div>
 </div>
 
 <script>
-    // Buraya Firebase MP3 yükleme fonksiyonlarını ekleyeceğiz.
-    // Dosya seçildiğinde tetiklenen olay:
-    document.getElementById('file-input').onchange = e => {
+    // Netlify/GitHub üzerinden dosya yönetimi için 
+    // buraya ileride veri tabanı kodlarını ekleyebiliriz.
+    document.getElementById('audio-input').onchange = e => {
         const file = e.target.files[0];
-        if(file) {
-            alert(file.name + " yüklenecek. (Firebase Storage ayarı lazım)");
-        }
+        if(file) alert(file.name + " dosyası hazır. Netlify deploy sonrası aktif olacak.");
     };
 </script>
 
