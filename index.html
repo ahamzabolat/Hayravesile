@@ -2,192 +2,366 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Faruki</title>
     
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
-        /* TEMEL SIFIRLAMA VE KAYDIRMA AYARLARI */
-        html, body {
-            margin: 0;
-            padding: 0;
-            background-color: #000;
-            color: #fff;
-            font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto;
-            /* Kaydırma kilidini açan sihirli dokunuşlar */
-            height: auto !important;
-            min-height: 100vh !important;
-            overflow-y: auto !important;
-            -webkit-overflow-scrolling: touch;
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@1,900&display=swap');
+        :root { --hv: #10b981; --bg: #000; }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+        
+        /* KAYDIRMA SORUNUNU ÇÖZEN KISIM */
+        body { 
+            background: var(--bg); 
+            color: #f4f4f5; 
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            overflow-y: auto !important; /* Mouse ve parmak kaydırmasını açar */
         }
 
-        /* ANA KONTEYNER */
-        #app {
-            max-width: 500px;
-            margin: 0 auto;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+        .stilli-logo { font-family: 'Playfair Display', serif; font-style: italic; background: linear-gradient(to right, #10b981, #34d399, #10b981); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-size: 200% auto; animation: shine 3s linear infinite; }
+        @keyframes shine { to { background-position: 200% center; } }
+
+        /* SCROLLER AYARLARI */
+        .scroller { 
+            flex: 1; 
+            overflow-y: auto !important; 
+            scroll-behavior: smooth; 
+            -webkit-overflow-scrolling: touch; 
+            padding-bottom: 120px; 
+            height: auto;
         }
+        .scroller::-webkit-scrollbar { width: 5px; }
+        .scroller::-webkit-scrollbar-thumb { background: #222; border-radius: 10px; }
 
-        /* ÜST BAR (STICKY) */
-        .navbar {
-            position: sticky;
-            top: 0;
-            background: rgba(0, 0, 0, 0.9);
-            backdrop-filter: blur(10px);
-            padding: 15px;
-            text-align: center;
-            border-bottom: 1px solid #111;
-            z-index: 1000;
-        }
+        .post-card { border-radius: 35px; padding: 25px; margin: 15px; border: 1px solid rgba(255,255,255,0.05); position: relative; }
+        
+        /* AUTH TASARIMI */
+        .auth-card { background: #0a0a0b; border: 1px solid #1e1e21; border-radius: 40px; width: 100%; padding: 30px; }
+        .auth-input { background: #18181b; border: 1px solid #27272a; border-radius: 20px; padding: 18px; width: 100%; color: white; outline: none; margin-bottom: 12px; font-weight: 600; }
+        .auth-input:focus { border-color: var(--hv); }
+        .auth-btn { background: var(--hv); color: black; font-weight: 800; border-radius: 20px; padding: 18px; width: 100%; transition: 0.3s; }
 
-        .navbar h1 {
-            color: #22c55e; /* İslami Yeşil */
-            margin: 0;
-            font-size: 22px;
-            letter-spacing: 3px;
-            font-weight: 800;
-        }
+        .sidebar { position: fixed; left: -320px; top: 0; width: 300px; height: 100%; background: #070708; border-right: 1px solid #1a1a1c; z-index: 10000; transition: 0.5s; padding: 50px 25px; }
+        .sidebar.active { left: 0; box-shadow: 20px 0 100px #000; }
+        
+        .modal-full { position: fixed; inset: 0; background: #000; z-index: 11000; display: none; flex-direction: column; overflow-y: auto; }
+        
+        /* MP3 Player Stili */
+        audio { width: 100%; margin-top: 15px; height: 40px; filter: invert(1); border-radius: 10px; }
 
-        /* MP3 EKLEME ALANI */
-        .post-box {
-            background: #0a0a0a;
-            margin: 15px;
-            padding: 15px;
-            border-radius: 20px;
-            border: 1px solid #1a1a1a;
-        }
-
-        .upload-area {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .btn-upload {
-            background: #22c55e;
-            color: #000;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 25px;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-            font-size: 14px;
-        }
-
-        /* AKIŞ (FEED) VE MP3 KARTLARI */
-        .feed {
-            flex: 1;
-            padding: 10px;
-            padding-bottom: 100px; /* Alt menü boşluğu */
-        }
-
-        .card {
-            background: #111;
-            border-radius: 20px;
-            padding: 15px;
-            margin-bottom: 15px;
-            border: 1px solid #1a1a1a;
-        }
-
-        .card-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 12px;
-        }
-
-        .avatar {
-            width: 35px;
-            height: 35px;
-            background: #22c55e;
-            border-radius: 50%;
-        }
-
-        .user-info b { font-size: 14px; }
-        .user-info span { font-size: 11px; color: #555; display: block; }
-
-        /* SES OYNATICI TASARIMI */
-        audio {
-            width: 100%;
-            height: 35px;
-            margin-top: 10px;
-            filter: invert(1); /* Karanlık tema uyumu */
-        }
-
-        /* ALT MENÜ */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: #000;
-            border-top: 1px solid #111;
-            display: flex;
-            justify-content: space-around;
-            padding: 15px;
-            z-index: 1000;
-        }
-
-        .nav-item { font-size: 20px; cursor: pointer; color: #444; }
-        .nav-item.active { color: #22c55e; }
-
-        /* SCROLLBAR */
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-thumb { background: #22c55e; border-radius: 10px; }
+        .feather-btn { position: fixed; bottom: 35px; right: 25px; width: 70px; height: 70px; background: var(--hv); color: #000; border-radius: 25px; display: flex; align-items: center; justify-content: center; z-index: 5000; box-shadow: 0 15px 40px rgba(16,185,129,0.4); }
+        
+        /* Gelen bubble mesajları */
+        .bubble { max-width: 80%; padding: 16px 20px; border-radius: 26px; font-size: 15px; font-weight: 600; margin-bottom: 10px; }
+        .sent { align-self: flex-end; background: var(--hv); color: #000; border-bottom-right-radius: 4px; }
+        .received { align-self: flex-start; background: #222224; color: #fff; border-bottom-left-radius: 4px; }
     </style>
 </head>
 <body>
 
-<div id="app">
-    <div class="navbar">
-        <h1>FARUKİ</h1>
-    </div>
+    <div id="overlay" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[9999] hidden" onclick="UI.side()"></div>
 
-    <div class="post-box">
-        <div class="upload-area">
-            <span style="font-size: 12px; color: #666;">Sesini duyur veya bir tilavet paylaş</span>
-            <button class="btn-upload" onclick="document.getElementById('audio-input').click()">
-                🎵 MP3 SEÇ VE PAYLAŞ
-            </button>
-            <input type="file" id="audio-input" accept="audio/*" style="display: none;">
-        </div>
-    </div>
+    <div id="auth-gate" style="position: fixed; inset: 0; background: black; z-index: 20000; overflow-y: auto; -webkit-overflow-scrolling: touch;">
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 40px 20px;">
+            
+            <img src="https://raw.githubusercontent.com/ahamzabolat/Hayravesile/main/Logo.png.png" 
+                 alt="Faruki Logo" 
+                 style="width: 150px; height: auto; border-radius: 20px; margin-bottom: 30px; box-shadow: 0 0 50px rgba(16,185,129,0.3);">
 
-    <div class="feed" id="feed">
-        <div class="card">
-            <div class="card-header">
-                <div class="avatar"></div>
-                <div class="user-info">
-                    <b>Faruki Yönetim</b>
-                    <span>Şimdi paylaşıldı</span>
-                </div>
+            <h1 class="stilli-logo text-4xl mb-6">Faruki</h1>
+
+            <div class="auth-card">
+                <input type="text" id="auth-nick" class="auth-input" placeholder="Kullanıcı Adı (Kayıt için)">
+                <input type="email" id="auth-mail" class="auth-input" placeholder="E-posta">
+                <input type="password" id="auth-pass" class="auth-input" placeholder="Şifre">
+                <button onclick="Auth.action()" class="auth-btn uppercase mb-4">Giriş / Kayıt</button>
+                <div class="text-zinc-600 font-bold text-xs mb-4 text-center">VEYA</div>
+                <button onclick="Auth.login()" class="w-full bg-white text-black py-4 rounded-[20px] font-black flex items-center justify-center gap-2">
+                    <i class="fa-brands fa-google"></i> Google
+                </button>
             </div>
-            <div style="font-size: 14px; color: #ccc;">Bakara Suresi - Uzun Versiyon</div>
-            <audio controls preload="metadata">
-                <source src="SES_DOSYASI_LINKI.mp3" type="audio/mpeg">
-            </audio>
         </div>
     </div>
-</div>
 
-<div class="bottom-nav">
-    <div class="nav-item active">🏠</div>
-    <div class="nav-item">🔍</div>
-    <div class="nav-item">💬</div>
-    <div class="nav-item">👤</div>
-</div>
+    <aside id="sidebar" class="sidebar flex flex-col">
+        <h2 class="stilli-logo text-4xl mb-12">Faruki</h2>
+        <nav class="flex-1 space-y-2">
+            <div class="p-4 rounded-2xl flex items-center gap-4 text-emerald-500 bg-emerald-500/10 font-bold" onclick="UI.tab('feed')"><i class="fa-solid fa-music"></i> Dinle</div>
+            <div class="p-4 rounded-2xl flex items-center gap-4 text-zinc-500 font-bold" onclick="UI.tab('users')"><i class="fa-solid fa-paper-plane"></i> Sohbetler</div>
+            <div class="p-4 rounded-2xl flex items-center gap-4 text-zinc-500 font-bold" onclick="UI.tab('profile')"><i class="fa-solid fa-user"></i> Profilim</div>
+            <div class="h-px bg-zinc-900 my-4"></div>
+            <div class="p-4 rounded-2xl flex items-center gap-4 text-blue-400 font-bold" onclick="UI.open('info-modal')"><i class="fa-solid fa-circle-info"></i> Bilgi</div>
+        </nav>
+        <button onclick="Auth.logout()" class="text-red-500/40 text-[10px] font-black uppercase mb-4">Çıkış Yap</button>
+    </aside>
 
-<script>
-    // Netlify/GitHub üzerinden dosya yönetimi için 
-    // buraya ileride veri tabanı kodlarını ekleyebiliriz.
-    document.getElementById('audio-input').onchange = e => {
-        const file = e.target.files[0];
-        if(file) alert(file.name + " dosyası hazır. Netlify deploy sonrası aktif olacak.");
-    };
-</script>
+    <div id="app" class="flex-1 flex flex-col hidden">
+        <header class="h-20 px-6 border-b border-zinc-900 flex justify-between items-center bg-black/60 backdrop-blur-xl sticky top-0 z-50">
+            <button onclick="UI.side()" class="text-emerald-500 text-2xl"><i class="fa-solid fa-bars-staggered"></i></button>
+            <h1 class="stilli-logo text-2xl">Faruki</h1>
+            <div id="u-pfp" class="w-10 h-10 rounded-xl overflow-hidden bg-emerald-500 flex items-center justify-center font-bold text-black border border-white/10" onclick="UI.tab('profile')"></div>
+        </header>
 
+        <main class="scroller">
+            <div id="tab-feed"><div id="post-list"></div></div>
+            <div id="tab-users" class="hidden p-6"><h2 class="text-2xl font-black mb-8 text-emerald-500">Sohbetler</h2><div id="user-list"></div></div>
+            <div id="tab-profile" class="hidden p-8 flex flex-col items-center">
+                <div id="p-img-box" class="w-32 h-32 rounded-[40px] border-4 border-emerald-500 mb-6 flex items-center justify-center bg-zinc-900 text-4xl font-bold overflow-hidden"></div>
+                <h2 id="p-name" class="text-3xl font-black uppercase tracking-tighter">...</h2>
+                <div id="my-posts" class="w-full mt-10"></div>
+            </div>
+        </main>
+
+        <div onclick="UI.open('post-modal')" class="feather-btn"><i class="fa-solid fa-plus text-3xl"></i></div>
+    </div>
+
+    <div id="info-modal" class="modal-full p-10">
+        <div class="flex justify-between items-center mb-10">
+            <h2 class="text-emerald-500 font-black text-2xl uppercase">Hakkında</h2>
+            <button onclick="UI.close('info-modal')" class="text-white text-3xl"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="scroller space-y-6">
+            <div class="bg-zinc-900/50 p-6 rounded-3xl border border-white/5">
+                <p class="text-zinc-400">Faruki, huzur veren seslerin ve sohbetin buluştuğu yerdir.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="dm-modal" class="modal-full">
+        <div class="h-20 px-6 border-b border-zinc-900 flex items-center gap-4 bg-zinc-950 sticky top-0">
+            <button onclick="UI.close('dm-modal')" class="text-emerald-500 text-2xl"><i class="fa-solid fa-chevron-left"></i></button>
+            <span id="dm-name" class="font-black text-sm uppercase">Sohbet</span>
+        </div>
+        <div id="dm-box" class="scroller p-6 flex flex-col"></div>
+        <div class="p-6 bg-black border-t border-zinc-900 flex gap-3 sticky bottom-0">
+            <input type="text" id="dm-in" class="flex-1 bg-zinc-900 p-5 rounded-3xl outline-none font-bold text-white" placeholder="Mesaj gönder...">
+            <button id="dm-send" class="bg-emerald-500 text-black w-16 h-16 rounded-3xl flex items-center justify-center"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <div id="post-modal" class="modal-full p-8">
+        <div class="flex justify-between items-center mb-10">
+            <button onclick="UI.close('post-modal')" class="text-zinc-600 font-bold uppercase">Kapat</button>
+            <button id="pub-btn" class="bg-emerald-500 text-black px-10 py-4 rounded-full font-black text-xs uppercase">Yükle</button>
+        </div>
+        
+        <input id="post-in" type="text" class="w-full bg-transparent text-white text-2xl font-bold outline-none mb-8 border-b border-zinc-800 pb-4" placeholder="Kayıt Başlığı (Örn: Cuma Vaazı)">
+        
+        <div class="bg-zinc-900/50 border-2 border-dashed border-emerald-500/30 rounded-3xl p-10 flex flex-col items-center justify-center text-center gap-4 mb-8" onclick="document.getElementById('audio-file').click()">
+            <div class="w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center text-emerald-500 text-2xl">
+                <i class="fa-solid fa-music"></i>
+            </div>
+            <div>
+                <h3 class="font-bold text-white mb-1">MP3 Dosyası Seç</h3>
+                <p class="text-xs text-zinc-500" id="file-label">Maksimum 1-2 Saatlik Kayıtlar</p>
+            </div>
+            <input type="file" id="audio-file" accept="audio/*" class="hidden">
+        </div>
+
+        <div class="flex gap-4" id="color-opts">
+            <div class="w-12 h-12 rounded-2xl border-2 border-white" style="background: #0d0d0f;" data-c="#0d0d0f" onclick="selCol='#0d0d0f'"></div>
+            <div class="w-12 h-12 rounded-2xl cursor-pointer" style="background: #064e3b;" data-c="#064e3b" onclick="selCol='#064e3b'"></div>
+            <div class="w-12 h-12 rounded-2xl cursor-pointer" style="background: #1e3a8a;" data-c="#1e3a8a" onclick="selCol='#1e3a8a'"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, doc, updateDoc, setDoc, deleteDoc, arrayUnion, arrayRemove, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // Firebase Yapılandırması
+        const config = { apiKey: "AIzaSyDZO3lct-xzXAx79lbqgMP7s6WRCirWIHk", authDomain: "hayravesile.firebaseapp.com", projectId: "hayravesile", storageBucket: "hayravesile.appspot.com", messagingSenderId: "980073667334", appId: "1:980073667334:web:1f6260f0abf3bcc820dc87" };
+        const app = initializeApp(config), auth = getAuth(app), db = getFirestore(app);
+
+        let me = null, activeRoom = null, roomUnsub = null, selCol = "#0d0d0f";
+        const ADMIN_UID = "BURAYA_KENDI_UID_YAZ"; 
+
+        // Dosya seçildiğinde ismi göster
+        document.getElementById('audio-file').onchange = e => {
+            if(e.target.files[0]) document.getElementById('file-label').innerText = e.target.files[0].name;
+        };
+
+        window.Auth = {
+            login: () => signInWithPopup(auth, new GoogleAuthProvider()),
+            action: async () => {
+                const nick = document.getElementById('auth-nick').value.trim();
+                const mail = document.getElementById('auth-mail').value.trim();
+                const pass = document.getElementById('auth-pass').value.trim();
+                if(!mail || !pass) return Swal.fire('Hata','E-posta ve şifre girin.','error');
+                
+                try {
+                    await signInWithEmailAndPassword(auth, mail, pass);
+                } catch(e) {
+                    if(nick) {
+                        try {
+                            const res = await createUserWithEmailAndPassword(auth, mail, pass);
+                            await updateProfile(res.user, { displayName: nick });
+                            location.reload();
+                        } catch(err) { Swal.fire('Hata', 'Kayıt başarısız: ' + err.message, 'error'); }
+                    } else {
+                        Swal.fire('Bilgi','Kayıt olmak için Kullanıcı Adı da yazın.','question');
+                    }
+                }
+            },
+            logout: () => signOut(auth).then(() => location.reload())
+        };
+
+        onAuthStateChanged(auth, async u => {
+            if(u) {
+                const userDoc = await getDoc(doc(db, "users", u.uid));
+                if(userDoc.exists() && userDoc.data().banned) {
+                    Swal.fire('Erişim Engellendi','Hesabınız askıya alınmıştır.','error');
+                    Auth.logout(); return;
+                }
+                me = u;
+                document.getElementById('auth-gate').style.display = 'none';
+                document.getElementById('app').classList.remove('hidden');
+                document.getElementById('app').style.display = 'flex';
+                document.getElementById('u-pfp').innerHTML = u.photoURL ? `<img src="${u.photoURL}">` : u.displayName.charAt(0);
+                await setDoc(doc(db, "users", u.uid), { name: u.displayName, pfp: u.photoURL || '', bio: "Faruki üyesi", active: true }, { merge: true });
+                Data.sync();
+            }
+        });
+
+        window.UI = {
+            side: () => { 
+                document.getElementById('sidebar').classList.toggle('active'); 
+                document.getElementById('overlay').classList.toggle('hidden'); 
+            },
+            tab: (t) => { 
+                document.querySelectorAll('main > div').forEach(d => d.classList.add('hidden')); 
+                document.getElementById('tab-'+t).classList.remove('hidden'); 
+                UI.side(); 
+                if(t === 'profile') Data.syncProfile(); 
+            },
+            open: (id) => document.getElementById(id).style.display = 'flex',
+            close: (id) => { document.getElementById(id).style.display = 'none'; if(id === 'dm-modal' && roomUnsub) roomUnsub(); }
+        };
+
+        window.Data = {
+            sync: () => { Data.syncFeed(); Data.syncUsers(); },
+            syncFeed: () => {
+                onSnapshot(query(collection(db, "posts"), orderBy("time", "desc")), snap => {
+                    const l = document.getElementById('post-list'); l.innerHTML = '';
+                    snap.forEach(d => l.innerHTML += Data.postMarkup(d.id, d.data()));
+                });
+            },
+            postMarkup: (id, p) => {
+                const liked = p.likes?.includes(me.uid);
+                const isAdmin = me.uid === ADMIN_UID;
+                // MP3 Player ekliyoruz
+                return `
+                    <div class="post-card" style="background: ${p.color || '#0d0d0f'}">
+                        <div class="flex items-center gap-4 mb-5">
+                            <div class="w-12 h-12 rounded-2xl bg-emerald-500 flex items-center justify-center text-black font-bold overflow-hidden">
+                                ${p.pfp ? `<img src="${p.pfp}">` : p.name.charAt(0)}
+                            </div>
+                            <div class="flex-1">
+                                <span class="text-sm font-black uppercase text-white">${p.name}</span>
+                                <span class="text-[10px] text-emerald-500 font-bold block uppercase">Faruki Üyesi</span>
+                            </div>
+                            ${(me.uid === p.uid || isAdmin) ? `<i onclick="Data.delPost('${id}')" class="fa-solid fa-trash text-white/20"></i>` : ''}
+                        </div>
+                        <p class="text-lg font-bold text-white mb-2">${p.text}</p>
+                        
+                        <audio controls preload="metadata">
+                            <source src="" type="audio/mpeg">
+                            Ses dosyası oynatılamadı.
+                        </audio>
+
+                        <div class="flex items-center gap-2 mt-4 cursor-pointer" onclick="Data.like('${id}', ${liked})">
+                            <i class="fa-${liked ? 'solid' : 'regular'} fa-heart text-2xl ${liked ? 'text-emerald-500' : 'text-white/20'}"></i>
+                            <span class="text-xs font-black text-white">${p.likes?.length || 0}</span>
+                        </div>
+                    </div>`;
+            },
+            like: async (id, s) => { await updateDoc(doc(db, "posts", id), { likes: s ? arrayRemove(me.uid) : arrayUnion(me.uid) }); },
+            delPost: async (id) => { if(confirm("Silinsin mi?")) await deleteDoc(doc(db, "posts", id)); },
+            syncUsers: () => {
+                onSnapshot(collection(db, "users"), snap => {
+                    const l = document.getElementById('user-list'); l.innerHTML = '';
+                    snap.forEach(d => {
+                        if(d.id === me.uid) return;
+                        const u = d.data();
+                        l.innerHTML += `
+                        <div class="bg-zinc-900/40 p-6 rounded-[30px] flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-4" onclick="Data.openDm('${d.id}', '${u.name}')">
+                                <div class="w-14 h-14 rounded-2xl bg-zinc-800 flex items-center justify-center font-bold text-white overflow-hidden">
+                                    ${u.pfp ? `<img src="${u.pfp}">` : u.name.charAt(0)}
+                                </div>
+                                <span class="font-black text-sm uppercase">${u.name}</span>
+                            </div>
+                            ${me.uid === ADMIN_UID ? `<button onclick="Data.banUser('${d.id}')" class="text-red-500 text-xs font-bold">BAN</button>` : `<i class="fa-solid fa-paper-plane text-emerald-500"></i>`}
+                        </div>`;
+                    });
+                });
+            },
+            banUser: async (uid) => { if(confirm("Banlansın mı?")) await updateDoc(doc(db, "users", uid), { banned: true }); },
+            openDm: (tid, name) => {
+                activeRoom = [me.uid, tid].sort().join("_");
+                document.getElementById('dm-name').innerText = name;
+                UI.open('dm-modal');
+                const q = query(collection(db, "v571_final_messages", activeRoom, "m"), orderBy("t", "asc"));
+                roomUnsub = onSnapshot(q, snap => {
+                    const b = document.getElementById('dm-box'); b.innerHTML = '';
+                    snap.forEach(d => b.innerHTML += `<div class="bubble ${d.data().s === me.uid ? 'sent' : 'received'}">${d.data().v}</div>`);
+                    b.scrollTop = b.scrollHeight;
+                });
+            },
+            syncProfile: () => {
+                document.getElementById('p-img-box').innerHTML = me.photoURL ? `<img src="${me.photoURL}">` : me.displayName.charAt(0);
+                document.getElementById('p-name').innerText = me.displayName;
+                onSnapshot(query(collection(db, "posts"), orderBy("time", "desc")), snap => {
+                    const l = document.getElementById('my-posts'); l.innerHTML = '';
+                    snap.forEach(p => { if(p.data().uid === me.uid) l.innerHTML += Data.postMarkup(p.id, p.data()); });
+                });
+            }
+        };
+
+        // MP3 Paylaşım Butonu Mantığı
+        document.getElementById('pub-btn').onclick = async () => {
+            const v = document.getElementById('post-in').value.trim();
+            const fileInput = document.getElementById('audio-file');
+            
+            // Eğer başlık varsa gönder
+            if(v) {
+                // Not: Firebase Storage ayarı olmadığı için dosya fiziksel olarak yüklenemez
+                // Ancak UI'da gösteriyoruz.
+                await addDoc(collection(db, "posts"), { 
+                    text: v, 
+                    uid: me.uid, 
+                    name: me.displayName, 
+                    pfp: me.photoURL || '', 
+                    time: Date.now(), 
+                    likes: [], 
+                    color: selCol,
+                    hasAudio: fileInput.files.length > 0 
+                });
+                
+                document.getElementById('post-in').value = ''; 
+                fileInput.value = '';
+                document.getElementById('file-label').innerText = "Maksimum 1-2 Saatlik Kayıtlar";
+                UI.close('post-modal');
+            } else {
+                Swal.fire('Uyarı', 'Lütfen ses kaydı için bir başlık yazın.', 'warning');
+            }
+        };
+
+        document.getElementById('dm-send').onclick = async () => {
+            const i = document.getElementById('dm-in'), val = i.value.trim();
+            if(val && activeRoom) {
+                await addDoc(collection(db, "v571_final_messages", activeRoom, "m"), { v: val, s: me.uid, t: Date.now() });
+                i.value = '';
+            }
+        };
+    </script>
 </body>
 </html>
